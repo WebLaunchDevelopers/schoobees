@@ -1,0 +1,163 @@
+{% load static %}
+{% load widget_tweaks %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+
+  <title>{{ school_name | default:"MySchool" }}</title>
+  
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet"
+    href="{% static 'plugins/fontawesome-free/css/all.min.css' %}">
+
+  <link rel="stylesheet" href="{% static 'plugins/toastr/toastr.min.css' %}">
+  <!-- overlayScrollbars -->
+  <link rel="stylesheet"
+    href="{% static 'plugins/overlayScrollbars/css/OverlayScrollbars.min.css' %}">
+  <!-- Theme style -->
+  <link rel="stylesheet" href="{% static 'dist/css/adminlte.min.css' %}">
+
+  <!--Login Page Csss-->
+  <link rel="stylesheet" href="{% static 'dist/css/login-page.css' %}">
+
+  <!-- Google Font: Source Sans Pro -->
+  <link
+    href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700"
+    rel="stylesheet">
+</head>
+<body>
+
+<div class="limiter">
+    <div class="container-login100">
+        <div class="wrap-register100">
+          
+            <form class="validate-form" method="post" action="{% url 'login' %}">
+                {% csrf_token %}
+                <span class="login100-form-title">School Bee</span>
+                <span class="error-msg"> 
+                    {% if form.errors %}
+                    <div class="alert alert-danger">
+                      {% for field_errors in form.errors.values %}
+                          {% for error in field_errors %}
+                              {{ error }}
+                          {% endfor %}
+                      {% endfor %}
+                  </div>
+                    <p class="error-msg">Your username and password didn't match. Please try again.</p>
+                    {% endif %}
+            
+                    {% if next %}
+                    {% if user.is_authenticated %}
+                    <p class="error-msg"> Your account doesn't have access to this page. To proceed,
+                      please login with an account that has access.</p>
+                    {% else %}
+                    </span>
+                    <p>Please Login to see this page.</p>
+                    {% endif %}
+                    {% endif %}
+                </span>
+                <div class="testing">
+                  <div class="container">
+                    <h2>Registration Form</h2>
+                    <form method="post" class="form-horizontal">
+                      {% csrf_token %}
+                      <div class="form-group wrap-input100 validate-input">
+                        <label class="control-label col-sm-4" for="username">Username:</label>
+                        <div class="col-sm-8">
+                          {{ form.username }}
+                        </div>
+                      </div>
+                      <div class="form-group wrap-input100 validate-input">
+                        <label class="control-label col-sm-4" for="email">Email:</label>
+                        <div class="col-sm-8">
+                          {{ form.email }}
+                        </div>
+                      </div>
+                      <div class="form-group wrap-input100 validate-input">
+                        <label class="control-label col-sm-4" for="school_name">School Name:</label>
+                        <div class="col-sm-8">
+                          {{ form.school_name }}
+                        </div>
+                      </div>
+                      <div class="form-group wrap-input100 validate-input">
+                        <label class="control-label col-sm-4" for="mobile_number">Mobile Number:</label>
+                        <div class="col-sm-8">
+                          {{ form.mobile_number }}
+                        </div>
+                      </div>
+                      <div class="form-group wrap-input100 validate-input">
+                        <label class="control-label col-sm-4" for="country">Country:</label>
+                        <div class="col-sm-8">
+                          {{ form.country }}
+                        </div>
+                      </div>
+                      <div class="form-group wrap-input100 validate-input">
+                        <label class="control-label col-sm-4" for="chairman">Chairman:</label>
+                        <div class="col-sm-8">
+                          {{ form.chairman }}
+                        </div>
+                      </div>
+                      <div class="form-group wrap-input100 validate-input">
+                        <label class="control-label col-sm-4" for="principal">Principal:</label>
+                        <div class="col-sm-8">
+                          {{ form.principal }}
+                        </div>
+                      </div>
+                      <div class="form-group wrap-input100 validate-input">
+                        <label class="control-label col-sm-4" for="password1">Password:</label>
+                        <div class="col-sm-8">
+                          {{ form.password1 }}
+                        </div>
+                      </div>
+                      <div class="form-group wrap-input100 validate-input">
+                        <label class="control-label col-sm-4" for="password2">Confirm Password:</label>
+                        <div class="col-sm-8">
+                          {{ form.password2 }}
+                        </div>
+                      </div>
+                      <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-8 container-login100-form-btn">
+                          <button type="submit" class="btn btn-default login100-form-btn">Submit</button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+  <!-- REQUIRED SCRIPTS -->
+  <!-- jQuery -->
+  <script src="{% static 'plugins/jquery/jquery.min.js' %}"></script>
+  <script src="{% static 'dist/js/jquery.formset.js' %}"> </script>
+  <!-- Bootstrap -->
+  <script
+    src="{% static 'plugins/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+  <script src="{% static 'plugins/toastr/toastr.min.js' %}"></script>
+  <!-- overlayScrollbars -->
+  <script
+    src="{% static 'plugins/overlayScrollbars/js/jquery.overlayScrollbars.min.js' %}"></script>
+
+  <!-- AdminLTE App -->
+  <script src="{% static 'dist/js/adminlte.js' %}"></script>
+
+  <!-- OPTIONAL SCRIPTS -->
+  <script src="{% static 'dist/js/demo.js' %}"></script>
+
+  {% if messages %}
+  {% for message in messages %}
+  <script type=text/javascript>
+      toastr.options.progressBar = true;
+      toastr.{{ message.tags }}('{{ message }}')
+    </script>
+  {% endfor %}
+  {% endif %}
+
+</body>
