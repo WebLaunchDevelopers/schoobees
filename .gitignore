@@ -1,9 +1,6 @@
 # Ignore compiled Python files
 *.pyc
 
-# Ignore Django's migration files
-**/migrations/
-
 # Ignore local development settings
 local_settings.py
 
@@ -21,3 +18,5 @@ docs/_build/
 __pycache__/
 
 # Ignore all files in Django's migrations directory except __init__.py
+**/migrations/*
+!**/migrations/__init__.py
