@@ -20,5 +20,6 @@ docs/_build/
 #cache files
 __pycache__/
 
-# Ignore Django's migration files, except for the __init__.py file
-**/migrations/!__init__.py
+# Ignore all files in Django's migrations directory except __init__.py
+**/migrations/*
+!**/migrations/__init__.py
