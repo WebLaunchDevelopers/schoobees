@@ -1,14 +1,14 @@
 TODO:
-1. Student Management: The web application can have a student management system to add, edit, and delete student records, including personal information, academic records, and attendance records.
+WIP 1. Student Management: The web application can have a student management system to add, edit, and delete student records, including personal information, academic records, and attendance records.
 
-2. Parent Management: The web application can have a parent management system to add, edit, and delete parent records, including contact information and financial records.
+WIP 2. Parent Management: The web application can have a parent management system to add, edit, and delete parent records, including contact information and financial records.
 
-3. Attendance Management: The web application can have an attendance management system to record and manage student attendance, including absences, tardiness, and early departures.
+NOT TOUCHED 3. Attendance Management: The web application can have an attendance management system to record and manage student attendance, including absences, tardiness, and early departures.
 
-4. Exam Management: The web application can have an exam management system to manage and record student exam results, including grades, test scores, and progress reports.
+NOT TOUCHED 4. Exam Management: The web application can have an exam management system to manage and record student exam results, including grades, test scores, and progress reports.
 
-5. Fee Management: The web application can have a fee management system to manage and record student fees and expenses, including payments and outstanding balances.
+WIP 5. Fee Management: The web application can have a fee management system to manage and record student fees and expenses, including payments and outstanding balances.
 
-6. Report Generation: The web application can have a reporting system to generate custom reports on student attendance, exam results, and academic progress.
+WIP 6. Report Generation: The web application can have a reporting system to generate custom reports on student attendance, exam results, and academic progress.
 
-7. Communication (Notifications): The web application can have a communication system to send notifications, alerts, and messages to parents and students about upcoming events, holidays, and other important information.
+NOT TOUCHED - 7. Communication (Notifications): The web application can have a communication system to send notifications, alerts, and messages to parents and students about upcoming events, holidays, and other important information.
