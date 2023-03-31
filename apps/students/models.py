@@ -17,6 +17,7 @@ class Student(models.Model):
     registration_number = models.CharField(max_length=200, unique=True)
     surname = models.CharField(max_length=200)
     firstname = models.CharField(max_length=200)
+    guardianname = models.CharField(max_length=200,blank=True)
     other_name = models.CharField(max_length=200, blank=True)
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES, default="male")
     date_of_birth = models.DateField(default=timezone.now)

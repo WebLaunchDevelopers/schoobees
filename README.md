@@ -11,7 +11,7 @@ Solely, it's expected to be used on a single machine or online for managers only
 
 
 username: admin
-password: admin123
+password: C
 ```
 
 

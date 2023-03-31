@@ -9,6 +9,7 @@ local_settings.py
 
 # Ignore database files
 db.sqlite3
+
 *.sqlite3
 
 # Ignore any generated documentation

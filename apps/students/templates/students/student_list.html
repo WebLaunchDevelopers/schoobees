@@ -16,6 +16,7 @@
         <tr>
           <th>S/N</th>
           <th>Fullname</th>
+          <th>Guardian Name</th>
           <th>Registration Number</th>
           <th>Current Class</th>
           <th>Gender</th>
@@ -29,6 +30,7 @@
           <tr class='clickable-row' data-href="{% url 'student-detail' student.id %}">
             <td>{{ forloop.counter}}</td>
             <td>{{ student.surname}} {{student.firstname }} {{student.other_name }}</td>
+            <td>{{ student.guardianname }}</td>
             <td>{{ student.registration_number}}</td>
             <td>{{ student.current_class}}</td>
             <td>{{ student.get_gender_display}}</td>
