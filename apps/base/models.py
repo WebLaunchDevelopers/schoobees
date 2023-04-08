@@ -15,27 +15,27 @@ class CustomUser(AbstractUser):
         ('AU', 'Australia (+61)'),
     )
 
-    SCHOOL_CHOICES = (
-        ('primary', 'Primary'),
-        ('secondary', 'Secondary'),
-        ('tertiary', 'Tertiary'),
-    )
+    # SCHOOL_CHOICES = (
+    #     ('primary', 'Primary'),
+    #     ('secondary', 'Secondary'),
+    #     ('tertiary', 'Tertiary'),
+    # )
 
-    school_name = models.CharField(max_length=50)
-    mobile_number = models.CharField(max_length=15)
-    country = models.CharField(max_length=2, choices=COUNTRY_CHOICES)
+    # Common fields for all types of users
     email = models.EmailField()
-    chairman = models.CharField(max_length=50)
-    principal = models.CharField(max_length=50)
+    mobile_number = models.CharField(max_length=15)
+    address = models.CharField(max_length=100)
+    country = models.CharField(max_length=2, choices=COUNTRY_CHOICES)
+
+    # Fields specific to schools
+    school_name = models.CharField(max_length=50, blank=True, null=True)
+    # school_type = models.CharField(max_length=10, choices=SCHOOL_CHOICES, blank=True, null=True)
+    chairman = models.CharField(max_length=50, blank=True, null=True)
+    principal = models.CharField(max_length=50, blank=True, null=True)
     approved = models.BooleanField(default=False)
     activation_account = models.CharField(max_length=40, blank=True, null=True)
-    reset_password_token = models.CharField(max_length=40, blank=True, null=True)
-    reset_password_token_created_at = models.DateTimeField(blank=True, null=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
-    address = models.CharField(max_length=100)
-    school_type = models.CharField(max_length=10, choices=SCHOOL_CHOICES)
 
 class UserProfile(models.Model):
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
-    # Add additional fields here as needed
+    profile_picture = models.ImageField(upload_to='profile_pictures/', null=True, blank=True)
+    # Additional fields that are specific to certain user types go here

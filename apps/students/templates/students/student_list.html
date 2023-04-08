@@ -27,7 +27,7 @@
       <tbody>
 
         {% for student in students %}
-          <tr class='clickable-row' data-href="{% url 'student-detail' student.id %}">
+          <tr class='clickable-row' data-href="{% url 'student-detail' student.pk %}">
             <td>{{ forloop.counter}}</td>
             <td>{{ student.surname}} {{student.firstname }} {{student.other_name }}</td>
             <td>{{ student.guardianname }}</td>

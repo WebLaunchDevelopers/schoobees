@@ -24,6 +24,9 @@ class RegisterView(View):
             send_activation_email(user)
             messages.success(request, 'Your account has been created. Please check your email to activate your account.')
             return redirect('login')
+        else:
+            print("form errors: ", form)
+            messages.error(request, 'Invalid details.')
         return render(request, 'registration/register.html', {'form': form})
 
 class ActivateView(View):
@@ -44,19 +47,23 @@ class LoginView(View):
     def get(self, request):
         form = LoginForm()
         next = request.GET.get('next')
+        print("next in get: ", type(next))
         return render(request, 'registration/login.html', {'form': form, 'next': next})
 
     def post(self, request):
         form = LoginForm(data=request.POST)
         next = request.POST.get('next')
+        print("next value: ", next)
         if form.is_valid():
             user = form.get_user()
             if user.approved:
                 login(request, user)
                 messages.success(request, 'You have successfully logged in.')
-                if next:
+                if next != "None" and next:
+                    print("entered to next even though none: ", type(next))
                     return redirect(next)
                 else:
+                    print("entered to else still getting the error")
                     return redirect('home')
             else:
                 messages.error(request, 'Your account is not active. Please check your email to activate your account.')

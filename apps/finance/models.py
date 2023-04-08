@@ -4,9 +4,13 @@ from django.utils import timezone
 
 from apps.corecode.models import AcademicSession, AcademicTerm, StudentClass
 from apps.students.models import Student
+from django.contrib.auth import get_user_model
+
+CustomUser = get_user_model()
 
 
 class Invoice(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete = models.CASCADE, primary_key = True)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     session = models.ForeignKey(AcademicSession, on_delete=models.CASCADE)
     term = models.ForeignKey(AcademicTerm, on_delete=models.CASCADE)
@@ -51,12 +55,14 @@ class Invoice(models.Model):
 
 
 class InvoiceItem(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete = models.CASCADE, primary_key = True)
     invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE)
     description = models.CharField(max_length=200)
     amount = models.IntegerField()
 
 
 class Receipt(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete = models.CASCADE, primary_key = True)
     invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE)
     amount_paid = models.IntegerField()
     date_paid = models.DateField(default=timezone.now)

@@ -11,7 +11,7 @@ Solely, it's expected to be used on a single machine or online for managers only
 
 
 username: admin
-password: C
+password: admin123 / C
 ```
 
 
@@ -19,6 +19,7 @@ Run
 
 ```python
 pip install -r requirements.txt #install required packages
+python manage.py makemigrations
 python manage.py migrate # run first migration
 python manage.py runserver # run the server
 ```
