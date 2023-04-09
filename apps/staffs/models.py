@@ -2,13 +2,16 @@ from django.core.validators import RegexValidator
 from django.db import models
 from django.urls import reverse
 from django.utils import timezone
+from django.contrib.auth import get_user_model
 
+CustomUser = get_user_model()
 
 class Staff(models.Model):
     STATUS = [("active", "Active"), ("inactive", "Inactive")]
 
     GENDER = [("male", "Male"), ("female", "Female")]
 
+    user = models.OneToOneField(CustomUser, on_delete = models.CASCADE, primary_key = True)
     current_status = models.CharField(max_length=10, choices=STATUS, default="active")
     surname = models.CharField(max_length=200)
     firstname = models.CharField(max_length=200)

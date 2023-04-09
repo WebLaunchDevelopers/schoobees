@@ -4,7 +4,9 @@ from django.urls import reverse
 from django.utils import timezone
 
 from apps.corecode.models import StudentClass
+from django.contrib.auth import get_user_model
 
+CustomUser = get_user_model()
 
 class Student(models.Model):
     STATUS_CHOICES = [("active", "Active"), ("inactive", "Inactive")]
@@ -14,9 +16,11 @@ class Student(models.Model):
     current_status = models.CharField(
         max_length=10, choices=STATUS_CHOICES, default="active"
     )
+    user = models.OneToOneField(CustomUser, on_delete = models.CASCADE, primary_key = True)
     registration_number = models.CharField(max_length=200, unique=True)
     surname = models.CharField(max_length=200)
     firstname = models.CharField(max_length=200)
+    guardianname = models.CharField(max_length=200,blank=True)
     other_name = models.CharField(max_length=200, blank=True)
     gender = models.CharField(max_length=10, choices=GENDER_CHOICES, default="male")
     date_of_birth = models.DateField(default=timezone.now)
@@ -47,5 +51,6 @@ class Student(models.Model):
 
 
 class StudentBulkUpload(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete = models.CASCADE, primary_key = True)
     date_uploaded = models.DateTimeField(auto_now=True)
     csv_file = models.FileField(upload_to="students/bulkupload/")

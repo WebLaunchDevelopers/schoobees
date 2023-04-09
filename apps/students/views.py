@@ -17,6 +17,10 @@ class StudentListView(LoginRequiredMixin, ListView):
     model = Student
     template_name = "students/student_list.html"
     context_object_name = "students"
+    
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.filter(user=self.request.user)
 
 
 class StudentDetailView(LoginRequiredMixin, DetailView):
@@ -31,7 +35,7 @@ class StudentDetailView(LoginRequiredMixin, DetailView):
 
 class StudentCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Student
-    fields = "__all__"
+    fields = ['current_status','registration_number', 'surname', 'firstname', 'guardianname', 'other_name', 'gender', 'date_of_birth', 'current_class', 'date_of_admission', 'parent_mobile_number', 'address', 'others', 'passport']
     success_message = "New student successfully added."
 
     def get_form(self):
@@ -41,11 +45,16 @@ class StudentCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         form.fields["address"].widget = widgets.Textarea(attrs={"rows": 2})
         form.fields["others"].widget = widgets.Textarea(attrs={"rows": 2})
         return form
+    
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
 
+from django.http import Http404
 
 class StudentUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = Student
-    fields = "__all__"
+    fields = ['current_status','registration_number', 'surname', 'firstname', 'guardianname', 'other_name', 'gender', 'date_of_birth', 'current_class', 'date_of_admission', 'parent_mobile_number', 'address', 'others', 'passport']
     success_message = "Record successfully updated."
 
     def get_form(self):
@@ -59,7 +68,28 @@ class StudentUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
         form.fields["others"].widget = widgets.Textarea(attrs={"rows": 2})
         # form.fields['passport'].widget = widgets.FileInput()
         return form
+    
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.filter(user=self.request.user)
+
+    def get_object(self, queryset=None):
+        """Retrieve the object to be updated."""
+        pk = self.kwargs.get('pk')
+        queryset = self.get_queryset()
+        obj = queryset.filter(pk=pk).first()
+        return obj
+
+    def get(self, request, *args, **kwargs):
+        print("in get")
+        self.object = self.get_object()
+        print("views.py: ")
+        if self.object is None:
+            print("in None")
+            return HttpResponse("No student found matching the query")
+        context = self.get_context_data(object=self.object)
+        return self.render_to_response(context)
 
 class StudentDeleteView(LoginRequiredMixin, DeleteView):
     model = Student
@@ -85,6 +115,7 @@ class DownloadCSVViewdownloadcsv(LoginRequiredMixin, View):
                 "registration_number",
                 "surname",
                 "firstname",
+                "Guardianname"
                 "other_names",
                 "gender",
                 "parent_number",

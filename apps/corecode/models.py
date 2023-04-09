@@ -1,12 +1,15 @@
 from django.db import models
 from datetime import datetime
+from django.contrib.auth import get_user_model
 
+CustomUser = get_user_model()
 # Create your models here.
 
 
 class SiteConfig(models.Model):
     """Site Configurations"""
 
+    user = models.OneToOneField(CustomUser, on_delete = models.CASCADE, primary_key = True)
     key = models.SlugField()
     value = models.CharField(max_length=200)
 
@@ -26,6 +29,7 @@ class AcademicSession(models.Model):
             # If current month is greater than or equal to August, then academic year is current year - next year
             return f"{current_year}-{current_year + 1}"
     default_name = get_academic_year()
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     name = models.CharField(max_length=200, unique=True, default=default_name)
     current = models.BooleanField(default=True)
 
@@ -39,6 +43,7 @@ class AcademicSession(models.Model):
 class AcademicTerm(models.Model):
     """Academic Term"""
 
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     name = models.CharField(max_length=20, unique=True, default="1st Term")
     current = models.BooleanField(default=True)
 
@@ -52,6 +57,7 @@ class AcademicTerm(models.Model):
 class Subject(models.Model):
     """Subject"""
 
+    user = models.OneToOneField(CustomUser, on_delete = models.CASCADE, primary_key = True)
     name = models.CharField(max_length=200, unique=True)
 
     class Meta:
@@ -62,6 +68,7 @@ class Subject(models.Model):
 
 
 class StudentClass(models.Model):
+    user = models.OneToOneField(CustomUser, on_delete = models.CASCADE, primary_key = True)
     name = models.CharField(max_length=200, unique=True)
 
     class Meta:

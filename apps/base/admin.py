@@ -14,14 +14,14 @@ class CustomUserAdmin(BaseUserAdmin):
     list_filter = ('school_name', 'country', 'is_active', 'is_staff', 'is_superuser')
     fieldsets = (
         (None, {'fields': ('username', 'password')}),
-        (_('Personal info'), {'fields': ('first_name', 'last_name', 'email', 'mobile_number', 'address')}),
+        (_('Personal info'), {'fields': ('school_name', 'chairman', 'principal', 'email', 'mobile_number', 'address', 'country')}),
         (_('Permissions'), {'fields': ('approved', 'is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
     )
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('username', 'email', 'password1', 'password2', 'school_name', 'mobile_number', 'country', 'address'),
+            'fields': ('username', 'chairman', 'principal', 'email', 'password1', 'password2', 'school_name', 'mobile_number', 'country', 'address'),
         }),
     )
     

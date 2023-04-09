@@ -69,6 +69,9 @@ class SessionCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         context = super().get_context_data(**kwargs)
         context["title"] = "Add new session"
         return context
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
 
 
 class SessionUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
@@ -123,7 +126,9 @@ class TermCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     template_name = "corecode/mgt_form.html"
     success_url = reverse_lazy("terms")
     success_message = "New term successfully added"
-
+    def form_valid(self, form):
+            form.instance.user = self.request.user
+            return super().form_valid(form)
 
 class TermUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = AcademicTerm
