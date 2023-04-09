@@ -55,16 +55,26 @@ python manage.py test
 ```
 use this command in "cmd" of windows in root folder
 for /d /r . %d in (__pycache__) do @if exist "%d" rd /s /q "%d"
+OR
+use this command in "cmd" of Linux in root folder
+sudo find . -type d -name '__pycache__' -exec rm -rf {} +
 ```
 
 ## Delete files inside migrations folder excluding __init__.py
 ```
 use this command in "cmd" of windows in root folder
 for /r . %d in (migrations\*.py) do @if "%~nxd" neq "__init__.py" del /s /q "%~fd"
+OR
+use this command in "cmd" of Linux in root folder
+find . -path "*/migrations/*.py" ! -name "__init__.py" -delete
+
 ```
 
 ## Delete db.sqlite3
 ```
 use this command in "cmd" of windows in root folder
 del /q db.sqlite3
+OR
+use this command in "cmd" of Linux in root folder
+rm db.sqlite3
 ```
