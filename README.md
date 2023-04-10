@@ -78,3 +78,8 @@ OR
 use this command in "cmd" of Linux in root folder
 rm db.sqlite3
 ```
+
+# To change GIT URL
+```
+git remote set-url origin <new remote URL>
+```
