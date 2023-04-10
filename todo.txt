@@ -20,4 +20,4 @@ register good looking
 
 API - 
 website <--> App
-https://schoobee.com/students/token=234nskdjn@knds&modid=App&registerid=456778&studentid=243546
+localhost/students/token=234nskdjn@knds&modid=App&registerid=456778&studentid=243546
