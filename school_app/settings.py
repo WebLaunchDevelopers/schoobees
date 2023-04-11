@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     "apps.finance",
     "apps.result",
     "apps.base",
+    "apps.api",
 ]
 
 AUTH_USER_MODEL = "base.CustomUser"
