@@ -182,6 +182,9 @@ class ClassCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     template_name = "corecode/mgt_form.html"
     success_url = reverse_lazy("classes")
     success_message = "New class successfully added"
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
 
 
 class ClassUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
@@ -221,7 +224,9 @@ class SubjectCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     template_name = "corecode/mgt_form.html"
     success_url = reverse_lazy("subjects")
     success_message = "New subject successfully added"
-
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
 
 class SubjectUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = Subject
