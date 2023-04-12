@@ -31,6 +31,7 @@ urlpatterns = [
     path("staff/", include("apps.staffs.urls")),
     path("finance/", include("apps.finance.urls")),
     path("result/", include("apps.result.urls")),
+    path("api/", include("apps.api.urls")),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 handler404 = 'apps.base.views.error_404_view'
