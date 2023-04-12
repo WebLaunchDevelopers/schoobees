@@ -12,11 +12,11 @@ class SiteWideConfigs:
             try:
                 current_session = AcademicSession.objects.get(user=request.user, current=True)
             except AcademicSession.DoesNotExist:
-                print("middleware.py AcademicSession")
+                pass
             try:
                 current_term = AcademicTerm.objects.get(user=request.user, current=True)
             except AcademicTerm.DoesNotExist:
-                print("middleware.py AcademicTerm")
+                pass
 
         request.current_session = current_session
         request.current_term = current_term

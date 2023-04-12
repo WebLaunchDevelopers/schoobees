@@ -83,3 +83,9 @@ rm db.sqlite3
 ```
 git remote set-url origin <new remote URL>
 ```
+
+# Virtual ENV
+```
+virtualenv myenv
+myenv\Scripts\activate
+```

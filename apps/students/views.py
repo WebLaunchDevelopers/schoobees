@@ -35,7 +35,7 @@ class StudentDetailView(LoginRequiredMixin, DetailView):
 
 class StudentCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Student
-    fields = ['current_status','registration_number', 'surname', 'firstname', 'guardianname', 'other_name', 'gender', 'date_of_birth', 'current_class', 'date_of_admission', 'parent_mobile_number', 'address', 'others', 'passport']
+    fields = ['current_status','registration_number', 'firstname', 'lastname', 'guardianname', 'gender', 'date_of_birth', 'current_class', 'date_of_admission', 'parent_mobile_number', 'address', 'comments', 'passport']
     success_message = "New student successfully added."
 
     def get_form(self):
@@ -54,7 +54,7 @@ from django.http import Http404
 
 class StudentUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = Student
-    fields = ['current_status','registration_number', 'surname', 'firstname', 'guardianname', 'other_name', 'gender', 'date_of_birth', 'current_class', 'date_of_admission', 'parent_mobile_number', 'address', 'others', 'passport']
+    fields = ['current_status','registration_number', 'firstname', 'lastname', 'guardianname', 'gender', 'date_of_birth', 'current_class', 'date_of_admission', 'parent_mobile_number', 'address', 'comments', 'passport']
     success_message = "Record successfully updated."
 
     def get_form(self):
@@ -113,14 +113,14 @@ class DownloadCSVViewdownloadcsv(LoginRequiredMixin, View):
         writer.writerow(
             [
                 "registration_number",
-                "surname",
                 "firstname",
+                "lastname",
                 "Guardianname"
-                "other_names",
                 "gender",
                 "parent_number",
                 "address",
                 "current_class",
+                'comments'
             ]
         )
 
