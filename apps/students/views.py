@@ -35,7 +35,7 @@ class StudentDetailView(LoginRequiredMixin, DetailView):
 
 class StudentCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Student
-    fields = ['current_status','registration_number', 'firstname', 'lastname', 'guardianname', 'gender', 'date_of_birth', 'current_class', 'date_of_admission', 'parent_mobile_number', 'address', 'comments', 'passport']
+    fields = ['current_status','registration_number', 'first_name', 'last_name', 'guardian_name', 'gender', 'date_of_birth', 'current_class', 'date_of_admission', 'parent_mobile_number', 'address', 'comments', 'passport']
     success_message = "New student successfully added."
 
     def get_form(self):
@@ -43,7 +43,7 @@ class StudentCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         form = super(StudentCreateView, self).get_form()
         form.fields["date_of_birth"].widget = widgets.DateInput(attrs={"type": "date"})
         form.fields["address"].widget = widgets.Textarea(attrs={"rows": 2})
-        form.fields["others"].widget = widgets.Textarea(attrs={"rows": 2})
+        form.fields["comments"].widget = widgets.Textarea(attrs={"rows": 2})
         return form
     
     def form_valid(self, form):
@@ -54,7 +54,7 @@ from django.http import Http404
 
 class StudentUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = Student
-    fields = ['current_status','registration_number', 'firstname', 'lastname', 'guardianname', 'gender', 'date_of_birth', 'current_class', 'date_of_admission', 'parent_mobile_number', 'address', 'comments', 'passport']
+    fields = ['current_status','registration_number', 'first_name', 'last_name', 'guardian_name', 'gender', 'date_of_birth', 'current_class', 'date_of_admission', 'parent_mobile_number', 'address', 'comments', 'passport']
     success_message = "Record successfully updated."
 
     def get_form(self):
@@ -65,7 +65,7 @@ class StudentUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
             attrs={"type": "date"}
         )
         form.fields["address"].widget = widgets.Textarea(attrs={"rows": 2})
-        form.fields["others"].widget = widgets.Textarea(attrs={"rows": 2})
+        form.fields["comments"].widget = widgets.Textarea(attrs={"rows": 2})
         # form.fields['passport'].widget = widgets.FileInput()
         return form
     
@@ -113,9 +113,9 @@ class DownloadCSVViewdownloadcsv(LoginRequiredMixin, View):
         writer.writerow(
             [
                 "registration_number",
-                "firstname",
-                "lastname",
-                "Guardianname"
+                "first_name",
+                "last_name",
+                "guardian_name"
                 "gender",
                 "parent_number",
                 "address",
