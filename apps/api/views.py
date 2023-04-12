@@ -21,13 +21,13 @@ def apiOverview(request):
 
 @api_view(['GET'])
 def staff(request,pk):
-    task = Staff.objects.get(user_id=pk)
+    task = Staff.objects.get(registration_number=pk)
     serialiser = StaffSerializer(task,many=False)
     return Response(serialiser.data)
 
 @api_view(['GET'])
 def student(request,pk):
-    task = Student.objects.get(user_id=pk)
+    task = Student.objects.get(registration_number=pk)
     serialiser = StudentSerializer(task,many=False)
     return Response(serialiser.data)
 
