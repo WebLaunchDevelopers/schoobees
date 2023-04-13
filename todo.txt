@@ -21,5 +21,4 @@ API - dominic - done --> website <--> App -->localhost/students/token=234nskdjn@
 Domnic - 13/04 to 16/04
 atleast one class popup - dominic
 results optimisation - (mainly view results)
-
-register good looking - vinnay
+register good looking
