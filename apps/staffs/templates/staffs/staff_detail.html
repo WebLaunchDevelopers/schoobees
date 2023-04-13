@@ -5,10 +5,10 @@
 <div class="card-header">
   <div class="card-tools">
     <a href="#" class="btn btn-tool">Print</a>
-    <a href="{% url 'staff-update' object.id %}" class="btn btn-tool">
+    <a href="{% url 'staff-update' object.pk %}" class="btn btn-tool">
       <i class="fas fa-edit"></i>
     </a>
-    <a href="{% url 'staff-delete' object.id %}" class="btn btn-tool">
+    <a href="{% url 'staff-delete' object.pk %}" class="btn btn-tool">
       <i class="fas fa-times"></i>
     </a>
   </div>

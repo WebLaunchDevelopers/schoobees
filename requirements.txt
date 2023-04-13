@@ -3,8 +3,9 @@ asgiref==3.4.1
 black==21.7b0
 click==8.0.1
 colorama==0.4.4
-Django==3.2.5
+Django==4.2
 django-widget-tweaks==1.4.8
+djangorestframework==3.14.0
 flake8==3.9.2
 isort==5.9.2
 mccabe==0.6.1
@@ -17,3 +18,4 @@ pytz==2021.1
 regex==2023.3.23
 sqlparse==0.4.2
 tomli==1.0.4
+python-decouple==3.3

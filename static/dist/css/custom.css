@@ -1,0 +1,16 @@
+.nav-sidebar .menu-open>.nav-link i.down {
+    -webkit-transform: rotate(90deg) !important;
+    transform: rotate(90deg) !important;
+}
+
+.nav-sidebar .nav-item>.nav-link .down {
+    transition: -webkit-transform ease-in-out .3s;
+    transition: transform ease-in-out .3s;
+    transition: transform ease-in-out .3s, -webkit-transform ease-in-out .3s;
+}
+
+.nav-sidebar .nav-link>.down, .nav-sidebar .nav-link>p>.down {
+    position: absolute;
+    right: 1rem;
+    top: 0.7rem;
+}

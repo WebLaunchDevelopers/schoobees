@@ -24,7 +24,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = True # For 404 page keep it in False
 
 ALLOWED_HOSTS = [
     'localhost',
@@ -43,12 +43,14 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "django.contrib.humanize",
     "widget_tweaks",
+    "rest_framework",
     "apps.corecode",
     "apps.students",
     "apps.staffs",
     "apps.finance",
     "apps.result",
     "apps.base",
+    "apps.api",
 ]
 
 AUTH_USER_MODEL = "base.CustomUser"

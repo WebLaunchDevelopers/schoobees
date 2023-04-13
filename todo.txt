@@ -12,3 +12,13 @@ WIP 5. Fee Management: The web application can have a fee management system to m
 WIP 6. Report Generation: The web application can have a reporting system to generate custom reports on student attendance, exam results, and academic progress.
 
 NOT TOUCHED - 7. Communication (Notifications): The web application can have a communication system to send notifications, alerts, and messages to parents and students about upcoming events, holidays, and other important information.
+
+Domnic - 2 days work
+404 error - dominic - done
+2 or 3 schools create data leakage
+API - dominic - done --> website <--> App -->localhost/students/token=234nskdjn@knds&modid=App&registerid=456778&studentid=243546
+
+Domnic - 13/04 to 16/04
+atleast one class popup - dominic
+results optimisation - (mainly view results)
+register good looking

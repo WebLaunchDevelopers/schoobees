@@ -11895,6 +11895,10 @@ body.sidebar-collapse:not(.sidebar-mini-md):not(.sidebar-mini) .main-header::bef
   -webkit-transform: rotate(-90deg);
   transform: rotate(-90deg);
 }
+.nav-sidebar .menu-open > .nav-link i.down {
+  -webkit-transform: rotate(90deg);
+  transform: rotate(90deg);
+}
 
 .nav-sidebar > .nav-item {
   margin-bottom: 0;

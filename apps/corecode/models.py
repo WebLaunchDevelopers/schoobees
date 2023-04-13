@@ -57,8 +57,8 @@ class AcademicTerm(models.Model):
 class Subject(models.Model):
     """Subject"""
 
-    user = models.OneToOneField(CustomUser, on_delete = models.CASCADE, primary_key = True)
-    name = models.CharField(max_length=200, unique=True)
+    user = models.ForeignKey(CustomUser, on_delete = models.CASCADE)
+    name = models.CharField(max_length=200, unique=True, default="Telugu")
 
     class Meta:
         ordering = ["name"]
@@ -68,8 +68,8 @@ class Subject(models.Model):
 
 
 class StudentClass(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete = models.CASCADE, primary_key = True)
-    name = models.CharField(max_length=200, unique=True)
+    user = models.ForeignKey(CustomUser, on_delete = models.CASCADE)
+    name = models.CharField(max_length=200, unique=True, default="8th")
 
     class Meta:
         verbose_name = "Class"
