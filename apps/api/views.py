@@ -10,6 +10,8 @@ from apps.staffs.models import Staff
 
 # Create your views here.
 
+
+
 @api_view(['GET'])
 def apiOverview(request):
 	api_urls = {
@@ -26,8 +28,14 @@ def staff(request,pk):
     return Response(serialiser.data)
 
 @api_view(['GET'])
-def student(request,pk):
-    task = Student.objects.get(registration_number=pk)
+def student(request):
+    id=request.query_params['id']
+    task = Student.objects.get(registration_number=id)
     serialiser = StudentSerializer(task,many=False)
-    return Response(serialiser.data)
+    token=request.query_params['token']
+    print(request.query_params)
+    if token == "123123123":               #token can be set to anything
+        return Response(serialiser.data)
+    else:
+        return render(request,"404.html")
 
