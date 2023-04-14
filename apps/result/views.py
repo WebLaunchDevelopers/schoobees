@@ -77,12 +77,15 @@ def edit_results(request):
             form.save()
             messages.success(request, "Results successfully updated")
             return redirect("edit-results")
+        else:
+            messages.error(request, "Results not updated")
+            return redirect("edit-results")
     else:
         results = Result.objects.filter(
             session=request.current_session, term=request.current_term
         )
         form = EditResults(queryset=results)
-    return render(request, "result/edit_results.html", {"formset": form})
+        return render(request, "result/edit_results.html", {"formset": form})
 
 
 class ResultListView(LoginRequiredMixin, View):
