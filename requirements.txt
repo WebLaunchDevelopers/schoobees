@@ -19,4 +19,4 @@ regex==2023.3.23
 sqlparse==0.4.2
 tomli==1.0.4
 python-decouple==3.3
-psycopg2-binary=2.9.6
+psycopg2-binary==2.9.6
