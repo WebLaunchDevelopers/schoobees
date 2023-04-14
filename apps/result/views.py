@@ -102,7 +102,7 @@ class ResultListView(LoginRequiredMixin, View):
                     test_total += subject.test_score
                     exam_total += subject.exam_score
 
-            bulk[result.student.id] = {
+            bulk[result.student.registration_number] = {
                 "student": result.student,
                 "subjects": subjects,
                 "test_total": test_total,

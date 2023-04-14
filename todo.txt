@@ -22,3 +22,9 @@ Domnic - 13/04 to 16/04
 atleast one class popup - dominic
 results optimisation - (mainly view results)
 register good looking
+
+
+Bugs
+not showing all the students in student/list
+Staff registration no has to be added
+Student registrationno has to be the primary key instead of User
