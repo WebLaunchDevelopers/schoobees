@@ -38,6 +38,7 @@ def create_result(request):
                             if not check:
                                 results.append(
                                     Result(
+                                        user=request.user,
                                         session=session,
                                         term=term,
                                         current_class=stu.current_class,
