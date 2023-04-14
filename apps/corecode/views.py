@@ -24,13 +24,17 @@ from .models import (
 )
 
 
-class IndexView(LoginRequiredMixin, TemplateView):
+class IndexView(LoginRequiredMixin, SuccessMessageMixin, ListView):
     template_name = "index.html"
     model = StudentClass
-
+    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["form"] = StudentClassForm()
+        if len(context["object_list"])==0:
+            context["bool"]=True
+        else:
+            context["bool"]=False
         return context
 
 
