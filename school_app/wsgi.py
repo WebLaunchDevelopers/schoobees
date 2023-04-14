@@ -8,9 +8,13 @@ https://docs.djangoproject.com/en/3.0/howto/deployment/wsgi/
 """
 
 import os
+import sys
+sys.path.append('/var/www/schoobees')
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "school_app.settings")
+sys.path.append('/var/www/schoobees')
+
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "schoobees.school_app.settings")
 
 application = get_wsgi_application()

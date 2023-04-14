@@ -21,3 +21,9 @@ __pycache__/
 # Ignore all files in Django's migrations directory except __init__.py
 **/migrations/*
 !**/migrations/__init__.py
+
+# staticfiles
+staticfiles/
+
+#virtual file
+venv/

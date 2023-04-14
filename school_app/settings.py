@@ -26,11 +26,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True # For 404 page keep it in False
 
-ALLOWED_HOSTS = [
-    'localhost',
-    '127.0.0.1',
-    '13.51.255.34',
-]
+ALLOWED_HOSTS = ['schoobees.com', 'www.schoobees.com']
 
 # Application definition
 
@@ -95,8 +91,12 @@ WSGI_APPLICATION = "school_app.wsgi.application"
 
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": 'database-1',
+        "USER": 'postgres',
+        "PASSWORD": 'avinashgummadi',
+        "HOST": 'database-1.cpdnafjyf3dy.eu-north-1.rds.amazonaws.com',
+        "PORT": '5432',
     }
 }
 
@@ -143,7 +143,7 @@ STATIC_URL = "/static/"
 
 STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
 
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATIC_ROOT = '/var/www/schoobees/staticfiles/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
