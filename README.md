@@ -86,6 +86,12 @@ git remote set-url origin <new remote URL>
 
 # Virtual ENV
 ```
+Windows-->
 virtualenv myenv
 myenv\Scripts\activate
+
+Linux-->
+virtualenv venv
+source venv/bin/activate
+deactivate
 ```
