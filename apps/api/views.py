@@ -29,12 +29,13 @@ def staff(request,pk):
 
 @api_view(['GET'])
 def student(request):
-    id=request.query_params['id']
+    id=request.query_params['studentid']
     task = Student.objects.get(registration_number=id)
+    modid = request.query_params['modid']
     serialiser = StudentSerializer(task,many=False)
     token=request.query_params['token']
-    print(request.query_params)
-    if token == "123123123":               #token can be set to anything
+    modlist = ['App']
+    if token == "123123123" and modid in modlist:               #token can be set to anything
         return Response(serialiser.data)
     else:
         return render(request,"404.html")
