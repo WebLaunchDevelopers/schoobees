@@ -8,9 +8,10 @@ from .serializers import StudentSerializer,StaffSerializer
 from apps.students.models import Student
 from apps.staffs.models import Staff
 
+import hashlib
+
 # Create your views here.
-
-
+MODLIST = ['App']
 
 @api_view(['GET'])
 def apiOverview(request):
@@ -29,14 +30,19 @@ def staff(request,pk):
 
 @api_view(['GET'])
 def student(request):
+    # Concatenate the words and encode as UTF-8
+    text = "AppToWebFromWebLaunch".encode("utf-8")
+    # Generate a SHA-256 hash from the text
+    hash_object = hashlib.sha256(text)
+    # Convert the hash to a hexadecimal string
+    token = hash_object.hexdigest()
+    # print(token)
     id=request.query_params['studentid']
     task = Student.objects.get(registration_number=id)
     modid = request.query_params['modid']
     serialiser = StudentSerializer(task,many=False)
-    token=request.query_params['token']
-    modlist = ['App']
-    if token == "123123123" and modid in modlist:               #token can be set to anything
+    paramstoken=request.query_params['token']
+    if token == paramstoken and modid in MODLIST:
         return Response(serialiser.data)
     else:
         return render(request,"404.html")
-

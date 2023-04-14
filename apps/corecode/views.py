@@ -261,10 +261,21 @@ class CurrentSessionAndTermView(LoginRequiredMixin, View):
     template_name = "corecode/current_session.html"
 
     def get(self, request, *args, **kwargs):
+        current_session = None
+        current_term = None
+        if request.user.is_authenticated:
+            try:
+                current_session = AcademicSession.objects.get(user=request.user, current=True)
+            except AcademicSession.DoesNotExist:
+                pass
+            try:
+                current_term = AcademicTerm.objects.get(user=request.user, current=True)
+            except AcademicTerm.DoesNotExist:
+                pass
         form = self.form_class(
             initial={
-                "current_session": AcademicSession.objects.get(current=True),
-                "current_term": AcademicTerm.objects.get(current=True),
+                "current_session": current_session,
+                "current_term": current_term,
             }
         )
         return render(request, self.template_name, {"form": form})

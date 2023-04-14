@@ -13,7 +13,7 @@ class CustomUserAdmin(BaseUserAdmin):
     list_display = ('username', 'email', 'school_name', 'country', 'is_active', 'is_staff', 'is_superuser')
     list_filter = ('school_name', 'country', 'is_active', 'is_staff', 'is_superuser')
     fieldsets = (
-        (None, {'fields': ('username', 'password')}),
+        (None, {'fields': ('username', 'password', 'register_id')}),
         (_('Personal info'), {'fields': ('school_name', 'chairman', 'principal', 'email', 'mobile_number', 'address', 'country')}),
         (_('Permissions'), {'fields': ('approved', 'is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions')}),
         (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
