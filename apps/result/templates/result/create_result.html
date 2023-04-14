@@ -30,7 +30,7 @@
     <tbody>
       {% for student in students %}
         <tr>
-          <td><input type="checkbox" id="{{ student.id }}" name="students" value="{{ student.id}}"></td>
+          <td><input type="checkbox" id="{{ student.pk }}" name="students" value="{{ student.pk}}"></td>
           <td>{{student}} </td>
           <td>{{student.current_class}}</td>
         </tr>
@@ -38,7 +38,7 @@
     </tbody>
   </table>
 
-  <input type="submit" class="btn btn-success mt-2" value="Proceed >">
+  <input type="submit" class="btn btn-success mt-2" value="Proceed">
 
 
 </form>

@@ -16,7 +16,7 @@ CustomUser = get_user_model()
 
 # Create your models here.
 class Result(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete = models.CASCADE, primary_key = True)
+    user = models.ForeignKey(CustomUser, on_delete = models.CASCADE)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     session = models.ForeignKey(AcademicSession, on_delete=models.CASCADE)
     term = models.ForeignKey(AcademicTerm, on_delete=models.CASCADE)
