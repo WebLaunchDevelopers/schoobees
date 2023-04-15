@@ -17,7 +17,7 @@ class InvoiceListView(LoginRequiredMixin, ListView):
 
 class InvoiceCreateView(LoginRequiredMixin, CreateView):
     model = Invoice
-    fields = "__all__"
+    fields = ['student', 'session', 'term', 'class_for', 'balance_from_previous_term', 'status']
     success_url = "/finance/list"
 
     def get_context_data(self, **kwargs):
@@ -33,6 +33,7 @@ class InvoiceCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         context = self.get_context_data()
         formset = context["items"]
+        form.instance.user = self.request.user
         self.object = form.save()
         if self.object.id != None:
             if form.is_valid() and formset.is_valid():
