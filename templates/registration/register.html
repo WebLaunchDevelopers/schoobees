@@ -61,71 +61,93 @@
                     {% endif %}
                     {% endif %}
                 </span>
-                <div class="testing">
+                <div class="testing w-60 ">
                   <div class="container">
-                    <h2>Registration Form</h2>
+                    <h2 class="login100-form-title" style="font-size:xx-large">Registration Form</h2>
                       {% csrf_token %}
-                      <div class="form-group wrap-input100 validate-input">
-                        <label class="control-label col-sm-4" for="username">Username:</label>
-                        <div class="col-sm-8">
-                          {{ form.username }}
-                        </div>
+
+                      <div class="wrap-input100 validate-input" data-validate="Enter username">
+                        <input class="input100" id="id_username" name="username" type="text" placeholder="Username" required>
+                          <span class="focus-input100"></span>
+                          <span class="symbol-input100">
+                            <i class="fa fa-user-circle" aria-hidden="true"></i>
+                          </span>
                       </div>
-                      <div class="form-group wrap-input100 validate-input">
-                        <label class="control-label col-sm-4" for="email">Email:</label>
-                        <div class="col-sm-8">
-                          {{ form.email }}
-                        </div>
+
+                      <div class="wrap-input100 validate-input" data-validate="Valid email is required: ex@abc.xyz">
+                        <input type="email" name="email" id="email" class="input100" placeholder="Email" required> 
+                          <span class="focus-input100"></span>
+                          <span class="symbol-input100">
+                              <i class="fa fa-envelope" aria-hidden="true"></i>
+                          </span>
                       </div>
-                      <div class="form-group wrap-input100 validate-input">
-                        <label class="control-label col-sm-4" for="school_name">School Name:</label>
-                        <div class="col-sm-8">
-                          {{ form.school_name }}
-                        </div>
+
+                      <div class="wrap-input100 validate-input" data-validate="Valid email is required: ex@abc.xyz">
+                        <input class="input100" id="school_name" name="school_name" type="text" placeholder="School Name" required>
+                          <span class="focus-input100"></span>
+                          <span class="symbol-input100">
+                            <i class="fa fa-building" aria-hidden="true"></i>
+                          </span>
                       </div>
-                      <div class="form-group wrap-input100 validate-input">
-                        <label class="control-label col-sm-4" for="mobile_number">Mobile Number:</label>
-                        <div class="col-sm-8">
-                          {{ form.mobile_number }}
-                        </div>
+
+                      <div class="wrap-input100 validate-input" data-validate="Valid email is required: ex@abc.xyz">
+                        <input class="input100" id="mobile_number" name="mobile_number" type="text" placeholder="Mobile Number" required>
+                          <span class="focus-input100"></span>
+                          <span class="symbol-input100">
+                            <i class="fa fa-phone" aria-hidden="true"></i>
+                          </span>
                       </div>
-                      <div class="form-group wrap-input100 validate-input">
-                        <label class="control-label col-sm-4" for="country">Country:</label>
-                        <div class="col-sm-8">
-                          {{ form.country }}
-                        </div>
-                      </div>
-                      <div class="form-group wrap-input100 validate-input">
-                        <label class="control-label col-sm-4" for="chairman">Chairman:</label>
-                        <div class="col-sm-8">
-                          {{ form.chairman }}
-                        </div>
-                      </div>
-                      <div class="form-group wrap-input100 validate-input">
-                        <label class="control-label col-sm-4" for="principal">Principal:</label>
-                        <div class="col-sm-8">
-                          {{ form.principal }}
-                        </div>
-                      </div>
-                      <div class="form-group wrap-input100 validate-input">
-                        <label class="control-label col-sm-4" for="password1">Password:</label>
-                        <div class="col-sm-8">
-                          {{ form.password1 }}
-                        </div>
-                      </div>
-                      <div class="form-group wrap-input100 validate-input">
-                        <label class="control-label col-sm-4" for="password2">Confirm Password:</label>
-                        <div class="col-sm-8">
-                          {{ form.password2 }}
-                        </div>
-                      </div>
-                      <div class="form-group wrap-input100 validate-input">
-                        <label class="control-label col-sm-4" for="address">Address:</label>
-                        <div class="col-sm-8">
-                          {{ form.address }}
-                        </div>
-                      </div>
+                      
                       <div class="form-group">
+                        <label for="exampleFormControlSelect1">Select Country</label>
+                        <select class="form-control" name="country" id="country">
+                          {% for x,y in form.fields.country.choices %}
+                          <option value="{{ y }}">{{ x }}</option>
+                          {% endfor %}
+                        </select>
+                      </div>
+
+                      <div class="wrap-input100 validate-input" data-validate="Valid email is required: ex@abc.xyz">
+                        <input class="input100" id="chairman" name="chairman" type="text" placeholder="Chairman" required>
+                          <span class="focus-input100"></span>
+                          <span class="symbol-input100">
+                            <i class="fa fa-user" aria-hidden="true"></i>
+                          </span>
+                      </div>
+
+                      <div class="wrap-input100 validate-input" data-validate="Valid email is required: ex@abc.xyz">
+                        <input class="input100" id="principal" name="principal" type="text" placeholder="Principal" required>
+                          <span class="focus-input100"></span>
+                          <span class="symbol-input100">
+                            <i class="fa fa-user" aria-hidden="true"></i>
+                          </span>
+                      </div>
+
+                      <div class="wrap-input100 validate-input" data-validate="Password is required">
+                          <input type="password" name="password1" id="password1" class="input100" placeholder="Password" required>
+                          <span class="focus-input100"></span>
+                          <span class="symbol-input100">
+                              <i class="fa fa-lock" aria-hidden="true"></i>
+                          </span>
+                      </div>
+
+                      <div class="wrap-input100 validate-input" data-validate="Password is required">
+                        <input type="password" name="password2" id="password2" class="input100" placeholder="Confirm Password" required>
+                        <span class="focus-input100"></span>
+                        <span class="symbol-input100">
+                            <i class="fa fa-lock" aria-hidden="true"></i>
+                        </span>
+                      </div>
+                      
+                      <div class="wrap-input100 validate-input" data-validate="Valid email is required: ex@abc.xyz">
+                        <input class="input100" id="address" name="address" type="text" placeholder="Address" required>
+                          <span class="focus-input100"></span>
+                          <span class="symbol-input100">
+                            <i class="fa fa-map-marker" aria-hidden="true"></i>
+                          </span>
+                      </div>
+                      
+                      <div class="form-group d-flex justify-content-center align-items-center">
                         <div class="col-sm-offset-2 col-sm-8 container-login100-form-btn">
                           <button type="submit" class="btn btn-default login100-form-btn">Submit</button>
                         </div>

@@ -22,10 +22,7 @@ Domnic - 13/04 to 16/04
 atleast one class popup - dominic  - done
 results optimisation - (mainly view results)
 register good looking
-
-
-Bugs
-not showing all the students in student/list
-Staff registration no has to be added
-Student registrationno has to be the primary key instead of User
-Results user has to be removed from primary key
+Busg found-
+classes donot have connection to user(school)
+only one student possible for a user(school)
+dataleak in show results
