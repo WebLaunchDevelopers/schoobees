@@ -102,7 +102,7 @@
                         <label for="exampleFormControlSelect1">Select Country</label>
                         <select class="form-control" name="country" id="country">
                           {% for x,y in form.fields.country.choices %}
-                          <option value="{{ y }}">{{ x }}</option>
+                          <option value="{{ x }}">{{ y }}</option>
                           {% endfor %}
                         </select>
                       </div>
