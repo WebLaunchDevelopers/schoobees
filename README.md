@@ -95,3 +95,5 @@ virtualenv venv
 source venv/bin/activate
 deactivate
 ```
+# Whenever new packages installed
+ pip freeze > requirements.txt
