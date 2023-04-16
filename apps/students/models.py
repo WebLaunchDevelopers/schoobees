@@ -16,7 +16,7 @@ class Student(models.Model):
     current_status = models.CharField(
         max_length=10, choices=STATUS_CHOICES, default="active"
     )
-    user = models.OneToOneField(CustomUser, on_delete = models.CASCADE, primary_key = True)
+    user = models.ForeignKey(CustomUser, on_delete = models.CASCADE)
     registration_number = models.CharField(max_length=200, unique=True)
     first_name = models.CharField(max_length=200)
     last_name = models.CharField(max_length=200)
@@ -50,6 +50,6 @@ class Student(models.Model):
 
 
 class StudentBulkUpload(models.Model):
-    user = models.OneToOneField(CustomUser, on_delete = models.CASCADE, primary_key = True)
+    user = models.ForeignKey(CustomUser, on_delete = models.CASCADE)
     date_uploaded = models.DateTimeField(auto_now=True)
     csv_file = models.FileField(upload_to="students/bulkupload/")
