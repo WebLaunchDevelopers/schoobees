@@ -64,13 +64,13 @@ def student(request):
             userdata = CustomUser.objects.get(register_id=register_id)
             userserializer = CustomUserSerializer(userdata, many=False)
         except CustomUser.DoesNotExist:
-            return Response({'error': 'School not found', 'status': status.HTTP_404_NOT_FOUND}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'School not found', 'status': status.HTTP_200_OK}, status=status.HTTP_200_OK)
 
         try:
             studentdata = Student.objects.get(user=userdata, registration_number=student_id)
             studentserializer = StudentSerializer(studentdata, many=False)
             return Response({'status':status.HTTP_200_OK,'schooldata': userserializer.data, 'studentdata': studentserializer.data})
         except Student.DoesNotExist:
-            return Response({'error': 'Student not found', 'status': status.HTTP_404_NOT_FOUND}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'error': 'Student not found', 'status': status.HTTP_200_OK}, status=status.HTTP_200_OK)
     else:
         return Response({'error': 'Invalid parameter value', 'status': status.HTTP_400_BAD_REQUEST}, status=status.HTTP_400_BAD_REQUEST)

@@ -1,6 +1,10 @@
 import secrets
 from django.utils import timezone
+from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import send_mail
+from django.urls import reverse
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
 
 def generate_token():
     return secrets.token_urlsafe(20)
@@ -10,11 +14,16 @@ def activate_account(user):
     user.activation_account = None
     user.save()
 
-def send_activation_email(user):
+def send_activation_email(user, request):
     token = generate_token()
     user.activation_account = token
     user.save()
-    activation_link = f"https://example.com/activate/{token}"
+
+    uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
+    current_site = get_current_site(request)
+    domain = current_site.domain
+    environment = 'http' if domain == '127.0.0.1:8000' else 'https'
+    activation_link = f"{environment}://{domain}{reverse('activate', kwargs={'uidb64': uidb64, 'token': token})}"
     send_mail(
         'Activate your account',
         f'Please click the following link to activate your account: {activation_link}',

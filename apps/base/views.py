@@ -9,7 +9,9 @@ from .utils import send_activation_email, send_password_reset_email
 from .models import CustomUser as User
 from django.contrib.auth.views import PasswordResetConfirmView
 from django.views.generic import TemplateView
-
+# from django.utils.encoding import force_text
+from django.utils.encoding import force_str
+from django.utils.http import urlsafe_base64_decode
 class RegisterView(View):
     def get(self, request):
         form = RegistrationForm()
@@ -21,19 +23,19 @@ class RegisterView(View):
             user = form.save(commit=False)
             user.approved = False
             user.save()
-            send_activation_email(user)
+            send_activation_email(user, request)
             messages.success(request, 'Your account has been created. Please check your email to activate your account.')
             return redirect('login')
         else:
-            print("form errors: ", form)
             messages.error(request, 'Invalid details.')
         return render(request, 'registration/register.html', {'form': form})
 
 class ActivateView(View):
-    def get(self, request, token):
+    def get(self, request, uidb64, token):
         try:
-            user = User.objects.get(activation_account=token)
-        except User.DoesNotExist:
+            uid = force_str(urlsafe_base64_decode(uidb64))
+            user = User.objects.get(pk=uid, activation_account=token)
+        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
             messages.error(request, 'Invalid activation link.')
             return redirect('login')
 
@@ -43,27 +45,24 @@ class ActivateView(View):
         return redirect('login')
 
 
+
 class LoginView(View):
     def get(self, request):
         form = LoginForm()
         next = request.GET.get('next')
-        print("next in get: ", type(next))
         return render(request, 'registration/login.html', {'form': form, 'next': next})
 
     def post(self, request):
         form = LoginForm(data=request.POST)
         next = request.POST.get('next')
-        print("next value: ", next)
         if form.is_valid():
             user = form.get_user()
             if user.approved:
                 login(request, user)
                 messages.success(request, 'You have successfully logged in.')
                 if next != "None" and next:
-                    print("entered to next even though none: ", type(next))
                     return redirect(next)
                 else:
-                    print("entered to else still getting the error")
                     return redirect('home')
             else:
                 messages.error(request, 'Your account is not active. Please check your email to activate your account.')
