@@ -36,9 +36,8 @@ def student(request):
     hash_object = hashlib.sha256(text)
     # Convert the hash to a hexadecimal string
     token = hash_object.hexdigest()
-    # print(token)
-    id=request.query_params['studentid']
-    task = Student.objects.get(registration_number=id)
+    student_id=request.query_params['studentid']
+    task = Student.objects.get(registration_number=student_id)
     modid = request.query_params['modid']
     serialiser = StudentSerializer(task,many=False)
     paramstoken=request.query_params['token']
