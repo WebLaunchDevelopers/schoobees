@@ -8,15 +8,27 @@ from .models import (
     StudentClass,
     Subject,
 )
+from apps.base.models import CustomUser
 
-SiteConfigForm = modelformset_factory(
-    SiteConfig,
-    fields=(
-        "key",
-        "value",
-    ),
-    extra=0,
-)
+class CustomUserForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ['register_id', 'email', 'mobile_number', 'address', 'country', 'school_name', 'chairman', 'principal']
+
+class SiteConfigForm(forms.ModelForm):
+    class Meta:
+        model = CustomUser
+        fields = ['register_id', 'email', 'mobile_number', 'address', 'country', 'school_name', 'chairman', 'principal']
+        widgets={
+            "register_id": forms.HiddenInput(),
+            "email": forms.TextInput(attrs={"class": "form-control"}),
+            "mobile_number": forms.TextInput(attrs={"class": "form-control"}),
+            "address": forms.TextInput(attrs={"class": "form-control"}),
+            "country": forms.Select(attrs={"class": "form-control"}),
+            "school_name": forms.TextInput(attrs={"class": "form-control"}),
+            "chairman": forms.TextInput(attrs={"class": "form-control"}),
+            "principal": forms.TextInput(attrs={"class": "form-control"}),
+        }
 
 
 class AcademicSessionForm(ModelForm):

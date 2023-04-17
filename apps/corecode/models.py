@@ -9,7 +9,7 @@ CustomUser = get_user_model()
 class SiteConfig(models.Model):
     """Site Configurations"""
 
-    user = models.OneToOneField(CustomUser, on_delete = models.CASCADE, primary_key = True)
+    user = models.ForeignKey(CustomUser, on_delete = models.CASCADE)
     key = models.SlugField()
     value = models.CharField(max_length=200)
 

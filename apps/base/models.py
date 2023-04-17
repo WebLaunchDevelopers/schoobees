@@ -16,12 +16,6 @@ class CustomUser(AbstractUser):
         ('AU', 'Australia (+61)'),
     )
 
-    # SCHOOL_CHOICES = (
-    #     ('primary', 'Primary'),
-    #     ('secondary', 'Secondary'),
-    #     ('tertiary', 'Tertiary'),
-    # )
-
     # Common fields for all types of users
     register_id = models.PositiveIntegerField(unique=True)
     email = models.EmailField()

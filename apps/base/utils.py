@@ -14,8 +14,9 @@ def activate_account(user):
     user.activation_account = None
     user.save()
 
-def send_activation_email(user, request):
+def send_activation_email(user, request, newmail=None):
     token = generate_token()
+    user.approved = False
     user.activation_account = token
     user.save()
 
@@ -24,11 +25,16 @@ def send_activation_email(user, request):
     domain = current_site.domain
     environment = 'http' if domain == '127.0.0.1:8000' else 'https'
     activation_link = f"{environment}://{domain}{reverse('activate', kwargs={'uidb64': uidb64, 'token': token})}"
+    if newmail:
+        tomail = newmail
+    else:
+        tomail = user.email
+    print(tomail)
     send_mail(
         'Activate your account',
         f'Please click the following link to activate your account: {activation_link}',
         'avinashgummadi2021weblaunch@gmail.com',
-        [user.email],
+        [tomail],
         fail_silently=False,
     )
 

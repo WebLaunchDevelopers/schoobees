@@ -7,11 +7,17 @@ from django.urls import reverse_lazy
 from django.views.generic import ListView, TemplateView, View
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 
+from django.contrib.auth import update_session_auth_hash
+from apps.base.utils import send_activation_email
+
+# from django.views import View
+
 from .forms import (
     AcademicSessionForm,
     AcademicTermForm,
     CurrentSessionForm,
     SiteConfigForm,
+    CustomUserForm,
     StudentClassForm,
     SubjectForm,
 )
@@ -36,8 +42,7 @@ class IndexView(LoginRequiredMixin, SuccessMessageMixin, ListView):
         else:
             context["bool"]=False
         return context
-
-
+    
 class SiteConfigView(LoginRequiredMixin, View):
     """Site Config View"""
 
@@ -45,16 +50,30 @@ class SiteConfigView(LoginRequiredMixin, View):
     template_name = "corecode/siteconfig.html"
 
     def get(self, request, *args, **kwargs):
-        formset = self.form_class(queryset=SiteConfig.objects.all())
-        context = {"formset": formset}
+        user = request.user
+        form = SiteConfigForm(instance=user)
+        context = {"form": form}
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
-        formset = self.form_class(request.POST)
-        if formset.is_valid():
-            formset.save()
+        user = request.user
+
+        if request.POST['email'] != user.email:
+            send_activation_email(user, request, request.POST['email'])
+            messages.warning(request, "Please check your email to activate your new email address")
+        
+        form = SiteConfigForm(request.POST, instance=user)
+
+        if form.errors:
+            messages.error(request, "There was an error in the form. Please correct it and try again.")
+            context = {"form": form, "title": "Configuration"}
+            return render(request, self.template_name, context)
+        
+        if form.is_valid():
+            form.save()
+            # update_session_auth_hash(request, user)  # Keep user logged in
             messages.success(request, "Configurations successfully updated")
-        context = {"formset": formset, "title": "Configuration"}
+        context = {"form": form, "title": "Configuration"}
         return render(request, self.template_name, context)
 
 
@@ -213,7 +232,6 @@ class ClassDeleteView(LoginRequiredMixin, DeleteView):
 
     def delete(self, request, *args, **kwargs):
         obj = self.get_object()
-        print(obj.name)
         messages.success(self.request, self.success_message.format(obj.name))
         return super(ClassDeleteView, self).delete(request, *args, **kwargs)
 
