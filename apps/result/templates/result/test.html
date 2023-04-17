@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block fullcard %}
+    {% for key, result in results.items %}
+    
+        <h1>{{key}}----</h1> <br> {{result.results}} <br>
+        {% for student,data in result.results.items %}
+            <h3>{{data.student.first_name}}</h3><br>
+            {{data.subjects}} <br>
+            {{data.test_total}} <br>
+            {{data.exam_total}}
+
+
+        {% endfor %}
+    {% endfor %}
+{% endblock fullcard %}

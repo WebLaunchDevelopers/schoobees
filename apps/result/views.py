@@ -8,7 +8,7 @@ from apps.students.models import Student
 
 from .forms import CreateResults, EditResults
 from .models import Result
-
+from apps.corecode.models import StudentClass
 
 @login_required
 def create_result(request):
@@ -89,14 +89,27 @@ def edit_results(request):
         return render(request, "result/edit_results.html", {"formset": form})
 
 
-class ResultListView(LoginRequiredMixin, View):
-    def get(self, request, *args, **kwargs):
-        results = Result.objects.filter(
-            session=request.current_session, term=request.current_term
-        )
+@login_required
+def get_results(request):
+    print(request.user)#asdf
+    results = Result.objects.filter(
+        user=request.user
+    )
+    #print(results) #[<Result: 1234 1234 (1234) 2022-2023 1st Term Telugu>, <Result: 2345 23452345 (2345) 2022-2023 1st Term Telugu>, <Result: 3456 3456 (3456) 2022-2023 1st Term Telugu>]
+    classes=StudentClass.objects.filter(user=request.user)
+    #print(classes)
+    resultss=dict()
+    for clas in classes:
+        result = Result.objects.filter(user=request.user,current_class=clas)
+        class_data=dict()
+        class_data["student"]=result
+        resultss[clas]=class_data
+    #print(resultss) #{<StudentClass: 8th>: {'student': <QuerySet [<Result: 1234 1234 (1234) 2022-2023 1st Term English>, <Result: 1234 1234 (1234) 2022-2023 1st Term Telugu>, <Result: 2345 23452345 (2345) 2022-2023 1st Term Telugu>, <Result: 3456 3456 (3456) 2022-2023 1st Term Telugu>]>}}
+    
+    
+    for clas in classes:  
         bulk = {}
-
-        for result in results:
+        for result in resultss[clas]["student"]:
             test_total = 0
             exam_total = 0
             subjects = []
@@ -113,6 +126,9 @@ class ResultListView(LoginRequiredMixin, View):
                 "exam_total": exam_total,
                 "total_total": test_total + exam_total,
             }
+        print(result.student.first_name)
+        resultss[clas]["results"]=bulk
+        print("-------------------------->",resultss) #{<StudentClass: 8th>: {'results': {'1234': {'student': <Student: 1234 1234 (1234)>, 'subjects': [<Result: 1234 1234 (1234) 2022-2023 1st Term English>, <Result: 1234 1234 (1234) 2022-2023 1st Term Telugu>], 'test_total': 140, 'exam_total': 100, 'total_total': 240}, '2345': {'student': <Student: 2345 23452345 (2345)>, 'subjects': [<Result: 2345 23452345 (2345) 2022-2023 1st Term Telugu>], 'test_total': 10, 'exam_total': 50, 'total_total': 60}, '3456': {'student': <Student: 3456 3456 (3456)>, 'subjects': [<Result: 3456 3456 (3456) 2022-2023 1st Term Telugu>], 'test_total': 40, 'exam_total': 60, 'total_total': 100}}}}
 
-        context = {"results": bulk}
-        return render(request, "result/all_results.html", context)
+    context = {"results": resultss}
+    return render(request, "result/all_results.html", context)
