@@ -126,8 +126,9 @@ def get_results(request):
                 "exam_total": exam_total,
                 "total_total": test_total + exam_total,
             }
+        print(result.student.first_name)
         resultss[clas]["results"]=bulk
         print("-------------------------->",resultss) #{<StudentClass: 8th>: {'results': {'1234': {'student': <Student: 1234 1234 (1234)>, 'subjects': [<Result: 1234 1234 (1234) 2022-2023 1st Term English>, <Result: 1234 1234 (1234) 2022-2023 1st Term Telugu>], 'test_total': 140, 'exam_total': 100, 'total_total': 240}, '2345': {'student': <Student: 2345 23452345 (2345)>, 'subjects': [<Result: 2345 23452345 (2345) 2022-2023 1st Term Telugu>], 'test_total': 10, 'exam_total': 50, 'total_total': 60}, '3456': {'student': <Student: 3456 3456 (3456)>, 'subjects': [<Result: 3456 3456 (3456) 2022-2023 1st Term Telugu>], 'test_total': 40, 'exam_total': 60, 'total_total': 100}}}}
 
-    context = {"results": resultss[clas]["results"]}
+    context = {"results": resultss}
     return render(request, "result/all_results.html", context)
