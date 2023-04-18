@@ -3,7 +3,8 @@
 {% block fullcard %}
 {% for key,result in results.items %}
 
- <h1>{{key}}</h1>
+ <h1>Class {{key}}</h1>
+
   {% for student, data in result.results.items %}
   
     <div class="card">
@@ -45,10 +46,24 @@
 
 
 
-
       </div>
     </div>
   {% endfor %}
 
+      <!--Date representation-->
+      <div class="col-md-7">
+        <div class="chart-container" style=" width:50vw">
+          <div class="container"><h4>Visual Representation</h4>
+          {% autoescape off %}
+          {{result.chart}}
+          {% endautoescape %}  
+
+          
+          </div>
+        </div>
+      </div>
+
 {% endfor %}
+
+
 {% endblock fullcard %}

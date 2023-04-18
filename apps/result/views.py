@@ -10,6 +10,10 @@ from .forms import CreateResults, EditResults
 from .models import Result
 from apps.corecode.models import StudentClass
 
+from plotly.offline import plot
+import plotly.express as px 
+import pandas as pd
+
 @login_required
 def create_result(request):
     students = Student.objects.all()
@@ -101,14 +105,19 @@ def get_results(request):
     resultss=dict()
     for clas in classes:
         result = Result.objects.filter(user=request.user,current_class=clas)
-        class_data=dict()
-        class_data["student"]=result
-        resultss[clas]=class_data
+        if len(result) != 0:
+            class_data=dict()
+            class_data["student"]=result
+            resultss[clas]=class_data
+        else:
+            print("----->",classes,clas)
+            #classes.exclude(StudentClass=clas)
     #print(resultss) #{<StudentClass: 8th>: {'student': <QuerySet [<Result: 1234 1234 (1234) 2022-2023 1st Term English>, <Result: 1234 1234 (1234) 2022-2023 1st Term Telugu>, <Result: 2345 23452345 (2345) 2022-2023 1st Term Telugu>, <Result: 3456 3456 (3456) 2022-2023 1st Term Telugu>]>}}
     
     
     for clas in classes:  
         bulk = {}
+        data,label=list(),list()
         for result in resultss[clas]["student"]:
             test_total = 0
             exam_total = 0
@@ -118,6 +127,9 @@ def get_results(request):
                     subjects.append(subject)
                     test_total += subject.test_score
                     exam_total += subject.exam_score
+                    
+            data.append(test_total+exam_total)
+            label.append(result.student.first_name+" "+result.student.last_name)
 
             bulk[result.student.registration_number] = {
                 "student": result.student,
@@ -126,9 +138,20 @@ def get_results(request):
                 "exam_total": exam_total,
                 "total_total": test_total + exam_total,
             }
-        print(result.student.first_name)
+        #print("-------------------------->")
+        #print(data)
+        #print(label)
+        resultss[clas]["data"]=data[1:]
+        resultss[clas]["label"]=label[1:]
+        df=pd.DataFrame(data[1:],label[1:])
+        #print(df)
+        fig = px.bar(df)
+        chart=plot(fig,output_type="div")
+        #print(result.student.first_name)
         resultss[clas]["results"]=bulk
-        print("-------------------------->",resultss) #{<StudentClass: 8th>: {'results': {'1234': {'student': <Student: 1234 1234 (1234)>, 'subjects': [<Result: 1234 1234 (1234) 2022-2023 1st Term English>, <Result: 1234 1234 (1234) 2022-2023 1st Term Telugu>], 'test_total': 140, 'exam_total': 100, 'total_total': 240}, '2345': {'student': <Student: 2345 23452345 (2345)>, 'subjects': [<Result: 2345 23452345 (2345) 2022-2023 1st Term Telugu>], 'test_total': 10, 'exam_total': 50, 'total_total': 60}, '3456': {'student': <Student: 3456 3456 (3456)>, 'subjects': [<Result: 3456 3456 (3456) 2022-2023 1st Term Telugu>], 'test_total': 40, 'exam_total': 60, 'total_total': 100}}}}
+        resultss[clas]["chart"]=chart
+        
+        #print("-------------------------->",resultss) #{<StudentClass: 8th>: {'results': {'1234': {'student': <Student: 1234 1234 (1234)>, 'subjects': [<Result: 1234 1234 (1234) 2022-2023 1st Term English>, <Result: 1234 1234 (1234) 2022-2023 1st Term Telugu>], 'test_total': 140, 'exam_total': 100, 'total_total': 240}, '2345': {'student': <Student: 2345 23452345 (2345)>, 'subjects': [<Result: 2345 23452345 (2345) 2022-2023 1st Term Telugu>], 'test_total': 10, 'exam_total': 50, 'total_total': 60}, '3456': {'student': <Student: 3456 3456 (3456)>, 'subjects': [<Result: 3456 3456 (3456) 2022-2023 1st Term Telugu>], 'test_total': 40, 'exam_total': 60, 'total_total': 100}}}}
 
     context = {"results": resultss}
     return render(request, "result/all_results.html", context)
