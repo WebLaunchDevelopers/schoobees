@@ -111,6 +111,7 @@ def get_results(request):
             resultss[clas]=class_data
         else:
             print("----->",classes,clas)
+            classes = classes.exclude(pk=clas.pk)
             #classes.exclude(StudentClass=clas)
     #print(resultss) #{<StudentClass: 8th>: {'student': <QuerySet [<Result: 1234 1234 (1234) 2022-2023 1st Term English>, <Result: 1234 1234 (1234) 2022-2023 1st Term Telugu>, <Result: 2345 23452345 (2345) 2022-2023 1st Term Telugu>, <Result: 3456 3456 (3456) 2022-2023 1st Term Telugu>]>}}
     
