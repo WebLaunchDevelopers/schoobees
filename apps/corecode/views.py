@@ -6,8 +6,8 @@ from django.shortcuts import HttpResponseRedirect, redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import ListView, TemplateView, View
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.db import IntegrityError
 
-from django.contrib.auth import update_session_auth_hash
 from apps.base.utils import send_activation_email
 
 # from django.views import View
@@ -29,18 +29,24 @@ from .models import (
     Subject,
 )
 
-
-class IndexView(LoginRequiredMixin, SuccessMessageMixin, ListView):
+class IndexView(LoginRequiredMixin, ListView):
     template_name = "index.html"
     model = StudentClass
+    
+    def get_queryset(self):
+        # Retrieve all objects associated with the logged-in user
+        return StudentClass.objects.filter(user=self.request.user)
     
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["form"] = StudentClassForm()
-        if len(context["object_list"])==0:
-            context["bool"]=True
+        
+        # Check if the user has any objects associated with them
+        if not context["object_list"]:
+            context["bool"] = True
         else:
-            context["bool"]=False
+            context["bool"] = False
+        
         return context
     
 class SiteConfigView(LoginRequiredMixin, View):
@@ -194,27 +200,34 @@ class TermDeleteView(LoginRequiredMixin, DeleteView):
         messages.success(self.request, self.success_message.format(obj.name))
         return super(TermDeleteView, self).delete(request, *args, **kwargs)
 
-
 class ClassListView(LoginRequiredMixin, SuccessMessageMixin, ListView):
     model = StudentClass
     template_name = "corecode/class_list.html"
+
+    def get_queryset(self):
+        # Retrieve the classes for the current logged-in user
+        queryset = super().get_queryset().filter(user=self.request.user)
+        return queryset
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["form"] = StudentClassForm()
         return context
-
-
+    
 class ClassCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = StudentClass
     form_class = StudentClassForm
     template_name = "corecode/mgt_form.html"
     success_url = reverse_lazy("classes")
     success_message = "New class successfully added"
-    def form_valid(self, form):
-        form.instance.user = self.request.user
-        return super().form_valid(form)
 
+    def form_valid(self, form):
+        try:
+            form.instance.user = self.request.user
+            return super().form_valid(form)
+        except IntegrityError:
+            form.add_error('name', 'Class with this name already exists')
+            return self.form_invalid(form)
 
 class ClassUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = StudentClass
@@ -222,6 +235,13 @@ class ClassUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     success_url = reverse_lazy("classes")
     success_message = "class successfully updated."
     template_name = "corecode/mgt_form.html"
+    def form_valid(self, form):
+        try:
+            form.instance.user = self.request.user
+            return super().form_valid(form)
+        except IntegrityError:
+            form.add_error('name', 'Class with this name already exists')
+            return self.form_invalid(form)
 
 
 class ClassDeleteView(LoginRequiredMixin, DeleteView):

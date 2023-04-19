@@ -66,15 +66,15 @@ class Subject(models.Model):
     def __str__(self):
         return self.name
 
-
 class StudentClass(models.Model):
-    user = models.ForeignKey(CustomUser, on_delete = models.CASCADE)
-    name = models.CharField(max_length=200, unique=True, default="8th")
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    name = models.CharField(max_length=200, default="8th")
 
     class Meta:
         verbose_name = "Class"
         verbose_name_plural = "Classes"
         ordering = ["name"]
+        unique_together = [["user", "name"]]
 
     def __str__(self):
         return self.name
