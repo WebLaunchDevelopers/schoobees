@@ -7,6 +7,7 @@ from .models import (
     SiteConfig,
     StudentClass,
     Subject,
+    Calendar
 )
 from apps.base.models import CustomUser
 
@@ -72,3 +73,31 @@ class CurrentSessionForm(forms.Form):
         queryset=AcademicTerm.objects.all(),
         help_text='Click <a href="/term/create/?next=current-session/">here</a> to add new term',
     )
+
+class CalendarForm(forms.ModelForm):
+    EVENT_TYPE = 'event'
+    HOLIDAY_TYPE = 'holiday'
+    TYPE_CHOICES = [
+        (EVENT_TYPE, 'Event'),
+        (HOLIDAY_TYPE, 'Holiday'),
+    ]
+    type = forms.ChoiceField(choices=TYPE_CHOICES)
+    
+    class Meta:
+        model = Calendar
+        fields = ['title', 'date', 'type']
+        widgets = {
+            'date': forms.DateInput(attrs={'type': 'date'})
+        }
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['type'].initial = self.instance.type if self.instance else self.EVENT_TYPE
+    
+    def save(self, commit=True):
+        model_type = self.cleaned_data.get('type')
+        if model_type == self.EVENT_TYPE:
+            self.Meta.model = Calendar.EVENT_TYPE
+        elif model_type == self.HOLIDAY_TYPE:
+            self.Meta.model = Calendar.HOLIDAY_TYPE
+        return super().save(commit=commit)

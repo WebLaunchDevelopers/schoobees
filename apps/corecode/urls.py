@@ -20,6 +20,10 @@ from .views import (
     TermDeleteView,
     TermListView,
     TermUpdateView,
+    CalendarListView,
+    CalendarCreateView,
+    CalendarUpdateView,
+    CalendarDeleteView
 )
 
 urlpatterns = [
@@ -60,4 +64,8 @@ urlpatterns = [
         SubjectDeleteView.as_view(),
         name="subject-delete",
     ),
+    path("calendar/list/", CalendarListView.as_view(), name="calendar-list"),
+    path("calendar/create/", CalendarCreateView.as_view(), name="calendar-create"),
+    path("calendar/<int:pk>/update/", CalendarUpdateView.as_view(), name="calendar-update"),
+    path('calendar/<int:pk>/delete/', CalendarDeleteView.as_view(), name='calendar-delete'),
 ]

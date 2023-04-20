@@ -5,7 +5,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import HttpResponseRedirect, redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import ListView, TemplateView, View
-from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.views.generic.edit import CreateView, DeleteView, UpdateView, FormMixin, ModelFormMixin
 from django.db import IntegrityError
 
 from apps.base.utils import send_activation_email
@@ -20,6 +20,7 @@ from .forms import (
     CustomUserForm,
     StudentClassForm,
     SubjectForm,
+    CalendarForm,
 )
 from .models import (
     AcademicSession,
@@ -27,6 +28,7 @@ from .models import (
     SiteConfig,
     StudentClass,
     Subject,
+    Calendar
 )
 
 class IndexView(LoginRequiredMixin, ListView):
@@ -255,7 +257,6 @@ class ClassDeleteView(LoginRequiredMixin, DeleteView):
         messages.success(self.request, self.success_message.format(obj.name))
         return super(ClassDeleteView, self).delete(request, *args, **kwargs)
 
-
 class SubjectListView(LoginRequiredMixin, SuccessMessageMixin, ListView):
     model = Subject
     template_name = "corecode/subject_list.html"
@@ -295,7 +296,6 @@ class SubjectDeleteView(LoginRequiredMixin, DeleteView):
         messages.success(self.request, self.success_message.format(obj.name))
         return super(SubjectDeleteView, self).delete(request, *args, **kwargs)
 
-
 class CurrentSessionAndTermView(LoginRequiredMixin, View):
     """Current SEssion and Term"""
 
@@ -332,3 +332,63 @@ class CurrentSessionAndTermView(LoginRequiredMixin, View):
             AcademicTerm.objects.filter(name=term).update(current=True)
 
         return render(request, self.template_name, {"form": form})
+
+class SubjectListView(LoginRequiredMixin, SuccessMessageMixin, ListView):
+    model = Subject
+    template_name = "corecode/subject_list.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form"] = SubjectForm()
+        return context
+
+class CalendarCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+    model = Calendar
+    template_name = "corecode/mgtspecial_form.html"
+    success_url = reverse_lazy("calendar-list")
+    success_message = "New event/holiday successfully added."
+    form_class = CalendarForm
+
+    def form_valid(self, form):
+        obj = form.save(commit=False)
+        obj.user = self.request.user
+        obj.save()
+        return super().form_valid(form)
+
+class CalendarUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+    model = Calendar
+    template_name = "corecode/mgtspecial_form.html"
+    success_url = reverse_lazy("calendar-list")
+    success_message = "Event/holiday updated successfully."
+    form_class = CalendarForm
+
+    def form_valid(self, form):
+        obj = form.save(commit=False)
+        obj.user = self.request.user
+        obj.save()
+        return super().form_valid(form)
+
+class CalendarDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
+    model = Calendar
+    template_name = "corecode/core_confirm_delete.html"
+    success_url = reverse_lazy("calendar-list")
+    success_message = "Event/holiday deleted successfully."
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(self.request, self.success_message)
+        return super().delete(request, *args, **kwargs)
+
+class CalendarListView(ListView):
+    model = Calendar
+    form_class = CalendarForm
+    template_name = 'corecode/calendar_list.html'
+    context_object_name = 'object_list'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = self.form_class()
+        context['holidays'] = Calendar.objects.filter(user=self.request.user, type=Calendar.HOLIDAY_TYPE)
+        return context
+
+    def get_queryset(self):
+        return Calendar.objects.filter(user=self.request.user, type=Calendar.EVENT_TYPE)

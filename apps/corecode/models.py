@@ -78,3 +78,17 @@ class StudentClass(models.Model):
 
     def __str__(self):
         return self.name
+
+class Calendar(models.Model):
+    EVENT_TYPE = 'event'
+    HOLIDAY_TYPE = 'holiday'
+    TYPE_CHOICES = [
+        (EVENT_TYPE, 'Event'),
+        (HOLIDAY_TYPE, 'Holiday'),
+    ]
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    title = models.CharField(max_length=200)
+    date = models.DateField()
+    type = models.CharField(max_length=7, choices=TYPE_CHOICES)
+
+

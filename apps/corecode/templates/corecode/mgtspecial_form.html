@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}
+  {{title}}
+{% endblock title %}
+
+{% block title-side %}{% endblock title-side %}
+
+{% block content %}
+  <h3>Create Event/Holiday</h3>
+  <form method="post">
+    {% csrf_token %}
+    <div class="form-group">
+      <label for="model_type">Select Model Type:</label>
+      <select class="form-control" id="model_type" name="model_type">
+        <option value="event">Event</option>
+        <option value="holiday">Holiday</option>
+      </select>
+    </div>
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-primary">Create</button>
+  </form>
+{% endblock content %}
