@@ -1,43 +1,32 @@
 from django.contrib import admin
-from .models import SiteConfig, AcademicSession, AcademicTerm, Subject, StudentClass
+from .models import SiteConfig, AcademicSession, AcademicTerm, Subject, StudentClass, Calendar
 
 class SiteConfigAdmin(admin.ModelAdmin):
-    # list_display = ['id','title', 'des']
-    # search_fields = ['school_name','school_slogan', 'school_address']
-    # readonly_fields = ['school_name','school_slogan', 'school_address']
-    class Meta:
-        model = SiteConfig
+    list_display = ('key', 'value', 'user')
 
 class AcademicSessionAdmin(admin.ModelAdmin):
-    # list_display = ['id','title']
-    # search_fields = ['id','title']
-    # readonly_fields = ['id','title']
-    class Meta:
-        model = AcademicSession
+    list_display = ('name', 'current', 'user')
+    list_filter = ('user', 'current')
 
 class AcademicTermAdmin(admin.ModelAdmin):
-    # list_display = ['id','title']
-    # search_fields = ['id','title']
-    # readonly_fields = ['id','title']
-    class Meta:
-        model = AcademicTerm
+    list_display = ('name', 'current', 'user')
+    list_filter = ('user', 'current')
 
 class SubjectAdmin(admin.ModelAdmin):
-    # list_display = ['id','title']
-    # search_fields = ['id','title']
-    # readonly_fields = ['id','title']
-    class Meta:
-        model = Subject
+    list_display = ('name', 'user')
+    search_fields = ('name',)
 
 class StudentClassAdmin(admin.ModelAdmin):
-    # list_display = ['id','title']
-    # search_fields = ['id','title']
-    # readonly_fields = ['id','title']
-    class Meta:
-        model = StudentClass
+    list_display = ('name', 'user')
+    search_fields = ('name',)
+
+class CalendarAdmin(admin.ModelAdmin):
+    list_display = ('title', 'date', 'type', 'user')
+    search_fields = ('title',)
 
 admin.site.register(SiteConfig, SiteConfigAdmin)
 admin.site.register(AcademicSession, AcademicSessionAdmin)
 admin.site.register(AcademicTerm, AcademicTermAdmin)
 admin.site.register(Subject, SubjectAdmin)
 admin.site.register(StudentClass, StudentClassAdmin)
+admin.site.register(Calendar, CalendarAdmin)

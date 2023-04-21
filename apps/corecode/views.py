@@ -31,6 +31,8 @@ from .models import (
     Calendar
 )
 
+import json
+
 class IndexView(LoginRequiredMixin, ListView):
     template_name = "index.html"
     model = StudentClass
@@ -48,7 +50,12 @@ class IndexView(LoginRequiredMixin, ListView):
             context["bool"] = True
         else:
             context["bool"] = False
-        
+
+        events = Calendar.objects.filter(user=self.request.user)
+        event_list = [{'title': event.title, 'start': str(event.date), 'type': event.type} for event in events]
+        context.update({
+            'event_list': json.dumps(event_list)
+        })
         return context
     
 class SiteConfigView(LoginRequiredMixin, View):

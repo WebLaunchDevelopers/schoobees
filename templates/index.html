@@ -6,7 +6,12 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.6.0/font/bootstrap-icons.css" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.min.js" integrity="sha384-Atwg2Pkwv9vp0ygtn1JAojH0nYbwNJLPhwyoVbhoPwBhjQPR5VtM2+xf0Uwh9KtT" crossorigin="anonymous"></script></head>
-
+<!--  -->
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js' defer></script>
+<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.css' />
+<script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.js' defer></script>
+<!--  -->
 	<!-- Modal -->
 	<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	  <div class="modal-dialog">
@@ -89,6 +94,41 @@
     </div>
   </div>
   <div id='calendar'></div>
+  <script>
+    $(document).ready(function() {
+      var event_list = JSON.parse('{{ event_list|safe }}');
+
+      $('#calendar').fullCalendar({
+        events: event_list,
+        defaultView: 'month',
+        header: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'month,basicWeek,basicDay'
+        },
+        eventRender: function(event, element) {
+          element.addClass('fc-event');
+          
+          if (event.type == 'event') {
+            element.css('background-color', '#0071c5');
+          } else if (event.type == 'holiday') {
+            element.css('background-color', '#ff9f89');
+          }
+        },
+        dayRender: function(date, cell) {
+          var today = moment();
+          var momentDate = moment(date); // create a moment object from the date parameter
+          if (momentDate.isSame(today, 'day')) {
+            cell.css('background-color', '#a1ff9c');
+          }
+        },
+        contentHeight: 'auto', // adjust the height of the calendar to fit its content
+        aspectRatio: 2, // set the aspect ratio of the calendar to 2:1
+        eventLimit: true, // allow "more" link when too many events
+        eventLimitClick: 'popover' // show popover when clicking "more" link    
+      });
+    });
+</script>
   {% if bool %}
 <script>
 var myModal = new bootstrap.Modal(document.getElementById('myModal'), {})
