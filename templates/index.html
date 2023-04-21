@@ -12,6 +12,21 @@
 <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.css' />
 <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.js' defer></script>
 <!--  -->
+<style>
+  #calendar {
+    width: 400px;
+    float: right;
+    position: relative;
+    min-width: 0;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 1px solid rgba(0,0,0,.125);
+    border-radius: 0.25rem;
+    box-shadow: 0 0 1px rgba(0,0,0,.125), 0 1px 3px rgba(0,0,0,.2);
+    margin-bottom: 1rem;
+  }
+</style>
 	<!-- Modal -->
 	<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 	  <div class="modal-dialog">
@@ -107,19 +122,23 @@
           right: 'month,basicWeek,basicDay'
         },
         eventRender: function(event, element) {
-          element.addClass('fc-event');
+          // element.addClass('fc-event');
           var startCell = $('#calendar').find('.fc-day[data-date="' + event.start.format('YYYY-MM-DD') + '"]');
-            element.css('border', 'none');
-            element.css('text-align', 'center');
-            element.css('color', 'white');
-            element.css('font-weight', 'bold');
+          $('.fc-day-number').css('font-weight','500');
+            // element.css('border', 'none');
+            // element.css('text-align', 'center');
+            // element.css('color', 'white');
+            // element.css('font-weight', 'bold');
           if (event.type == 'event') {
-            element.css('background-color', 'purple');
+            // element.css('background-color', 'purple');
             startCell.css('background-color', 'purple');
           } else if (event.type == 'holiday') {
-            element.css('background-color', '#478ac6');
+            // element.css('background-color', '#478ac6');
             startCell.css('background-color', '#478ac6');
           }
+          element.css('display', 'none');
+          element.empty()
+          element.remove();
         },
         dayRender: function(date, cell) {
           var today = moment();
@@ -128,10 +147,37 @@
             cell.css('background-color', '#3ca1a0');
           }
         },
+        dayClick: function(date, jsEvent, view) {
+          var events = $('#calendar').fullCalendar('clientEvents', function(event) {
+            return moment(event.start).isSame(date, 'day');
+          });
+          if (events.length > 0) {
+            var popoverContent = '<ul>';
+            $.each(events, function(index, event) {
+              popoverContent += '<li>' + event.title + '</li>';
+            });
+            popoverContent += '</ul>';
+            if($(this).attr('aria-describedby')){
+              $(this).popover('hide');
+            }
+            else{
+              $(this).popover({
+                title: moment(date).format('dddd, MMMM D'),
+                content: popoverContent,
+                html: true,
+                trigger: 'manual',
+                placement: 'top'
+              }).popover('show');
+            }
+          }
+          else{
+            $('.popover').popover('hide');
+          }
+        },
         contentHeight: 'auto', // adjust the height of the calendar to fit its content
         aspectRatio: 2, // set the aspect ratio of the calendar to 2:1
-        eventLimit: true, // allow "more" link when too many events
-        eventLimitClick: 'popover' // show popover when clicking "more" link    
+        // eventLimit: true, // allow "more" link when too many events
+        // eventLimitClick: 'popover' // show popover when clicking "more" link    
       });
     });
 </script>
