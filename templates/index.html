@@ -108,18 +108,24 @@
         },
         eventRender: function(event, element) {
           element.addClass('fc-event');
-          
+          var startCell = $('#calendar').find('.fc-day[data-date="' + event.start.format('YYYY-MM-DD') + '"]');
+            element.css('border', 'none');
+            element.css('text-align', 'center');
+            element.css('color', 'white');
+            element.css('font-weight', 'bold');
           if (event.type == 'event') {
-            element.css('background-color', '#0071c5');
+            element.css('background-color', 'purple');
+            startCell.css('background-color', 'purple');
           } else if (event.type == 'holiday') {
-            element.css('background-color', '#ff9f89');
+            element.css('background-color', '#478ac6');
+            startCell.css('background-color', '#478ac6');
           }
         },
         dayRender: function(date, cell) {
           var today = moment();
           var momentDate = moment(date); // create a moment object from the date parameter
           if (momentDate.isSame(today, 'day')) {
-            cell.css('background-color', '#a1ff9c');
+            cell.css('background-color', '#3ca1a0');
           }
         },
         contentHeight: 'auto', // adjust the height of the calendar to fit its content
