@@ -7,11 +7,17 @@ from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, ListView, View
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.shortcuts import render
 
 from apps.finance.models import Invoice
 
 from .models import Student, StudentBulkUpload
 
+from apps.result.models import Result
+from apps.corecode.models import StudentClass
+from plotly.offline import plot
+import plotly.express as px 
+import pandas as pd
 
 class StudentListView(LoginRequiredMixin, ListView):
     model = Student
@@ -30,8 +36,29 @@ class StudentDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(StudentDetailView, self).get_context_data(**kwargs)
         context["payments"] = Invoice.objects.filter(student=self.object)
-        return context
+        results = Result.objects.filter(student=self.object)
+        subjects,subject,marks=dict(),list(),list()
+        score,total=0,0
+        for result in results:
+            test=result.test_score
+            exam=result.exam_score
+            score+=result.test_score + result.exam_score
+            total+=score
+            subjects[str(result.subject)]={"test":test,"exam":exam,"score":score}
+            
+            subject.append(str(result.subject))
+            marks.append(score)
+        
+        df=pd.DataFrame(marks,subject)
+        fig = px.bar(df)
+        chart=plot(fig,output_type="div")
 
+        context["result"]=subjects
+        context["total"]=total
+        context["chart"]=chart
+        print("---------------->",context)
+        return context
+    
 
 class StudentCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Student
