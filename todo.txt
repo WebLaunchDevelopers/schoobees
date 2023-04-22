@@ -22,7 +22,3 @@ Domnic - 13/04 to 16/04
 atleast one class popup - dominic  - done
 results optimisation - (mainly view results)
 register good looking
-Busg found-
-classes donot have connection to user(school)
-only one student possible for a user(school)
-dataleak in show results

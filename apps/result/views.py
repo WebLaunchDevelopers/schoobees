@@ -8,6 +8,8 @@ from apps.students.models import Student
 
 from .forms import CreateResults, EditResults
 from .models import Result
+from apps.corecode.models import Subject
+
 from apps.corecode.models import StudentClass
 
 from plotly.offline import plot
@@ -95,7 +97,7 @@ def edit_results(request):
 
 @login_required
 def get_results(request):
-    print(request.user)#asdf
+    #print(request.user)#asdf
     results = Result.objects.filter(
         user=request.user
     )
@@ -104,17 +106,36 @@ def get_results(request):
     #print(classes)
     resultss=dict()
     for clas in classes:
+        subjects,students=list(),list()
+        unique_subjects = Result.objects.filter(user=request.user,current_class=clas).values("subject").distinct()
+        unique_students = Result.objects.filter(user=request.user,current_class=clas).values("student").distinct()
         result = Result.objects.filter(user=request.user,current_class=clas)
+        
         if len(result) != 0:
             class_data=dict()
             class_data["student"]=result
+            for student in unique_students:
+                subject_obj = Student.objects.get(pk=student['student'])
+                students.append(subject_obj.registration_number)
+            students=list(set(students))
+            print(students)
+            for subject in unique_subjects:
+                subject_obj = Subject.objects.get(pk=subject['subject'])
+                subjects.append(subject_obj.name)
+            #print(subjects)
+            class_data["subjects"]=subjects
+            class_data["students"]=students
             resultss[clas]=class_data
+            #print("---------------->",resultss)
+
+
+            
         else:
-            print("----->",classes,clas)
             classes = classes.exclude(pk=clas.pk)
-            #classes.exclude(StudentClass=clas)
     #print(resultss) #{<StudentClass: 8th>: {'student': <QuerySet [<Result: 1234 1234 (1234) 2022-2023 1st Term English>, <Result: 1234 1234 (1234) 2022-2023 1st Term Telugu>, <Result: 2345 23452345 (2345) 2022-2023 1st Term Telugu>, <Result: 3456 3456 (3456) 2022-2023 1st Term Telugu>]>}}
     
+    #for clas in classes:
+        
     
     for clas in classes:  
         bulk = {}
@@ -140,15 +161,7 @@ def get_results(request):
                 "total_total": test_total + exam_total,
             }
 
-        resultss[clas]["data"]=data[1:]
-        resultss[clas]["label"]=label[1:]
-        df=pd.DataFrame(data[1:],label[1:])
-
-        fig = px.bar(df)
-        chart=plot(fig,output_type="div")
-
         resultss[clas]["results"]=bulk
-        resultss[clas]["chart"]=chart
-
+        #print(resultss)
     context = {"results": resultss}
     return render(request, "result/all_results.html", context)
