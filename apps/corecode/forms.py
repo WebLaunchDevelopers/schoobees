@@ -108,4 +108,4 @@ class DriverForm(forms.ModelForm):
     address = forms.CharField(widget=forms.Textarea(attrs={'rows': 2}))
     class Meta:
         model = Driver
-        fields = ('name', 'phone_number', 'email', 'address', 'aadhaar_number', 'license_number', 'vehicle_name', 'vehicle_model', 'vehicle_number')
+        fields = ('name', 'phone_number', 'alternate_number', 'email', 'address', 'aadhaar_number', 'license_number', 'vehicle_name', 'vehicle_model', 'vehicle_number')

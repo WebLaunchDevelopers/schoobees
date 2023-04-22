@@ -1,0 +1,122 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content-header %}
+<div class="card-header">
+  <div class="card-tools">
+    <a href="#" class="btn btn-tool">Print</a>
+    <a href="{% url 'driver-update' object.pk %}" class="btn btn-tool">
+      <i class="fas fa-edit"></i>
+    </a>
+    <a href="{% url 'driver-delete' object.pk %}" class="btn btn-tool">
+      <i class="fas fa-times"></i>
+    </a>
+  </div>
+</div>
+{% endblock content-header %}
+
+{% block content %}
+  <div class="row mb-4">
+    <div class="col-sm-4">
+      <div class="row mb-2">
+        
+        {% if object.passport %}
+            <img
+                src="{{ object.passport.url }}"
+                class="float-left rounded-circle mr-3" style="width: 120px; height: 120px;">
+        {% else %}
+            <img
+            src="{% static 'dist/img/avatar.png' %}"
+            class="float-left rounded-circle mr-3" style="width: 120px; height: 120px;">
+        {% endif %}
+        
+        <div class="float-right">
+          <h4>{{ object.name }}</h4>
+          <h4>{{ object.vehicle_number }}</h4>
+        </div>
+      </div>
+      <h5>{{ object.vehicle_name }} | {{ object.vehicle_model }}</h5>
+      <div>
+        {% if img_url %}
+          <img src="{{ img_url }}" style="width: 300px;height: 300px;" alt="QR code">
+        {% endif %}
+      </div>
+    </div>
+    <div class="col-sm-8">
+      <div>
+        <div class="form-group border-bottom row">
+          <label class="col">
+            Phone Number
+          </label>
+          <div class="col">
+            {{ object.phone_number }}
+          </div>
+        </div>
+        <div class="form-group border-bottom row">
+          <label class="col">
+            Alternate Number
+          </label>
+          <div class="col">
+            {{ object.alternate_number }}
+          </div>
+        </div>
+  
+        <div class="form-group border-bottom row">
+          <label class="col">
+            Email
+          </label>
+          <div class="col">
+            {{ object.email }}
+          </div>
+        </div>
+  
+        <div class="form-group border-bottom row">
+          <label class="col">
+            Address
+          </label>
+          <div class="col">
+            {{ object.address }}
+          </div>
+        </div>
+  
+        <div class="form-group border-bottom row">
+          <label class="col">
+            Aadhaar Number
+          </label>
+          <div class="col">
+            {{ object.aadhaar_number }}
+          </div>
+        </div>
+  
+        <div class="form-group border-bottom row">
+          <label class="col">
+            License Number
+          </label>
+          <div class="col">
+            {{ object.license_number }}
+          </div>
+        </div>
+  
+        <div class="form-group border-bottom row">
+          <label class="col">
+            Created At
+          </label>
+          <div class="col">
+            {{ object.created_at }}
+          </div>
+        </div>
+  
+        <div class="form-group border-bottom row">
+          <label class="col">
+            Updated At
+          </label>
+          <div class="col">
+            {{ object.updated_at }}
+          </div>
+        </div>
+  
+      </div>
+  
+    </div>
+  </div>
+{% endblock %}

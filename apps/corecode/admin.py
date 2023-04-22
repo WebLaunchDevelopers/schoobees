@@ -28,6 +28,7 @@ class DriverAdmin(admin.ModelAdmin):
     list_display = ('user', 'name', 'phone_number', 'email')
     search_fields = ('user', 'name', 'phone_number', 'email', 'address', 'aadhaar_number', 'license_number', 'vehicle_number')
     list_filter = ('user', 'vehicle_name', 'created_at', 'updated_at')
+    readonly_fields = ('created_at', 'updated_at')
 
 admin.site.register(Driver, DriverAdmin)
 admin.site.register(SiteConfig, SiteConfigAdmin)

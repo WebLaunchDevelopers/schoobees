@@ -4,9 +4,14 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import HttpResponseRedirect, redirect, render
 from django.urls import reverse_lazy
-from django.views.generic import ListView, TemplateView, View
+from django.views.generic import ListView, TemplateView, View, DetailView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView, FormMixin, ModelFormMixin
 from django.db import IntegrityError
+from django.http import HttpResponse
+import qrcode
+from django.conf import settings
+from django.core.files.storage import FileSystemStorage
+import os
 
 from apps.base.utils import send_activation_email
 
@@ -402,6 +407,32 @@ class CalendarListView(LoginRequiredMixin, SuccessMessageMixin, ListView):
     def get_queryset(self):
         return Calendar.objects.filter(user=self.request.user, type=Calendar.EVENT_TYPE)
 
+class DriverUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+    model = Driver
+    fields = ['name', 'phone_number', 'alternate_number', 'email', 'address', 'aadhaar_number', 'license_number', 'vehicle_name', 'vehicle_model', 'vehicle_number']
+    success_message = 'Driver record was updated successfully.'
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.filter(user=self.request.user)
+
+    def get_object(self, queryset=None):
+        """Retrieve the object to be updated."""
+        pk = self.kwargs.get('pk')
+        queryset = self.get_queryset()
+        obj = queryset.filter(pk=pk).first()
+        return obj
+
+    def get_success_url(self):
+        return reverse_lazy('driver-details', kwargs={'pk': self.object.pk})
+
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if self.object is None:
+            return HttpResponse("No driver found matching the query")
+        context = self.get_context_data(object=self.object)
+        return self.render_to_response(context)
+    
 class DriversView(LoginRequiredMixin, SuccessMessageMixin, View):
     template_name = 'corecode/drivers.html'
 
@@ -435,4 +466,38 @@ class DriversView(LoginRequiredMixin, SuccessMessageMixin, View):
                     messages.error(request, error)
             return render(request, self.template_name, context)
 
-        return render(request, self.template_name, {'drivers': drivers, 'driver_form': driver_form})
+        # Pass the img variable to the context
+        context = {
+            'drivers': drivers,
+            'driver_form': driver_form
+        }
+
+        return render(request, self.template_name, context)
+
+class DriverDetailView(LoginRequiredMixin, DetailView):
+    model = Driver
+    template_name = 'corecode/driver_details.html'
+    qrcodeimg = None  # initialize img variable
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        driver = self.get_object()
+        data = {'driver_auth': driver.id, 'register_id': self.request.user.register_id}
+        qr = qrcode.QRCode(version=1, box_size=10, border=5)
+        qr.add_data(str(data))
+        qr.make(fit=True)
+        qrcodeimg = qr.make_image(fill='black', back_color='white')
+        # Save the image to a temporary file
+        tmp_filename = os.path.join(settings.MEDIA_ROOT, 'qrcode.png')
+        with open(tmp_filename, 'wb') as f:
+            qrcodeimg.save(f)
+        # Get the URL of the temporary file
+        fs = FileSystemStorage()
+        img_url = fs.url(tmp_filename)
+        context['img_url'] = img_url
+        return context
+
+class DriverDeleteView(LoginRequiredMixin, DeleteView):
+    model = Driver
+    template_name = "corecode/core_confirm_delete.html"
+    success_url = reverse_lazy("drivers-view")
