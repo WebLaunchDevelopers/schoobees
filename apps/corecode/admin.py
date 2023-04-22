@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import SiteConfig, AcademicSession, AcademicTerm, Subject, StudentClass, Calendar
+from .models import SiteConfig, AcademicSession, AcademicTerm, Subject, StudentClass, Calendar, Driver
 
 class SiteConfigAdmin(admin.ModelAdmin):
     list_display = ('key', 'value', 'user')
@@ -24,6 +24,12 @@ class CalendarAdmin(admin.ModelAdmin):
     list_display = ('title', 'date', 'type', 'user')
     search_fields = ('title',)
 
+class DriverAdmin(admin.ModelAdmin):
+    list_display = ('user', 'name', 'phone_number', 'email')
+    search_fields = ('user', 'name', 'phone_number', 'email', 'address', 'aadhaar_number', 'license_number', 'vehicle_number')
+    list_filter = ('user', 'vehicle_name', 'created_at', 'updated_at')
+
+admin.site.register(Driver, DriverAdmin)
 admin.site.register(SiteConfig, SiteConfigAdmin)
 admin.site.register(AcademicSession, AcademicSessionAdmin)
 admin.site.register(AcademicTerm, AcademicTermAdmin)

@@ -31,6 +31,11 @@
   .fc-center {
     margin-top: 1em;
   }
+  .popover-ul {
+    list-style: numbers;
+    padding-left: 0.5rem;
+    text-transform: capitalize;
+  }
 </style>
 	<!-- Modal -->
 	<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -83,7 +88,7 @@
           <div class="card-body">
             <h5 class="card-title">
               <i class="fa fa-user fa-lg mr-2"></i>
-              Staff
+              Employees
             </h5>
             <p class="card-text">{{ 100 }}</p>
           </div>
@@ -94,7 +99,7 @@
           <div class="card-body">
             <h5 class="card-title">
               <i class="fa fa-building fa-lg mr-2"></i>
-              Departments
+              Non Staff
             </h5>
             <p class="card-text">{{ 30 }}</p>
           </div>
@@ -105,9 +110,9 @@
           <div class="card-body">
             <h5 class="card-title">
               <i class="fa fa-money-bill-alt fa-lg mr-2"></i>
-              Revenue
+              Pending Fee's
             </h5>
-            <p class="card-text">{{ 100000 }}</p>
+            <p class="card-text">{{ 10000 }}</p>
           </div>
         </div>
       </div>
@@ -170,9 +175,9 @@
             return moment(event.start).isSame(date, 'day');
           });
           if (events.length > 0) {
-            var popoverContent = '<ul>';
+            var popoverContent = '<ul class="popover-ul">';
             $.each(events, function(index, event) {
-              popoverContent += '<li>' + event.title + '</li>';
+              popoverContent += '<li>' + event.type + ": " + event.title + '</li>';
             });
             popoverContent += '</ul>';
             if($(this).attr('aria-describedby')){
