@@ -7,8 +7,10 @@ from .models import (
     SiteConfig,
     StudentClass,
     Subject,
-    Calendar
+    Calendar,
+    Driver
 )
+
 from apps.base.models import CustomUser
 
 class CustomUserForm(forms.ModelForm):
@@ -101,3 +103,9 @@ class CalendarForm(forms.ModelForm):
         elif model_type == self.HOLIDAY_TYPE:
             self.Meta.model = Calendar.HOLIDAY_TYPE
         return super().save(commit=commit)
+
+class DriverForm(forms.ModelForm):
+    address = forms.CharField(widget=forms.Textarea(attrs={'rows': 2}))
+    class Meta:
+        model = Driver
+        fields = ('name', 'phone_number', 'email', 'address', 'aadhaar_number', 'license_number', 'vehicle_name', 'vehicle_model', 'vehicle_number')

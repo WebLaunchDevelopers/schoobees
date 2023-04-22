@@ -23,7 +23,8 @@ from .views import (
     CalendarListView,
     CalendarCreateView,
     CalendarUpdateView,
-    CalendarDeleteView
+    CalendarDeleteView,
+    DriversView
 )
 
 urlpatterns = [
@@ -68,4 +69,6 @@ urlpatterns = [
     path("calendar/create/", CalendarCreateView.as_view(), name="calendar-create"),
     path("calendar/<int:pk>/update/", CalendarUpdateView.as_view(), name="calendar-update"),
     path('calendar/<int:pk>/delete/', CalendarDeleteView.as_view(), name='calendar-delete'),
+
+    path('drivers/view/', DriversView.as_view(), name='drivers-view'),
 ]

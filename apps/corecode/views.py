@@ -21,6 +21,7 @@ from .forms import (
     StudentClassForm,
     SubjectForm,
     CalendarForm,
+    DriverForm,
 )
 from .models import (
     AcademicSession,
@@ -28,7 +29,8 @@ from .models import (
     SiteConfig,
     StudentClass,
     Subject,
-    Calendar
+    Calendar,
+    Driver
 )
 
 import json
@@ -385,7 +387,7 @@ class CalendarDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
         messages.success(self.request, self.success_message)
         return super().delete(request, *args, **kwargs)
 
-class CalendarListView(ListView):
+class CalendarListView(LoginRequiredMixin, SuccessMessageMixin, ListView):
     model = Calendar
     form_class = CalendarForm
     template_name = 'corecode/calendar_list.html'
@@ -399,3 +401,38 @@ class CalendarListView(ListView):
 
     def get_queryset(self):
         return Calendar.objects.filter(user=self.request.user, type=Calendar.EVENT_TYPE)
+
+class DriversView(LoginRequiredMixin, SuccessMessageMixin, View):
+    template_name = 'corecode/drivers.html'
+
+    def get(self, request, *args, **kwargs):
+        driver_form = DriverForm()
+        drivers = Driver.objects.filter(user=request.user)
+        context = {
+            'driver_form': driver_form,
+            'drivers': drivers
+        }
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        driver_form = DriverForm(request.POST)
+        drivers = Driver.objects.filter(user=request.user)
+        if driver_form.is_valid():
+            driver = driver_form.save(commit=False)
+            driver.user = request.user
+            driver.save()
+            driver_form = DriverForm()
+            messages.success(request, "Record Saved")
+        else:
+            print(driver_form.errors)
+            context = {
+                'driver_form': driver_form,
+                'drivers': drivers
+            }
+            # Add this code to show the form errors
+            for field in driver_form:
+                for error in field.errors:
+                    messages.error(request, error)
+            return render(request, self.template_name, context)
+
+        return render(request, self.template_name, {'drivers': drivers, 'driver_form': driver_form})
