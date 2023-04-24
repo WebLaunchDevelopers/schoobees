@@ -114,19 +114,33 @@ def get_results(request):
         if len(result) != 0:
             class_data=dict()
             class_data["student"]=result
-            for student in unique_students:
-                subject_obj = Student.objects.get(pk=student['student'])
-                students.append(subject_obj.registration_number)
-            students=list(set(students))
-            print(students)
+
             for subject in unique_subjects:
                 subject_obj = Subject.objects.get(pk=subject['subject'])
                 subjects.append(subject_obj.name)
-            #print(subjects)
-            class_data["subjects"]=subjects
+            print("Subjects",subjects)
+            print("Students",unique_students)
+            for student in unique_students:
+                print("test----------->",student)
+                student_obj = Student.objects.get(pk=student['student'])
+                print(student_obj)
+                di=dict()
+                test=Result.objects.filter(student=student_obj).values_list("test_score", flat=True)
+                exam=Result.objects.filter(student=student_obj).values_list("exam_score", flat=True)
+                total = [sum(x) for x in zip(test, exam)]
+                total.append(sum(total))
+                print(total)
+                di[student_obj.registration_number]=total
+                print(di)
+                students.append(di)
+            #students=list(set(students))
+            #print(di)
+            #print(students)           
+            subjects.append("Total")
+            class_data["subject"]=subjects
             class_data["students"]=students
             resultss[clas]=class_data
-            #print("---------------->",resultss)
+            print("Results---------------->",resultss)
 
 
             
