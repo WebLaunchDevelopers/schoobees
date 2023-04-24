@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from apps.students.models import Student
 from apps.base.models import CustomUser
-from apps.staffs.models import Staff
+from apps.corecode.models import Driver
 
 class StudentSerializer(serializers.ModelSerializer):
     current_class_name = serializers.ReadOnlyField(source='current_class.name')
@@ -14,7 +14,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
         model = CustomUser
         fields = ['chairman', 'principal', 'school_name', 'mobile_number', 'email', 'address', 'country']
   
-class StaffSerializer(serializers.ModelSerializer):
+class DriverSerializer(serializers.ModelSerializer):
 	class Meta:
-		model = Staff
-		fields ='__all__'
+		model = Driver
+		fields = ['name', 'phone_number', 'alternate_number', 'email', 'address', 'aadhaar_number', 'license_number', 'vehicle_name', 'vehicle_model', 'vehicle_number']
