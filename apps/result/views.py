@@ -118,64 +118,39 @@ def get_results(request):
             for subject in unique_subjects:
                 subject_obj = Subject.objects.get(pk=subject['subject'])
                 subjects.append(subject_obj.name)
-            print("Subjects",subjects)
-            print("Students",unique_students)
+            #print("Subjects",subjects)
+            #print("Students",unique_students)
+            mig=list()
             for student in unique_students:
                 print("test----------->",student)
                 student_obj = Student.objects.get(pk=student['student'])
                 print(student_obj)
                 di=dict()
+                
                 test=Result.objects.filter(student=student_obj).values_list("test_score", flat=True)
                 exam=Result.objects.filter(student=student_obj).values_list("exam_score", flat=True)
                 total = [sum(x) for x in zip(test, exam)]
                 total.append(sum(total))
-                print(total)
-                di[student_obj.registration_number]=total
-                print(di)
-                students.append(di)
+                #print(total)
+                if student_obj.registration_number not in mig:
+                    di[student_obj.registration_number]=total
+                    mig.append(student_obj.registration_number)
+                    #print(di)
+                    students.append(di)
             #students=list(set(students))
             #print(di)
+            #print("mig:",mig)
             #print(students)           
             subjects.append("Total")
             class_data["subject"]=subjects
             class_data["students"]=students
             resultss[clas]=class_data
-            print("Results---------------->",resultss)
+            #print("Results---------------->",resultss)
 
 
             
         else:
             classes = classes.exclude(pk=clas.pk)
-    #print(resultss) #{<StudentClass: 8th>: {'student': <QuerySet [<Result: 1234 1234 (1234) 2022-2023 1st Term English>, <Result: 1234 1234 (1234) 2022-2023 1st Term Telugu>, <Result: 2345 23452345 (2345) 2022-2023 1st Term Telugu>, <Result: 3456 3456 (3456) 2022-2023 1st Term Telugu>]>}}
-    
-    #for clas in classes:
-        
-    
-    for clas in classes:  
-        bulk = {}
-        data,label=list(),list()
-        for result in resultss[clas]["student"]:
-            test_total = 0
-            exam_total = 0
-            subjects = []
-            for subject in results:
-                if subject.student == result.student:
-                    subjects.append(subject)
-                    test_total += subject.test_score
-                    exam_total += subject.exam_score
-                    
-            data.append(test_total+exam_total)
-            label.append(result.student.first_name+" "+result.student.last_name)
 
-            bulk[result.student.registration_number] = {
-                "student": result.student,
-                "subjects": subjects,
-                "test_total": test_total,
-                "exam_total": exam_total,
-                "total_total": test_total + exam_total,
-            }
-
-        resultss[clas]["results"]=bulk
-        #print(resultss)
     context = {"results": resultss}
     return render(request, "result/all_results.html", context)

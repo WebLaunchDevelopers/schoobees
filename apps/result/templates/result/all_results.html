@@ -15,7 +15,7 @@
         <th>S/N</th>
         <th>Registration Number</th>
         {% for sub in result.subject%}
-        <th>{{sub}}</th>
+          <th>{{sub}}</th>
         {% endfor %}
       </tr>
     </thead>
@@ -23,9 +23,9 @@
 
         <tr class='clickable-row' >
 
-        {% for student in result.students %}
+      {% for student in result.students %}
           {% for id,marks in student.items %}
-           <td>{{ forloop.counter}}</td>
+           <td>{{ forloop.parentloop.counter }}</td>
            <td> {{id}} </td>
              {% for mark in marks %}
                 <td> {{mark}} </td>
