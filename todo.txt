@@ -20,5 +20,28 @@ API - dominic - done --> website <--> App -->localhost/students/token=234nskdjn@
 
 Domnic - 13/04 to 16/04
 atleast one class popup - dominic  - done
-results optimisation - (mainly view results)
-register good looking
+results optimisation - (mainly view results) -done
+register good looking -done
+
+ReDesign register page
+New Staff
+Students visual representation graph
+     Width
+     Unwanted icons
+     colours
+{ (removed)
+    Create results
+    Check box 
+Update results
+    Delete row keep last
+}
+    add filters to create and update results
+View results
+Land page show class blocks at half of page remaining will be discussed like calendar/list
+After blocks the class particular should be shown and also graph at another side later
+    Filters ( class )
+    Class( student )
+    Different colours for graph
+    If there is no data it would show no      records page
+staff Birthdays
+student,staff count
