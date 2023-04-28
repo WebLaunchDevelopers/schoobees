@@ -126,9 +126,9 @@
           <i class="fa fa-birthday-cake fa-lg mr-2"></i>
           Staff Birthdays
         </h5>
-        <p class="card-text">Rohit Sharma</p>
-        <p class="card-text">Srinila K</p>
-        <p class="card-text">Bhaskar Kumar </p>
+        {% for Bdays in staffBdays %}
+        <p class="card-text">{{Bdays.surname}} {{Bdays.firstname}}</p>
+        {% endfor %}
       </div>
     </div>    
   </div>

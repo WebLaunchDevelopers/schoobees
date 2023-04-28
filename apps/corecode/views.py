@@ -65,6 +65,12 @@ class IndexView(LoginRequiredMixin, ListView):
         context["students"]=student_count
         context["staff"]=staff_count
         context["nonstaff"]=non_staff_count
+        
+        from datetime import datetime
+        today = datetime.today()
+        staffBdays=Staff.objects.filter(date_of_birth__month=today.month, date_of_birth__day=today.day)
+        context["staffBdays"]=staffBdays
+        
         events = Calendar.objects.filter(user=self.request.user)
         event_list = [{'title': event.title, 'start': str(event.date), 'type': event.type} for event in events]
         context.update({
