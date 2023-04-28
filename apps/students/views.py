@@ -50,7 +50,8 @@ class StudentDetailView(LoginRequiredMixin, DetailView):
             marks.append(score)
         
         df=pd.DataFrame(marks,subject)
-        fig = px.bar(df)
+        fig = px.bar(df,color=subject)
+        fig.update_traces(width=0.5)
         chart=plot(fig,output_type="div")
 
         context["result"]=subjects

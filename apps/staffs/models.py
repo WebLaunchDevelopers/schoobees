@@ -11,7 +11,7 @@ class Staff(models.Model):
 
     GENDER = [("male", "Male"), ("female", "Female")]
 
-    user = models.OneToOneField(CustomUser, on_delete = models.CASCADE, primary_key = True)
+    user = models.ForeignKey(CustomUser, on_delete = models.CASCADE)
     current_status = models.CharField(max_length=10, choices=STATUS, default="active")
     surname = models.CharField(max_length=200)
     firstname = models.CharField(max_length=200)
