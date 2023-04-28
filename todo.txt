@@ -25,17 +25,6 @@ register good looking -done
 
 ReDesign register page
 New Staff------(not finding template)
-Students visual representation graph--------Done
-     Width----Done
-     Unwanted icons---Done
-     colours---Done
-{ (removed)
-    Create results
-    Check box 
-Update results-----------------------------Done
-    Delete row keep last
-}
-    add filters to create and update results
 View results
 Land page show class blocks at half of page remaining will be discussed like calendar/list
 After blocks the class particular should be shown and also graph at another side later
@@ -43,5 +32,17 @@ After blocks the class particular should be shown and also graph at another side
     Class( student )
     Different colours for graph
     If there is no data it would show no      records page
-staff Birthdays
-student,staff count
+{ (removed)
+    Create results
+    Check box 
+    add filters to create and update results
+
+Update results-----------------------------Done
+    Delete row keep last
+}
+staff Birthdays -----------------------------------------------------------Done
+student,staff count--------------------------Done
+Students visual representation graph--------Done
+     Width----Done
+     Unwanted icons---Done
+     colours---Done
