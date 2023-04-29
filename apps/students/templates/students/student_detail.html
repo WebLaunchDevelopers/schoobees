@@ -181,8 +181,10 @@
           </div>
 
           <script>
-            var element = document.getElementById("symbol");
-            element.remove();
+            const elements = document.querySelectorAll('[data-title="Box Select"],[data-title="Lasso Select"],[data-title="Produced with Plotly.js (v2.20.0)"]');
+            elements.forEach((element) => {
+              element.remove();
+            });
 
           </script>
 {% endblock content %}

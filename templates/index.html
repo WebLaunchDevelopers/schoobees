@@ -79,7 +79,7 @@
               <i class="fa fa-users fa-lg mr-2"></i>
               Students
             </h5>
-            <p class="card-text">{{ 1200 }}</p>
+            <p class="card-text">{{ students }}</p>
           </div>
         </div>
       </div>
@@ -90,7 +90,7 @@
               <i class="fa fa-user fa-lg mr-2"></i>
               Employees
             </h5>
-            <p class="card-text">{{ 100 }}</p>
+            <p class="card-text">{{ staff }}</p>
           </div>
         </div>
       </div>
@@ -101,7 +101,7 @@
               <i class="fa fa-building fa-lg mr-2"></i>
               Non Staff
             </h5>
-            <p class="card-text">{{ 30 }}</p>
+            <p class="card-text">{{ nonstaff }}</p>
           </div>
         </div>
       </div>
@@ -126,9 +126,9 @@
           <i class="fa fa-birthday-cake fa-lg mr-2"></i>
           Staff Birthdays
         </h5>
-        <p class="card-text">Rohit Sharma</p>
-        <p class="card-text">Srinila K</p>
-        <p class="card-text">Bhaskar Kumar </p>
+        {% for Bdays in staffBdays %}
+        <p class="card-text">{{Bdays.surname}} {{Bdays.firstname}}</p>
+        {% endfor %}
       </div>
     </div>    
   </div>

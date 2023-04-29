@@ -39,6 +39,9 @@ from .models import (
 )
 
 import json
+from apps.staffs.models import Staff
+from apps.students.models import Student
+from apps.corecode.models import Driver
 
 class IndexView(LoginRequiredMixin, ListView):
     template_name = "index.html"
@@ -51,13 +54,23 @@ class IndexView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["form"] = StudentClassForm()
-        
+        student_count = Student.objects.all().count()        
+        staff_count = Staff.objects.all().count()    
+        non_staff_count = Driver.objects.all().count()
         # Check if the user has any objects associated with them
         if not context["object_list"]:
             context["bool"] = True
         else:
             context["bool"] = False
-
+        context["students"]=student_count
+        context["staff"]=staff_count
+        context["nonstaff"]=non_staff_count
+        
+        from datetime import datetime
+        today = datetime.today()
+        staffBdays=Staff.objects.filter(date_of_birth__month=today.month, date_of_birth__day=today.day)
+        context["staffBdays"]=staffBdays
+        
         events = Calendar.objects.filter(user=self.request.user)
         event_list = [{'title': event.title, 'start': str(event.date), 'type': event.type} for event in events]
         context.update({

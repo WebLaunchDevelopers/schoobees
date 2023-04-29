@@ -24,15 +24,15 @@ results optimisation - (mainly view results) -done
 register good looking -done
 
 ReDesign register page
-New Staff
-Students visual representation graph
-     Width
-     Unwanted icons
-     colours
+New Staff------(not finding template)
+Students visual representation graph--------Done
+     Width----Done
+     Unwanted icons---Done
+     colours---Done
 { (removed)
     Create results
     Check box 
-Update results
+Update results-----------------------------Done
     Delete row keep last
 }
     add filters to create and update results
