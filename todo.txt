@@ -45,3 +45,9 @@ After blocks the class particular should be shown and also graph at another side
     If there is no data it would show no      records page
 staff Birthdays
 student,staff count
+
+
+Avinash - todo for assigning
+1. change 404 page
+2. use C:\Users\avina\Downloads\glassmorphism-login-form-tutorial-in-html-css\glassmorphism-login-form-tutorial-in-html-css login page
+3. write hosting steps
