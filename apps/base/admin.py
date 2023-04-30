@@ -27,10 +27,10 @@ class CustomUserAdmin(BaseUserAdmin):
     )
 
     def get_inline_instances(self, request, obj=None):
-        if obj and obj.is_faculty:
-            inlines = [StaffInline]
-        else:
+        if obj and not obj.is_faculty:
             inlines = [UserProfileInline]
+        else:
+            inlines = []
         return [inline(self.model, self.admin_site) for inline in inlines]
 
 admin.site.register(CustomUser, CustomUserAdmin)

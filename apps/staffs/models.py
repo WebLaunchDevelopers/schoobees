@@ -11,8 +11,7 @@ class Staff(models.Model):
 
     GENDER_CHOICES = [("male", "Male"), ("female", "Female")]
 
-    user = models.OneToOneField(CustomUser, on_delete = models.CASCADE, related_name='staff_user')
-    # school_user = models.CharField(max_length=150)
+    user = models.ForeignKey(CustomUser, on_delete = models.CASCADE)
     email = models.EmailField()
     current_status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="active")
     first_name = models.CharField(max_length=200)
