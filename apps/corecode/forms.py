@@ -11,20 +11,26 @@ from .models import (
     Driver
 )
 
-from apps.base.models import CustomUser
+from apps.base.models import UserProfile
+from django.contrib.auth import get_user_model
+
+
+CustomUser = get_user_model()
 
 class CustomUserForm(forms.ModelForm):
     class Meta:
         model = CustomUser
-        fields = ['register_id', 'email', 'mobile_number', 'address', 'country', 'school_name', 'chairman', 'principal']
-
-class SiteConfigForm(forms.ModelForm):
-    class Meta:
-        model = CustomUser
-        fields = ['register_id', 'email', 'mobile_number', 'address', 'country', 'school_name', 'chairman', 'principal']
+        fields = ['register_id', 'email']
         widgets={
             "register_id": forms.HiddenInput(),
             "email": forms.TextInput(attrs={"class": "form-control"}),
+        }
+
+class UserProfileForm(forms.ModelForm):
+    class Meta:
+        model = UserProfile
+        fields = ['mobile_number', 'address', 'country', 'school_name', 'chairman', 'principal']
+        widgets={
             "mobile_number": forms.TextInput(attrs={"class": "form-control"}),
             "address": forms.TextInput(attrs={"class": "form-control"}),
             "country": forms.Select(attrs={"class": "form-control"}),
@@ -33,6 +39,15 @@ class SiteConfigForm(forms.ModelForm):
             "principal": forms.TextInput(attrs={"class": "form-control"}),
         }
 
+class SiteConfigForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields.update(CustomUserForm(instance=self.instance).fields)
+        self.fields.update(UserProfileForm(instance=self.instance.userprofile).fields)
+
+    class Meta:
+        model = CustomUser
+        fields = []
 
 class AcademicSessionForm(ModelForm):
     prefix = "Academic Session"

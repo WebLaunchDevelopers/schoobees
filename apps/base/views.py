@@ -4,7 +4,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.utils import timezone
 from django.views import View
-from .forms import RegistrationForm, LoginForm
+from .forms import CustomUserCreationForm, LoginForm, UserProfileForm
 from .utils import send_activation_email, send_password_reset_email
 from .models import CustomUser as User
 from django.contrib.auth.views import PasswordResetConfirmView
@@ -12,23 +12,28 @@ from django.views.generic import TemplateView
 # from django.utils.encoding import force_text
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
+
 class RegisterView(View):
     def get(self, request):
-        form = RegistrationForm()
-        return render(request, 'registration/register.html', {'form': form})
+        user_form = CustomUserCreationForm()
+        profile_form = UserProfileForm()
+        return render(request, 'registration/register.html', {'user_form': user_form, 'profile_form': profile_form})
 
     def post(self, request):
-        form = RegistrationForm(request.POST)
-        if form.is_valid():
-            user = form.save(commit=False)
-            user.approved = False
+        user_form = CustomUserCreationForm(request.POST)
+        profile_form = UserProfileForm(request.POST)
+        if user_form.is_valid() and profile_form.is_valid():
+            user = user_form.save(commit=False)
             user.save()
+            profile = profile_form.save(commit=False)
+            profile.user = user
+            profile.save()
             send_activation_email(user, request)
             messages.success(request, 'Your account has been created. Please check your email to activate your account.')
             return redirect('login')
         else:
             messages.error(request, 'Invalid details.')
-        return render(request, 'registration/register.html', {'form': form})
+        return render(request, 'registration/register.html', {'user_form': user_form, 'profile_form': profile_form})
 
 class ActivateView(View):
     def get(self, request, uidb64, token):
@@ -44,8 +49,6 @@ class ActivateView(View):
         messages.success(request, 'Your account has been activated. Please log in.')
         return redirect('login')
 
-
-
 class LoginView(View):
     def get(self, request):
         form = LoginForm()
@@ -57,7 +60,7 @@ class LoginView(View):
         next = request.POST.get('next')
         if form.is_valid():
             user = form.get_user()
-            if user.approved:
+            if user.userprofile.approved:
                 login(request, user)
                 messages.success(request, 'You have successfully logged in.')
                 if next != "None" and next:
@@ -70,7 +73,6 @@ class LoginView(View):
             # handle form errors
             messages.error(request, 'Invalid email or password.')
         return render(request, 'registration/login.html', {'form': form, 'next': next})
-
 
 class LogoutView(View):
     def get(self, request):

@@ -99,12 +99,8 @@
                       </div>
                       
                       <div class="form-group mx-2">
-                        <label for="exampleFormControlSelect1">Select Country</label>
-                        <select class="form-control" name="country" id="country">
-                          {% for x,y in form.fields.country.choices %}
-                          <option value="{{ x }}">{{ y }}</option>
-                          {% endfor %}
-                        </select>
+                        <label for="country">Select Country</label>
+                        {{ profile_form.country }}
                       </div>
 
                       <div class="d-flex justify-content-center">

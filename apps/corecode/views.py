@@ -111,7 +111,6 @@ class SiteConfigView(LoginRequiredMixin, View):
         context = {"form": form, "title": "Configuration"}
         return render(request, self.template_name, context)
 
-
 class SessionListView(LoginRequiredMixin, SuccessMessageMixin, ListView):
     model = AcademicSession
     template_name = "corecode/session_list.html"
