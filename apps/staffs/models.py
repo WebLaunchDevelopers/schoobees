@@ -7,18 +7,18 @@ from django.contrib.auth import get_user_model
 CustomUser = get_user_model()
 
 class Staff(models.Model):
-    STATUS = [("active", "Active"), ("inactive", "Inactive")]
+    STATUS_CHOICES = [("active", "Active"), ("inactive", "Inactive")]
 
-    GENDER = [("male", "Male"), ("female", "Female")]
+    GENDER_CHOICES = [("male", "Male"), ("female", "Female")]
 
-    user = models.OneToOneField(CustomUser, on_delete = models.CASCADE, primary_key = True)
-    current_status = models.CharField(max_length=10, choices=STATUS, default="active")
-    surname = models.CharField(max_length=200)
-    firstname = models.CharField(max_length=200)
-    other_name = models.CharField(max_length=200, blank=True)
-    gender = models.CharField(max_length=10, choices=GENDER, default="male")
+    user = models.OneToOneField(CustomUser, on_delete = models.CASCADE, related_name='staff_user')
+    # school_user = models.CharField(max_length=150)
+    email = models.EmailField()
+    current_status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="active")
+    first_name = models.CharField(max_length=200)
+    last_name = models.CharField(max_length=200)
+    gender = models.CharField(max_length=10, choices=GENDER_CHOICES, default="male")
     date_of_birth = models.DateField(default=timezone.now)
-    date_of_admission = models.DateField(default=timezone.now)
 
     mobile_num_regex = RegexValidator(
         regex="^[0-9]{10,15}$", message="Entered mobile number isn't in a right format!"
@@ -28,10 +28,13 @@ class Staff(models.Model):
     )
 
     address = models.TextField(blank=True)
-    others = models.TextField(blank=True)
+    comments = models.TextField(blank=True)
+
+    class Meta:
+        ordering = ["first_name", "last_name"]
 
     def __str__(self):
-        return f"{self.surname} {self.firstname} {self.other_name}"
+        return f"{self.last_name} {self.first_name}"
 
     def get_absolute_url(self):
         return reverse("staff-detail", kwargs={"pk": self.pk})

@@ -6,7 +6,7 @@ class CustomUser(AbstractUser):
     # Common fields for all types of users
     register_id = models.PositiveIntegerField(unique=True)
     email = models.EmailField()
-    is_staff = models.BooleanField(default=False)
+    is_faculty = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         # Generate a random 5-10 digit number for the register_id field

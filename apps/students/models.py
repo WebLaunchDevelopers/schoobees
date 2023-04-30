@@ -13,9 +13,7 @@ class Student(models.Model):
 
     GENDER_CHOICES = [("male", "Male"), ("female", "Female")]
 
-    current_status = models.CharField(
-        max_length=10, choices=STATUS_CHOICES, default="active"
-    )
+    current_status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="active")
     user = models.ForeignKey(CustomUser, on_delete = models.CASCADE)
     registration_number = models.CharField(max_length=200, unique=True)
     first_name = models.CharField(max_length=200)
