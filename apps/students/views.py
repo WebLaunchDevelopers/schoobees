@@ -42,7 +42,7 @@ class StudentDetailView(LoginRequiredMixin, DetailView):
         for result in results:
             test=result.test_score
             exam=result.exam_score
-            score+=result.test_score + result.exam_score
+            score=result.test_score + result.exam_score
             total+=score
             subjects[str(result.subject)]={"test":test,"exam":exam,"score":score}
             
