@@ -1,53 +1,155 @@
 {% extends 'base.html' %}
-{% load widget_tweaks %}
+
 
 {% block title %}
-Update Attendence
+  Update Attendence
 {% endblock title %}
 
+{"""
+{% block content-header %}
+  <form method="POST">
+    {% csrf_token %}
+    <div class="card-header">
+      <div class="card-tools">
+      <p class="small btn btn-tool">You can also search by name/class by typing in the search box</p>
+      </div>
+    </div>
+    {% endblock content-header %} """}
+    {% block content %}
 
-{% block content %}
-<form method="POST">
-  {% csrf_token %}
-  {{ formset.management_form}}
-
-  <table id="studenttable" class="table table-sm">
-    <thead>
-      <tr>
-        <th></th>
-        <th>Student Name</th>
-        <th>Telugu</th>
-        <th>Hindi</th>
-        <th>English</th>
-        <th>Maths</th>
-        <th>Physics</th>
-        <th>Biology</th>
-        <th>Chemistry</th>
-        <th>Social</th>
-      </tr>
-    </thead>
-    <tbody>
-      {% for form in formset %}
-      {{ form.id}}
+    <table id="studenttable" class="table table-sm table-bordered" data-page-length='100'>
+      <thead class="thead-light">
+      {% for subject in subjects %}
         <tr>
-          <td>{{forloop.counter }}</td>
-          <td>{{form.instance.student }}</td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-
-
+          <th><input type="checkbox" id="selecter"></th>
+          <th>Student Name</th>
+          <th>{ subject.name }</th>
+          <th>Class</th>
+          <th>Telugu</th>
+          <th>Hindi</th>
+          <th>English</th>
+          <th>Maths</th>
+          <th>Physics</th>
+          <th>Biology</th>
+          <th>Chemistry</th>
+          <th>Social Studies</th>
+          <th>Other</th>
         </tr>
       {% endfor %}
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        {% for student in students %}
+          <tr>
+            <td><input type="checkbox" id="{{ student.pk }}" name="students" value="{{ student.pk}}"></td>
+            <td>{{student}} </td>
+            <td>{{student.current_class}}</td>
+            <td>
+              <select name="attendence-choice" class="form-control">
+                <option value="Present" selected>Present</option>
+                <option value="Absent"  >Absent</option>
+                <option value="Late"  >Late</option>
+                <option value="Excused"  >Excused</option>
+                <option value="Unexcused"  >Unexcused</option>
+              </select>
+            </td>
+            <td>
+              <select name="attendence-choice" class="form-control">
+                <option value="Present" selected>Present</option>
+                <option value="Absent"  >Absent</option>
+                <option value="Late"  >Late</option>
+                <option value="Excused"  >Excused</option>
+                <option value="Unexcused"  >Unexcused</option>
+              </select>
+            </td>
+            <td>
+              <select name="attendence-choice" class="form-control">
+                <option value="Present" selected>Present</option>
+                <option value="Absent"  >Absent</option>
+                <option value="Late"  >Late</option>
+                <option value="Excused"  >Excused</option>
+                <option value="Unexcused"  >Unexcused</option>
+              </select>
+            </td>
+            <td>
+              <select name="attendence-choice" class="form-control">
+                <option value="Present" selected>Present</option>
+                <option value="Absent"  >Absent</option>
+                <option value="Late"  >Late</option>
+                <option value="Excused"  >Excused</option>
+                <option value="Unexcused"  >Unexcused</option>
+              </select>
+            </td>
+            <td>
+              <select name="attendence-choice" class="form-control">
+                <option value="Present" selected>Present</option>
+                <option value="Absent"  >Absent</option>
+                <option value="Late"  >Late</option>
+                <option value="Excused"  >Excused</option>
+                <option value="Unexcused"  >Unexcused</option>
+              </select>
+            </td>
+            <td>
+              <select name="attendence-choice" class="form-control">
+                <option value="Present" selected>Present</option>
+                <option value="Absent"  >Absent</option>
+                <option value="Late"  >Late</option>
+                <option value="Excused"  >Excused</option>
+                <option value="Unexcused"  >Unexcused</option>
+              </select>
+            </td>
+            <td>
+              <select name="attendence-choice" class="form-control">
+                <option value="Present" selected>Present</option>
+                <option value="Absent"  >Absent</option>
+                <option value="Late"  >Late</option>
+                <option value="Excused"  >Excused</option>
+                <option value="Unexcused"  >Unexcused</option>
+              </select>
+            </td>
+            <td>
+              <select name="attendence-choice" class="form-control">
+                <option value="Present" selected>Present</option>
+                <option value="Absent"  >Absent</option>
+                <option value="Late"  >Late</option>
+                <option value="Excused"  >Excused</option>
+                <option value="Unexcused"  >Unexcused</option>
+              </select>
+            </td>
+            <td>
+              <select name="attendence-choice" class="form-control">
+                <option value="Present" selected>Present</option>
+                <option value="Absent"  >Absent</option>
+                <option value="Late"  >Late</option>
+                <option value="Excused"  >Excused</option>
+                <option value="Unexcused"  >Unexcused</option>
+              </select>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
 
-  <input type="submit" class="btn btn-success" value="Save">
+    <input type="submit" class="btn btn-success mt-2" value="Proceed">
+
+
   </form>
-
 {% endblock content %}
+
+
+{% block morejs %}
+<script>
+  $('#studenttable').DataTable({
+    "ordering": false
+  });
+
+  $("#selecter").change(function () {
+    if (this.checked) {
+      $('input[name="students"]').prop('checked', true);
+    }
+    else {
+      $('input[name="students"]').prop('checked', false);
+    }
+  });
+</script>
+
+{% endblock morejs %}

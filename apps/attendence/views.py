@@ -18,8 +18,17 @@ import pandas as pd
 
 @login_required
 def update_attendence(request):
-    return render(request, "attendence/update-attendence.html")
+    students = Student.objects.all()
+    subjects = Subject.objects.all()
+    print(subjects)
+    # if request.method=='POST':
+    #     student = request.POST.get('student')
+    #
+    #     update_attendence.objects.create(student=student, last_name=lname, email=email, password=password)
+
+    return render(request, "attendence/update-attendence.html", {"students": students, "subjects": subjects})
 
 @login_required
 def view_attendence(request):
-    return render(request, "attendence/view-attendence.html")
+    students = Student.objects.all()
+    return render(request, "attendence/view-attendence.html", {"students": students})
