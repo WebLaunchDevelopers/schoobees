@@ -18,9 +18,8 @@ import pandas as pd
 
 @login_required
 def update_attendence(request):
-    students = Student.objects.all()
-    subjects = Subject.objects.all()
-    print(subjects)
+    students = Student.objects.filter(user=request.user)
+    subjects = Subject.objects.filter(user=request.user)
     # if request.method=='POST':
     #     student = request.POST.get('student')
     #
