@@ -51,3 +51,4 @@ Avinash - todo for assigning
 1. change 404 page
 2. use C:\Users\avina\Downloads\glassmorphism-login-form-tutorial-in-html-css\glassmorphism-login-form-tutorial-in-html-css login page
 3. write hosting steps
+4. 'admin1', 'admin2' exclude from admin panel
