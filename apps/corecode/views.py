@@ -111,7 +111,6 @@ class SiteConfigView(LoginRequiredMixin, View):
         context = {"form": form, "title": "Configuration"}
         return render(request, self.template_name, context)
 
-
 class SessionListView(LoginRequiredMixin, SuccessMessageMixin, ListView):
     model = AcademicSession
     template_name = "corecode/session_list.html"
@@ -414,10 +413,17 @@ class CalendarListView(LoginRequiredMixin, SuccessMessageMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['form'] = self.form_class()
-        context['holidays'] = Calendar.objects.filter(user=self.request.user, type=Calendar.HOLIDAY_TYPE)
+        if self.request.user.is_faculty:
+            staff = Staff.objects.get(email=self.request.user.username)
+            context['holidays'] = Calendar.objects.filter(user=staff.user, type=Calendar.HOLIDAY_TYPE)
+        else:
+            context['holidays'] = Calendar.objects.filter(user=self.request.user, type=Calendar.HOLIDAY_TYPE)
         return context
 
     def get_queryset(self):
+        if self.request.user.is_faculty:
+            staff = Staff.objects.get(email=self.request.user.username)
+            return Calendar.objects.filter(user=staff.user, type=Calendar.EVENT_TYPE)
         return Calendar.objects.filter(user=self.request.user, type=Calendar.EVENT_TYPE)
 
 class DriverUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):

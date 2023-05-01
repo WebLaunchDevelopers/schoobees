@@ -20,7 +20,6 @@
       <div class="col-sm-4">
         <div>
           <h3>{{ object }} </h3>
-          <h5>{{ object.current_class }} </h5>
           <h5>{{ object.get_gender_display }} </h5>
           <h5>{{ object.get_current_status_display }} </h5>
         </div>
@@ -58,7 +57,15 @@
               Comments
             </label>
             <div class="col">
-              {{ object.others }}
+              {{ object.comments }}
+            </div>
+          </div>
+          <div class="form-group border-bottom row">
+            <label class="col">
+              Temporary Password
+            </label>
+            <div class="col">
+              {{ object.temp_password }}
             </div>
           </div>
 

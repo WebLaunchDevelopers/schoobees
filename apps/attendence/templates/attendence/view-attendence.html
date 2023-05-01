@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block fullcard %}
+
+{% for key,result in results.items %}
+
+ <h1>Class {{key}}</h1>
+
+   <h1>{{i}}</h1>
+
+ <div class="table-responsive">
+  <table id="studenttable" class="table table-bordered table-hover" data-page-length='100'>
+    <thead class="thead-light">
+      <tr>
+        <th>S/N</th>
+        <th>Registration Number</th>
+        {% for sub in result.subject%}
+          <th>{{sub}}</th>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+
+        <tr class='clickable-row' >
+
+      {% for student in result.students %}
+          {% for id,marks in student.items %}
+           <td>{{ forloop.parentloop.counter }}</td>
+           <td> {{id}} </td>
+             {% for mark in marks %}
+                <td> {{mark}} </td>
+             {% endfor %}
+           
+          {% endfor %}
+
+
+        </tr>
+      {% endfor %}
+
+    </tbody>
+  </table>
+</div>
+
+    
+
+{% endfor %}
+
+
+{% endblock fullcard %}
