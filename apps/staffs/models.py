@@ -13,6 +13,7 @@ class Staff(models.Model):
 
     user = models.ForeignKey(CustomUser, on_delete = models.CASCADE)
     email = models.EmailField()
+    temp_password = models.CharField(max_length=200)
     current_status = models.CharField(max_length=10, choices=STATUS_CHOICES, default="active")
     first_name = models.CharField(max_length=200)
     last_name = models.CharField(max_length=200)

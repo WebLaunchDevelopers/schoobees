@@ -21,6 +21,7 @@
                     {% for object in object_list %}
                         <tr>
                             <td>{{ object.title }} ({{ object.date }})</td>
+                            {% if not user.is_faculty %}
                             <td>
                                 <a href="{% url 'calendar-update' object.id %}">
                                     <i class="fa fa-edit"></i>
@@ -29,6 +30,7 @@
                                     <i class="fa fa-trash-alt"></i>
                                 </a>
                             </td>
+                            {% endif %}
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -42,6 +44,7 @@
                     {% for holiday in holidays %}
                         <tr>
                             <td>{{ holiday.title }} ({{ holiday.date }})</td>
+                            {% if not user.is_faculty %}
                             <td>
                                 <a href="{% url 'calendar-update' holiday.id %}">
                                     <i class="fa fa-edit"></i>
@@ -50,6 +53,7 @@
                                     <i class="fa fa-trash-alt"></i>
                                 </a>
                             </td>
+                            {% endif %}
                         </tr>
                     {% endfor %}
                 </tbody>

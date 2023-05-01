@@ -33,13 +33,13 @@ class StaffCreateView(SuccessMessageMixin, CreateView):
     def form_valid(self, form):
         # Create the User object with a random password
         email = form.cleaned_data['email']
-        username = email.split('@')[0]
         password = CustomUser.objects.make_random_password()
-        CustomUser.objects.create_user(username=username, email=email, password=password, is_faculty=True)
+        CustomUser.objects.create_user(username=email, email=email, password=password, is_faculty=True, approved=True)
 
         # Set the user for the staff object
         staff = form.save(commit=False)
         staff.user = self.request.user
+        staff.temp_password = password
         staff.save()
 
         return super().form_valid(form)

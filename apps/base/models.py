@@ -7,6 +7,7 @@ class CustomUser(AbstractUser):
     register_id = models.PositiveIntegerField(unique=True)
     email = models.EmailField()
     is_faculty = models.BooleanField(default=False)
+    approved = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         # Generate a random 5-10 digit number for the register_id field
@@ -40,6 +41,5 @@ class UserProfile(models.Model):
     # school_type = models.CharField(max_length=10, choices=SCHOOL_CHOICES, blank=True, null=True)
     chairman = models.CharField(max_length=50, blank=True, null=True)
     principal = models.CharField(max_length=50, blank=True, null=True)
-    approved = models.BooleanField(default=False)
     activation_account = models.CharField(max_length=40, blank=True, null=True)
     # Additional fields that are specific to certain user types go here

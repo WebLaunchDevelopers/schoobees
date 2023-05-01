@@ -28,7 +28,7 @@ class RegisterView(View):
             profile = profile_form.save(commit=False)
             profile.user = user
             profile.save()
-            send_activation_email(user, request)
+            # send_activation_email(user, request)
             messages.success(request, 'Your account has been created. Please check your email to activate your account.')
             return redirect('login')
         else:
@@ -60,7 +60,7 @@ class LoginView(View):
         next = request.POST.get('next')
         if form.is_valid():
             user = form.get_user()
-            if user.userprofile.approved:
+            if user.approved:
                 login(request, user)
                 messages.success(request, 'You have successfully logged in.')
                 if next != "None" and next:

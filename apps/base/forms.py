@@ -8,7 +8,7 @@ class CustomUserCreationForm(UserCreationForm):
     
     class Meta:
         model = CustomUser
-        fields = ('username', 'email', 'password1', 'password2')
+        fields = ('username', 'email', 'password1', 'password2', 'approved')
 
 class UserProfileForm(forms.ModelForm):
     country = forms.ChoiceField(choices=UserProfile.COUNTRY_CHOICES, widget=forms.Select(attrs={'class': 'form-control'}))
