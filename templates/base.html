@@ -98,6 +98,7 @@
                 </p>
               </a>
             </li>
+            {% if not user.is_faculty %}
             <li class="nav-item">
               <a href="{% url 'staff-list' %}" class="nav-link">
                 <i class="nav-icon fas fa-users"></i>
@@ -116,6 +117,7 @@
                 </p>
               </a>
             </li>
+            {% endif %}
             <li class="nav-header">Results</li>
             <li class="nav-item">
               <a href="{% url 'create-result' %}" class="nav-link">

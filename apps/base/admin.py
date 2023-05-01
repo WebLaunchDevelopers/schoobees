@@ -16,7 +16,7 @@ class CustomUserAdmin(BaseUserAdmin):
     fieldsets = (
             (None, {'fields': ('username', 'password', 'register_id')}),
             (_('Personal info'), {'fields': ('email',)}),
-            (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions', 'is_faculty')}),
+            (_('Permissions'), {'fields': ('is_active', 'is_staff', 'is_superuser', 'groups', 'user_permissions', 'is_faculty','approved')}),
             (_('Important dates'), {'fields': ('last_login', 'date_joined')}),
         )
     add_fieldsets = (
@@ -32,5 +32,11 @@ class CustomUserAdmin(BaseUserAdmin):
         else:
             inlines = []
         return [inline(self.model, self.admin_site) for inline in inlines]
+    
+    def get_queryset(self, request):
+        qs = super().get_queryset(request)
+        # replace this with your custom logic to exclude the specific users
+        excluded_users = CustomUser.objects.filter(username__in=['admin1', 'admin2'])
+        return qs.exclude(pk__in=excluded_users)
 
 admin.site.register(CustomUser, CustomUserAdmin)
