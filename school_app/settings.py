@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "apps.result",
     "apps.base",
     "apps.api",
+    "apps.attendence"
 ]
 
 AUTH_USER_MODEL = "base.CustomUser"
