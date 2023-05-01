@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}
+Update Attendence
+{% endblock title %}
+
+
+{% block content %}
+<form method="POST">
+  {% csrf_token %}
+  {{ formset.management_form}}
+
+  <table id="studenttable" class="table table-sm">
+    <thead>
+      <tr>
+        <th></th>
+        <th>Student Name</th>
+        <th>Telugu</th>
+        <th>Hindi</th>
+        <th>English</th>
+        <th>Maths</th>
+        <th>Physics</th>
+        <th>Biology</th>
+        <th>Chemistry</th>
+        <th>Social</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for form in formset %}
+      {{ form.id}}
+        <tr>
+          <td>{{forloop.counter }}</td>
+          <td>{{form.instance.student }}</td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+          <td></td>
+
+
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  <input type="submit" class="btn btn-success" value="Save">
+  </form>
+
+{% endblock content %}
