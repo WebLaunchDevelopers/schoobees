@@ -42,6 +42,9 @@ student,staff count----------------Done
 Update results-----------------------------Done
     Delete row keep last----------------Done
 }
+Results score bug fix-------------Done
+Max validation added to score----------Done
+Create results Css Bug fix -----------Done
 
 Avinash - todo for assigning
 1. change 404 page
