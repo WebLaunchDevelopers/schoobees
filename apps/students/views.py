@@ -57,7 +57,7 @@ class StudentDetailView(LoginRequiredMixin, DetailView):
         context["result"]=subjects
         context["total"]=total
         context["chart"]=chart
-        print("---------------->",context)
+        #print("---------------->",context)
         return context
     
 
