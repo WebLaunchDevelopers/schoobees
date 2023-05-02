@@ -17,7 +17,7 @@ class RegisterView(View):
     def get(self, request):
         user_form = CustomUserCreationForm()
         profile_form = UserProfileForm()
-        return render(request, 'registration/register.html', {'user_form': user_form, 'profile_form': profile_form})
+        return render(request, 'registration/register_new.html', {'user_form': user_form, 'profile_form': profile_form})
 
     def post(self, request):
         user_form = CustomUserCreationForm(request.POST)
@@ -33,7 +33,7 @@ class RegisterView(View):
             return redirect('login')
         else:
             messages.error(request, 'Invalid details.')
-        return render(request, 'registration/register.html', {'user_form': user_form, 'profile_form': profile_form})
+        return render(request, 'registration/register_new.html', {'user_form': user_form, 'profile_form': profile_form})
 
 class ActivateView(View):
     def get(self, request, uidb64, token):
