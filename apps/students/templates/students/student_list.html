@@ -11,17 +11,18 @@
 
 {% block content %}
   <div class="table-responsive">
-    <table id="studenttable" class="table table-bordered table-hover" data-page-length='100'>
-      <thead class="thead-light">
+    <table id="dtDynamicVerticalScrollExample" class="table table-striped table-bordered table-sm" cellspacing="0"
+    width="100%">
+    <thead>
         <tr>
-          <th>S/N</th>
-          <th>Registration Number</th>
-          <th>Fullname</th>
-          <th>Guardian Name</th>
-          <th>Current Class</th>
-          <th>Gender</th>
-          <th>Mobile Phone Number</th>
-          <th>Status</th>
+          <th class="th-sm">S/N</th>
+          <th class="th-sm">Registration Number</th>
+          <th class="th-sm">Fullname</th>
+          <th class="th-sm">Guardian Name</th>
+          <th class="th-sm">Current Class</th>
+          <th class="th-sm">Gender</th>
+          <th class="th-sm">Mobile Phone Number</th>
+          <th class="th-sm">Status</th>
         </tr>
       </thead>
       <tbody>
@@ -49,6 +50,14 @@
 <script>
   $('#studenttable').DataTable({
   });
+
+  $(document).ready(function () {
+  $('#dtDynamicVerticalScrollExample').DataTable({
+    "scrollY": "50vh",
+    "scrollCollapse": true,
+  });
+  $('.dataTables_length').addClass('bs-select');
+});
 </script>
 
 {% endblock morejs %}
