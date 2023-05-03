@@ -1,13 +1,16 @@
+import csv
 from django.contrib.messages.views import SuccessMessageMixin
 from django.forms import widgets
 from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.views.generic import DetailView, ListView
+from django.http import HttpResponse
+from django.views.generic import DetailView, ListView, View
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from apps.base.models import CustomUser
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin
 
-from .models import Staff
+from .models import Staff,StaffBulkUpload
 
 class StaffListView(ListView):
     model = Staff
@@ -86,4 +89,31 @@ class StaffDeleteView(DeleteView):
         messages.success(self.request, "Staff successfully deleted.")
         return super().form_valid(form)
 
+class StaffBulkUploadView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+    model = StaffBulkUpload
+    template_name = "staffs/staff_upload.html"
+    fields = ["csv_file"]
+    success_url = "/staff/list"
+    success_message = "Successfully uploaded staff"
+    
 
+class DownloadCSVViewdownloadcsv(LoginRequiredMixin, View):
+    def get(self, request, *args, **kwargs):
+        response = HttpResponse(content_type="text/csv")
+        response["Content-Disposition"] = 'attachment; filename="staff_template.csv"'
+
+        writer = csv.writer(response)
+        writer.writerow(
+            [
+                "first_name",
+                "last_name",
+                "guardian_name"
+                "gender",
+                "parent_number",
+                "address",
+                "current_class",
+                'comments'
+            ]
+        )
+
+        return response

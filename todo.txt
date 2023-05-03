@@ -46,7 +46,7 @@ Results score bug fix-------------Done
 Max validation added to score----------Done
 Create results Css Bug fix -----------Done
 Table scrolling-------------Done
-
+change 404 page-------------(Done)
 
 Avinash - todo for assigning
 1. change 404 page-------------(Done)
