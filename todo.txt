@@ -23,7 +23,7 @@ atleast one class popup - dominic  - done
 results optimisation - (mainly view results) -done
 register good looking -done
 
-ReDesign register page
+ReDesign register page---------Done
 New Staff------(not finding template)
 View results
 Land page show class blocks at half of page remaining will be discussed like calendar/list
@@ -45,7 +45,7 @@ Update results-----------------------------Done
 Results score bug fix-------------Done
 Max validation added to score----------Done
 Create results Css Bug fix -----------Done
-Table scrolling
+Table scrolling-------------Done
 
 
 Avinash - todo for assigning
