@@ -24,7 +24,7 @@ results optimisation - (mainly view results) -done
 register good looking -done
 
 ReDesign register page---------Done
-New Staff------(not finding template)
+New Staff------(Done)
 View results
 Land page show class blocks at half of page remaining will be discussed like calendar/list
 After blocks the class particular should be shown and also graph at another side later
