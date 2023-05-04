@@ -10,15 +10,12 @@
   <form method="POST">
     {% csrf_token %}
   <div class="card-header">
-
-
     <div class="card-tools">
       <p class="small btn btn-tool">You can also search by name/class by typing in the search box</p>
     </div>
   </div>
 {% endblock content-header %} """}
 {% block content %}
-
   <table id="studenttable" class="table table-sm table-bordered" data-page-length='100'>
     <thead class="thead-light">
       <tr>
