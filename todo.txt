@@ -26,7 +26,7 @@ register good looking -done
 ReDesign register page---------Done
 New Staff------(Done)
 View results
-Land page show class blocks at half of page remaining will be discussed like calendar/list
+Land page show class blocks at half of page remaining will be discussed like calendar/list--------------------Done
 After blocks the class particular should be shown and also graph at another side later
     Filters ( class )
     Class( student )
@@ -35,7 +35,7 @@ After blocks the class particular should be shown and also graph at another side
 staff Birthdays----------------Done
 student,staff count----------------Done
 { (removed)
-    Create results
+    Create results--------------------------Done
     Check box 
     add filters to create and update results
 
