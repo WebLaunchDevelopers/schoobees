@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% block fullcard %}
+
+<div class="container">
+{% for key,result in results.items %}
+
+
+ <div class="row border">
+   <div class="col-6 col-md-4 container d-flex justify-content-center align-items-center"><h2> Class {{key}} </h2></div>
+    <div class="col-md-8 container d-flex justify-content-center align-items-center"><h1>Data to be decided</h1></div>
+ </div>
+
+{% endfor %}
+
+</div>
+
+
+{% endblock fullcard %}

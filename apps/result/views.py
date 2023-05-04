@@ -153,4 +153,4 @@ def get_results(request):
             classes = classes.exclude(pk=clas.pk)
 
     context = {"results": resultss}
-    return render(request, "result/all_results.html", context)
+    return render(request, "result/all_results2.html", context)
