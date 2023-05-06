@@ -8,7 +8,7 @@
 {"""
 {% block content-header %}
   <form method="POST">
-    {% csrf_token %}
+  {% csrf_token %}
     <div class="card-header">
       <div class="card-tools">
       <p class="small btn btn-tool">You can also search by name/class by typing in the search box</p>
@@ -16,118 +16,35 @@
     </div>
     {% endblock content-header %} """}
     {% block content %}
-
+      {{ form.as_p }}
     <table id="studenttable" class="table table-sm table-bordered" data-page-length='100'>
-      <thead class="thead-light">
-      {% for subject in subjects %}
+    <thead class="thead-light">
         <tr>
-          <th><input type="checkbox" id="selecter"></th>
-          <th>Student Name</th>
-          <th>{{ subject }}</th>
-          <th>Class</th>
-          <th>Telugu</th>
-          <th>Hindi</th>
-          <th>English</th>
-          <th>Maths</th>
-          <th>Physics</th>
-          <th>Biology</th>
-          <th>Chemistry</th>
-          <th>Social Studies</th>
-          <th>Other</th>
+            <td></td>
+            <td name="student_name">Student Name</td>
+            {% for subject in subjects %}
+                <td name="subject">{{ subject }}</td>
+            {% endfor %}
         </tr>
-      {% endfor %}
-      </thead>
-      <tbody>
+    </thead>
+    <tbody>
         {% for student in students %}
           <tr>
             <td><input type="checkbox" id="{{ student.pk }}" name="students" value="{{ student.pk}}"></td>
-            <td>{{student}} </td>
-            <td>{{student.current_class}}</td>
-            <td>
-              <select name="attendence-choice" class="form-control">
-                <option value="Present" selected>Present</option>
-                <option value="Absent"  >Absent</option>
-                <option value="Late"  >Late</option>
-                <option value="Excused"  >Excused</option>
-                <option value="Unexcused"  >Unexcused</option>
-              </select>
-            </td>
-            <td>
-              <select name="attendence-choice" class="form-control">
-                <option value="Present" selected>Present</option>
-                <option value="Absent"  >Absent</option>
-                <option value="Late"  >Late</option>
-                <option value="Excused"  >Excused</option>
-                <option value="Unexcused"  >Unexcused</option>
-              </select>
-            </td>
-            <td>
-              <select name="attendence-choice" class="form-control">
-                <option value="Present" selected>Present</option>
-                <option value="Absent"  >Absent</option>
-                <option value="Late"  >Late</option>
-                <option value="Excused"  >Excused</option>
-                <option value="Unexcused"  >Unexcused</option>
-              </select>
-            </td>
-            <td>
-              <select name="attendence-choice" class="form-control">
-                <option value="Present" selected>Present</option>
-                <option value="Absent"  >Absent</option>
-                <option value="Late"  >Late</option>
-                <option value="Excused"  >Excused</option>
-                <option value="Unexcused"  >Unexcused</option>
-              </select>
-            </td>
-            <td>
-              <select name="attendence-choice" class="form-control">
-                <option value="Present" selected>Present</option>
-                <option value="Absent"  >Absent</option>
-                <option value="Late"  >Late</option>
-                <option value="Excused"  >Excused</option>
-                <option value="Unexcused"  >Unexcused</option>
-              </select>
-            </td>
-            <td>
-              <select name="attendence-choice" class="form-control">
-                <option value="Present" selected>Present</option>
-                <option value="Absent"  >Absent</option>
-                <option value="Late"  >Late</option>
-                <option value="Excused"  >Excused</option>
-                <option value="Unexcused"  >Unexcused</option>
-              </select>
-            </td>
-            <td>
-              <select name="attendence-choice" class="form-control">
-                <option value="Present" selected>Present</option>
-                <option value="Absent"  >Absent</option>
-                <option value="Late"  >Late</option>
-                <option value="Excused"  >Excused</option>
-                <option value="Unexcused"  >Unexcused</option>
-              </select>
-            </td>
-            <td>
-              <select name="attendence-choice" class="form-control">
-                <option value="Present" selected>Present</option>
-                <option value="Absent"  >Absent</option>
-                <option value="Late"  >Late</option>
-                <option value="Excused"  >Excused</option>
-                <option value="Unexcused"  >Unexcused</option>
-              </select>
-            </td>
-            <td>
-              <select name="attendence-choice" class="form-control">
-                <option value="Present" selected>Present</option>
-                <option value="Absent"  >Absent</option>
-                <option value="Late"  >Late</option>
-                <option value="Excused"  >Excused</option>
-                <option value="Unexcused"  >Unexcused</option>
-              </select>
-            </td>
+            <td name="student">{{student}} </td>
+            {% for i in subjects %}
+              <td name="attendence_choices">
+                    <input type="radio" name="{{ student.id }}" value="Present"> Present
+                    <input type="radio" name="{{ student.id }}" value="Absent"> Absent
+                    <input type="radio" name="{{ student.id }}" value="Late"> Late
+                    <input type="radio" name="{{ student.id }}" value="Excused">  Excused
+              </td>
+            {% endfor %}
           </tr>
         {% endfor %}
-      </tbody>
-    </table>
+
+    </tbody>
+</table>
 
     <input type="submit" class="btn btn-success mt-2" value="Proceed">
 

@@ -1,33 +1,32 @@
-from django.contrib import messages
+from django.views import View
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import redirect, render
-from django.views.generic import DetailView, ListView, View
+from django.utils.decorators import method_decorator
+from apps.base.models import CustomUser
+from .forms import AttendanceForm
 
-from apps.students.models import Student
+@method_decorator(login_required, name='dispatch')
+class UpdateAttendanceView(View):
+    def get(self, request):
+        form = AttendanceForm()
+        return render(request, 'attendence/update-attendence.html', {'form': form})
 
-from apps.corecode.models import Subject
+    def post(self, request):
+        form = AttendanceForm(request.POST)
+        if form.is_valid():
+            class_selected = form.cleaned_data['classes']
+            subject_selected = form.cleaned_data['subjects']
+            students = CustomUser.objects.filter(is_faculty=False, studentclass__name=class_selected, subject=subject_selected)
+            # Save attendance records to the database
+            for student in students:
+                attendance = Attendance(student=student, is_present=request.POST.get(str(student.id), False))
+                attendance.save()
+            return redirect('view-attendance')
+        else:
+            return render(request, 'attendence/update-attendence.html', {'form': form})
 
-from apps.corecode.models import StudentClass
-
-from plotly.offline import plot
-import plotly.express as px
-import pandas as pd
-
-# Create your views here.
-
-@login_required
-def update_attendence(request):
-    students = Student.objects.filter(user=request.user)
-    subjects = Subject.objects.filter(user=request.user)
-    # if request.method=='POST':
-    #     student = request.POST.get('student')
-    #
-    #     update_attendence.objects.create(student=student, last_name=lname, email=email, password=password)
-
-    return render(request, "attendence/update-attendence.html", {"students": students, "subjects": subjects})
-
-@login_required
-def view_attendence(request):
-    students = Student.objects.all()
-    return render(request, "attendence/view-attendence.html", {"students": students})
+@method_decorator(login_required, name='dispatch')
+class ViewAttendanceView(View):
+    def get(self, request):
+        students = CustomUser.objects.filter(is_faculty=False)
+        return render(request, 'attendence/update-attendence.html', {'students': students})

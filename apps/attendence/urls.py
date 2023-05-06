@@ -1,7 +1,7 @@
 from django.urls import path
-from .views import *
+from .views import UpdateAttendanceView, ViewAttendanceView
 
 urlpatterns = [
-    path("update/", update_attendence, name="update-attendence"),
-    path("view/", view_attendence, name="view-attendence"),
+    path('attendence/update/', UpdateAttendanceView.as_view(), name='update-attendence'),
+    path('attendence/view/', ViewAttendanceView.as_view(), name='view-attendence'),
 ]
