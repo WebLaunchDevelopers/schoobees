@@ -63,8 +63,10 @@ def create_result(request):
                 initial={
                     "session": request.current_session,
                     "term": request.current_term,
+                    #"class":request.current_class,
                 }
             )
+           # print("----------------->",request.current_session)
             studentlist = ",".join(id_list)
             return render(
                 request,

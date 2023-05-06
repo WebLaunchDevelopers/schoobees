@@ -76,6 +76,7 @@ class IndexView(LoginRequiredMixin, ListView):
         context.update({
             'event_list': json.dumps(event_list)
         })
+        print(context)
         return context
     
 class SiteConfigView(LoginRequiredMixin, View):
