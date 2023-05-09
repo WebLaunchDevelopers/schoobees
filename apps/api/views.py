@@ -18,7 +18,7 @@ MODLIST = ['App']
 @api_view(['GET'])
 def apiOverview(request):
 	api_urls = {
-		'Staff View':'/staff/<str:pk>/',
+		'Driver View':'/driver/<str:pk>/',
 		'Student View':'/student/<str:pk>/',
 		}
 
