@@ -22,6 +22,7 @@ from .forms import (
     AcademicTermForm,
     CurrentSessionForm,
     SiteConfigForm,
+    ProfileForm,
     CustomUserForm,
     StudentClassForm,
     SubjectForm,
@@ -88,6 +89,7 @@ class SiteConfigView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         user = request.user
         form = SiteConfigForm(instance=user)
+        print(form)
         context = {"form": form}
         return render(request, self.template_name, context)
 
@@ -95,10 +97,43 @@ class SiteConfigView(LoginRequiredMixin, View):
         user = request.user
 
         if request.POST['email'] != user.email:
-            send_activation_email(user, request, request.POST['email'])
+            # send_activation_email(user, request, request.POST['email'])
             messages.warning(request, "Please check your email to activate your new email address")
         
         form = SiteConfigForm(request.POST, instance=user)
+
+        if form.errors:
+            messages.error(request, "There was an error in the form. Please correct it and try again.")
+            context = {"form": form, "title": "Configuration"}
+            return render(request, self.template_name, context)
+        
+        if form.is_valid():
+            form.save()
+            # update_session_auth_hash(request, user)  # Keep user logged in
+            messages.success(request, "Configurations successfully updated")
+        context = {"form": form, "title": "Configuration"}
+        return render(request, self.template_name, context)
+class ProfileView(LoginRequiredMixin, View):
+    """Site Config View"""
+
+    form_class = ProfileForm
+    template_name = "corecode/siteconfig.html"
+
+    def get(self, request, *args, **kwargs):
+        # if request.user
+        user = request.user
+        form = ProfileForm(instance=user)
+        context = {"form": form}
+        return render(request, self.template_name, context)
+
+    def post(self, request, *args, **kwargs):
+        user = request.user
+
+        if request.POST['email'] != user.email:
+            # send_activation_email(user, request, request.POST['email'])
+            messages.warning(request, "Please check your email to activate your new email address")
+        
+        form = ProfileForm(request.POST, instance=user)
 
         if form.errors:
             messages.error(request, "There was an error in the form. Please correct it and try again.")

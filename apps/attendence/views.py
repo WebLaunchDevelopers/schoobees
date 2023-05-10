@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from apps.base.models import CustomUser
 from .forms import AttendanceForm
+from .models import Attendance
 
 @method_decorator(login_required, name='dispatch')
 class UpdateAttendanceView(View):
@@ -17,8 +18,10 @@ class UpdateAttendanceView(View):
             class_selected = form.cleaned_data['classes']
             subject_selected = form.cleaned_data['subjects']
             students = CustomUser.objects.filter(is_faculty=False, studentclass__name=class_selected, subject=subject_selected)
+            print(students)
             # Save attendance records to the database
             for student in students:
+                print(student)
                 attendance = Attendance(student=student, is_present=request.POST.get(str(student.id), False))
                 attendance.save()
             return redirect('view-attendance')

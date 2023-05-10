@@ -12,6 +12,7 @@ from .models import (
 )
 
 from apps.base.models import UserProfile
+from apps.staffs.models import Staff
 from django.contrib.auth import get_user_model
 
 
@@ -38,12 +39,33 @@ class UserProfileForm(forms.ModelForm):
             "chairman": forms.TextInput(attrs={"class": "form-control"}),
             "principal": forms.TextInput(attrs={"class": "form-control"}),
         }
+class StaffProfileForm(forms.ModelForm):
+    class Meta:
+        model = Staff
+        fields = ['first_name', 'last_name','mobile_number', 'address', 'gender', 'date_of_birth']
+        widgets={
+            "first_name": forms.TextInput(attrs={"class": "form-control"}),
+            "last_name": forms.TextInput(attrs={"class": "form-control"}),
+            "mobile_number": forms.TextInput(attrs={"class": "form-control"}),
+            "address": forms.TextInput(attrs={"class": "form-control"}),
+            "gender": forms.Select(attrs={"class": "form-control"}),
+            "date_of_birth": forms.DateInput(attrs={"class": "form-control"}),
+        }
 
 class SiteConfigForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields.update(CustomUserForm(instance=self.instance).fields)
         self.fields.update(UserProfileForm(instance=self.instance.userprofile).fields)
+
+    class Meta:
+        model = CustomUser
+        fields = []
+class ProfileForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields.update(CustomUserForm(instance=self.instance).fields)
+        self.fields.update(StaffProfileForm(instance=self.instance.staff).fields)
 
     class Meta:
         model = CustomUser

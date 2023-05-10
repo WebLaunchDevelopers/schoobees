@@ -14,7 +14,18 @@ class UpdateAttendence(forms.Form):
     )
 
 class AttendanceForm(forms.Form):
-    class_choices = CustomUser.objects.filter(is_faculty=False).values_list('studentclass__name', flat=True).distinct()
-    classes = forms.ChoiceField(choices=[(c, c) for c in class_choices])
-    subject_choices = CustomUser.objects.filter(is_faculty=False).values_list('subject', flat=True).distinct()
-    subjects = forms.ChoiceField(choices=[(s, s) for s in subject_choices])
+    classes = forms.ChoiceField(choices=[])
+    subjects = forms.ChoiceField(choices=[])
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        
+        if not CustomUser.objects.filter(is_faculty=False).exists():
+            return
+        
+        class_choices = CustomUser.objects.filter(is_faculty=False).values_list('studentclass__name', flat=True).distinct()
+        self.fields['classes'].choices = [(c, c) for c in class_choices]
+        
+        subject_choices = CustomUser.objects.filter(is_faculty=False).values_list('subject', flat=True).distinct()
+        self.fields['subjects'].choices = [(s, s) for s in subject_choices]
+
