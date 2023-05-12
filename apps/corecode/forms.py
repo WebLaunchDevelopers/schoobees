@@ -63,9 +63,10 @@ class SiteConfigForm(forms.ModelForm):
         fields = []
 class ProfileForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
+        staff = Staff.objects.get(email=self.instance.username)
         super().__init__(*args, **kwargs)
         self.fields.update(CustomUserForm(instance=self.instance).fields)
-        self.fields.update(StaffProfileForm(instance=self.instance.staff).fields)
+        self.fields.update(StaffProfileForm(instance=staff).fields)
 
     class Meta:
         model = CustomUser

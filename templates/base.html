@@ -57,9 +57,15 @@
             <i class="far fa-user"></i>
           </a>
           <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
-            <a href="{% url 'configs' %}" class="dropdown-item">
-              <i class="fas fa-user mr-2"></i> Profile
-            </a>
+            {% if request.user.is_faculty %}
+              <a href="{% url 'faculty-profile' %}" class="dropdown-item">
+                <i class="fas fa-user mr-2"></i> Profile
+              </a>
+            {% else %}
+              <a href="{% url 'configs' %}" class="dropdown-item">
+                <i class="fas fa-user mr-2"></i> Profile
+              </a>
+            {% endif %}
             <div class="dropdown-divider"></div>
             <a href="{% url 'drivers-view' %}" class="dropdown-item">
               <i class="fas fa-bus mr-2"></i> Drivers
@@ -69,6 +75,7 @@
               <i class="fas fa-sign-out"></i> Sign out
             </a>
           </div>
+
         </li>
         <li class="nav-item">
           <a class="nav-link" data-widget="control-sidebar" data-slide="true"
