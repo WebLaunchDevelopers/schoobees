@@ -1,17 +1,20 @@
 from django.shortcuts import render, redirect
-from django.contrib.auth import login, authenticate, logout
+from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib import messages
 from django.utils import timezone
 from django.views import View
-from .forms import CustomUserCreationForm, LoginForm, UserProfileForm
+from .forms import CustomUserCreationForm, LoginForm, UserProfileForm, ChangePasswordForm
 from .utils import send_activation_email, send_password_reset_email
 from .models import CustomUser as User
 from django.contrib.auth.views import PasswordResetConfirmView
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView, FormView
 # from django.utils.encoding import force_text
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+
 
 class RegisterView(View):
     def get(self, request):
@@ -106,3 +109,54 @@ def error_404_view(request, exception):
     # we add the path to the 404.html file
     # here. The name of our HTML file is 404.html
     return render(request, '404.html')
+
+
+# @login_required
+# class ChangePasswordView(View):
+#     form_class = ChangePasswordForm
+#     template_name = 'change_password.html'
+#     success_url = 'password_change_done'
+#
+#     def __init__(self, *args, **kwargs):
+#         super().__init__(*args, **kwargs)
+#
+#     def get(self, request, *args, **kwargs):
+#         form = self.form_class(request.user)
+#         debug_value = 'Form is invalid'
+#         return render(request, self.template_name, {'form': form, 'debug_value': debug_value})
+#
+#     def post(self, request, *args, **kwargs):
+#         form = self.form_class(request.user, request.POST)
+#         if form.is_valid():
+#             user = form.save()
+#             update_session_auth_hash(request, user)  # Important!
+#             return redirect(self.success_url)
+#         response = super().form_invalid(form)
+#         response.context_data['debug_value'] = 'Form is invalid'
+#         return response
+
+
+@method_decorator(login_required, name='dispatch')
+class ChangePasswordView(View):
+    form_class = ChangePasswordForm
+    template_name = 'registration/change_password.html'
+    success_url = 'change_password'
+
+    def get(self, request):
+        form = self.form_class(request.user)
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = self.form_class(request.user, request.POST)
+        if form.is_valid():
+            new_password1 = form.cleaned_data.get('new_password1')
+            new_password2 = form.cleaned_data.get('new_password2')
+            if new_password1 != new_password2:
+                messages.error('new_password2', 'New passwords do not match')
+                # messages.error(request, 'New passwords do not match')
+                return render(request, self.template_name, {'form': form})
+            user = form.save()
+            update_session_auth_hash(request, user)  # Important!
+            messages.success(request, 'You have successfully changed your password.')
+            return redirect(self.success_url)
+        return render(request, self.template_name, {'form': form})
