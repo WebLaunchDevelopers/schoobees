@@ -39,6 +39,17 @@ class UserProfileForm(forms.ModelForm):
             "chairman": forms.TextInput(attrs={"class": "form-control"}),
             "principal": forms.TextInput(attrs={"class": "form-control"}),
         }
+class SiteConfigForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields.update(CustomUserForm(instance=self.instance).fields)
+        print(UserProfileForm(instance=self.instance.userprofile).fields)
+        self.fields.update(UserProfileForm(instance=self.instance.userprofile).fields)
+
+    class Meta:
+        model = CustomUser
+        fields = []
+
 class StaffProfileForm(forms.ModelForm):
     class Meta:
         model = Staff
@@ -52,15 +63,6 @@ class StaffProfileForm(forms.ModelForm):
             "date_of_birth": forms.DateInput(attrs={"class": "form-control"}),
         }
 
-class SiteConfigForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields.update(CustomUserForm(instance=self.instance).fields)
-        self.fields.update(UserProfileForm(instance=self.instance.userprofile).fields)
-
-    class Meta:
-        model = CustomUser
-        fields = []
 class ProfileForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         staff = Staff.objects.get(email=self.instance.username)

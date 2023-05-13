@@ -89,7 +89,6 @@ class SiteConfigView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         user = request.user
         form = SiteConfigForm(instance=user)
-        print(form)
         context = {"form": form}
         return render(request, self.template_name, context)
 
