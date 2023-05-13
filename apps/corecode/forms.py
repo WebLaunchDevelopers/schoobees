@@ -11,56 +11,62 @@ from .models import (
     Driver
 )
 
-from apps.base.models import UserProfile
+from apps.base.models import UserProfile, CustomUser
 from apps.staffs.models import Staff
 from django.contrib.auth import get_user_model
 
-
-CustomUser = get_user_model()
+# CustomUser = get_user_model()
+from django.contrib.auth.forms import UserCreationForm
+from django.db import transaction
 
 class CustomUserForm(forms.ModelForm):
+    email = forms.EmailField(required=True)
+
     class Meta:
         model = CustomUser
         fields = ['register_id', 'email']
-        widgets={
-            "register_id": forms.HiddenInput(),
-            "email": forms.TextInput(attrs={"class": "form-control"}),
+        widgets = {
+            'email': forms.EmailInput(attrs={'class': 'form-control', 'placeholder': 'Enter your email'}),
         }
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        if 'email' in self.changed_data and CustomUser.objects.filter(email=email).exists():
+            raise forms.ValidationError('Email already exists')
+        return email
+
+    @transaction.atomic
+    def save(self):
+        user = super().save(commit=False)
+        user.email = self.cleaned_data.get('email')
+        user.username = self.cleaned_data.get('email')
+        user.save()
+        return user
 
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
-        fields = ['mobile_number', 'address', 'country', 'school_name', 'chairman', 'principal']
-        widgets={
-            "mobile_number": forms.TextInput(attrs={"class": "form-control"}),
-            "address": forms.TextInput(attrs={"class": "form-control"}),
-            "country": forms.Select(attrs={"class": "form-control"}),
-            "school_name": forms.TextInput(attrs={"class": "form-control"}),
-            "chairman": forms.TextInput(attrs={"class": "form-control"}),
-            "principal": forms.TextInput(attrs={"class": "form-control"}),
+        fields = ['school_name', 'chairman', 'principal', 'mobile_number', 'address', 'country']
+        widgets = {
+            'school_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your school name'}),
+            'chairman': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your chairman name'}),
+            'principal': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your principal name'}),
+            'mobile_number': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your mobile number'}),
+            'address': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your address'}),
+            'country': forms.Select(attrs={'class': 'form-control', 'placeholder': 'Enter your country'}),
         }
-class SiteConfigForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields.update(CustomUserForm(instance=self.instance).fields)
-        print(UserProfileForm(instance=self.instance.userprofile).fields)
-        self.fields.update(UserProfileForm(instance=self.instance.userprofile).fields)
-
-    class Meta:
-        model = CustomUser
-        fields = []
 
 class StaffProfileForm(forms.ModelForm):
     class Meta:
         model = Staff
-        fields = ['first_name', 'last_name','mobile_number', 'address', 'gender', 'date_of_birth']
+        fields = ['first_name', 'last_name','mobile_number', 'address', 'gender', 'date_of_birth', 'email']
         widgets={
-            "first_name": forms.TextInput(attrs={"class": "form-control"}),
-            "last_name": forms.TextInput(attrs={"class": "form-control"}),
-            "mobile_number": forms.TextInput(attrs={"class": "form-control"}),
-            "address": forms.TextInput(attrs={"class": "form-control"}),
-            "gender": forms.Select(attrs={"class": "form-control"}),
-            "date_of_birth": forms.DateInput(attrs={"class": "form-control"}),
+            "first_name": forms.TextInput(attrs={"class": "form-control", "placeholder": "Enter first name"}),
+            "last_name": forms.TextInput(attrs={"class": "form-control", "placeholder": "Enter last name"}),
+            "mobile_number": forms.TextInput(attrs={"class": "form-control", "placeholder": "Enter mobile number"}),
+            "address": forms.TextInput(attrs={"class": "form-control", "placeholder": "Enter address"}),
+            "gender": forms.Select(attrs={"class": "form-control", "placeholder": "Select gender"}),
+            "date_of_birth": forms.DateInput(attrs={"class": "form-control", "placeholder": "Enter date of birth"}),
         }
 
 class ProfileForm(forms.ModelForm):

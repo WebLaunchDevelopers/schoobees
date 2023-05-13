@@ -11,48 +11,48 @@
 
     <div class="form-group">
       <label>Register ID:</label>
-      <span class="form-control-static">{{ form.register_id.value }}</span>
+      <span class="form-control-static">{{ custom_user_form.register_id.value }}</span>
     </div>   
 
-    <input type="hidden" name="register_id" value="{{ form.instance.register_id }}">
+    <input type="hidden" name="register_id" value="{{ custom_user_form.instance.register_id }}">
     <div class="form-group">
-      <label for="{{ form.school_name.id_for_label }}">School Name:</label>
-      {{ form.school_name|add_class:"form-control"|attr:"placeholder: Enter your school name" }}
+      <label for="{{ user_profile_form.school_name.id_for_label }}">School Name:</label>
+      {{ user_profile_form.school_name|add_class:"form-control"|attr:"placeholder: Enter your school name" }}
     </div>
 
     <div class="form-group d-flex">
       <div class="flex-grow-1 mr-2">
-        <label for="{{ form.chairman.id_for_label }}">Chairman:</label>
-        {{ form.chairman|add_class:"form-control"|attr:"placeholder: Enter your chairman name" }}
+        <label for="{{ user_profile_form.chairman.id_for_label }}">Chairman:</label>
+        {{ user_profile_form.chairman|add_class:"form-control"|attr:"placeholder: Enter your chairman name" }}
       </div>
 
       <div class="flex-grow-1">
-        <label for="{{ form.principal.id_for_label }}">Principal:</label>
-        {{ form.principal|add_class:"form-control"|attr:"placeholder: Enter your principal name" }}
+        <label for="{{ user_profile_form.principal.id_for_label }}">Principal:</label>
+        {{ user_profile_form.principal|add_class:"form-control"|attr:"placeholder: Enter your principal name" }}
       </div>
     </div>
 
     <div class="form-group d-flex">
       <div class="flex-grow-1 mr-2">
-        <label for="{{ form.email.id_for_label }}">Email:</label>
-        {{ form.email|add_class:"form-control"|attr:"placeholder: Enter your email"|attr:"type: email" }}
+        <label for="{{ custom_user_form.email.id_for_label }}">Email:</label>
+        {{ custom_user_form.email|add_class:"form-control"|attr:"placeholder: Enter your email"|attr:"type: email" }}
       </div>
   
       <div class="flex-grow-1">
-        <label for="{{ form.mobile_number.id_for_label }}">Mobile Number:</label>
-        {{ form.mobile_number|add_class:"form-control"|attr:"placeholder: Enter your mobile number" }}
+        <label for="{{ user_profile_form.mobile_number.id_for_label }}">Mobile Number:</label>
+        {{ user_profile_form.mobile_number|add_class:"form-control"|attr:"placeholder: Enter your mobile number" }}
       </div>
     </div>
 
     <div class="form-group d-flex">
       <div class="flex-grow-1 mr-2" style="width: 70%">
-        <label for="{{ form.address.id_for_label }}">Address:</label>
-        {{ form.address|add_class:"form-control"|attr:"placeholder: Enter your address" }}
+        <label for="{{ user_profile_form.address.id_for_label }}">Address:</label>
+        {{ user_profile_form.address|add_class:"form-control"|attr:"placeholder: Enter your address" }}
       </div>
     
       <div class="flex-grow-1" style="width: 30%">
-        <label for="{{ form.country.id_for_label }}">Country:</label>
-        {{ form.country|add_class:"form-control"|attr:"placeholder: Enter your country" }}
+        <label for="{{ user_profile_form.country.id_for_label }}">Country:</label>
+        {{ user_profile_form.country|add_class:"form-control"|attr:"placeholder: Enter your country" }}
       </div>
     </div>    
 

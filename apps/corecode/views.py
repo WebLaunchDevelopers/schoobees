@@ -12,6 +12,7 @@ import qrcode
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 import os
+from django.utils.html import strip_tags
 
 from apps.base.utils import send_activation_email
 
@@ -21,9 +22,11 @@ from .forms import (
     AcademicSessionForm,
     AcademicTermForm,
     CurrentSessionForm,
-    SiteConfigForm,
+    # SiteConfigForm,
     ProfileForm,
     CustomUserForm,
+    UserProfileForm,
+    StaffProfileForm,
     StudentClassForm,
     SubjectForm,
     CalendarForm,
@@ -83,68 +86,79 @@ class IndexView(LoginRequiredMixin, ListView):
 class SiteConfigView(LoginRequiredMixin, View):
     """Site Config View"""
 
-    form_class = SiteConfigForm
-    template_name = "corecode/siteconfig.html"
-
-    def get(self, request, *args, **kwargs):
+    def get(self, request):
+        if request.user.is_faculty:
+            return redirect('faculty-profile')
         user = request.user
-        form = SiteConfigForm(instance=user)
-        context = {"form": form}
-        return render(request, self.template_name, context)
+        custom_user_form = CustomUserForm(instance=user)
+        user_profile_form = UserProfileForm(instance=user.userprofile)
+        return render(request, 'corecode/siteconfig.html', {'custom_user_form': custom_user_form, 'user_profile_form': user_profile_form})
 
-    def post(self, request, *args, **kwargs):
+    def post(self, request):
+        if request.user.is_faculty:
+            return redirect('faculty-profile')
         user = request.user
+        custom_user_form = CustomUserForm(request.POST, instance=user)
+        user_profile_form = UserProfileForm(request.POST, request.FILES, instance=user.userprofile)
+        if custom_user_form.is_valid() and user_profile_form.is_valid():
+            custom_user_form.save()
+            user_profile_form.save()
+            messages.success(request, 'Configurations successfully updated.')
+            return redirect('configs')
+        elif custom_user_form.errors:
+            email_error = strip_tags(custom_user_form.errors.get('email', ''))
+            if email_error == 'Email already exists':
+                messages.error(request, email_error)
+            else:
+                messages.error(request, 'There was an error in the form. Please correct it and try again.')
+            return redirect('configs')
+        else:
+            messages.error(request, 'There was an error in the form. Please correct it and try again.')
+            return render(request, 'corecode/siteconfig.html', {'custom_user_form': custom_user_form, 'user_profile_form': user_profile_form})
+  
+class FacultyProfileView(LoginRequiredMixin, View):
+    """Profile View"""
 
-        if request.POST['email'] != user.email:
-            # send_activation_email(user, request, request.POST['email'])
-            messages.warning(request, "Please check your email to activate your new email address")
-        
-        form = SiteConfigForm(request.POST, instance=user)
-
-        if form.errors:
-            messages.error(request, "There was an error in the form. Please correct it and try again.")
-            context = {"form": form, "title": "Configuration"}
-            return render(request, self.template_name, context)
-        
-        if form.is_valid():
-            form.save()
-            # update_session_auth_hash(request, user)  # Keep user logged in
-            messages.success(request, "Configurations successfully updated")
-        context = {"form": form, "title": "Configuration"}
-        return render(request, self.template_name, context)
-class ProfileView(LoginRequiredMixin, View):
-    """Site Config View"""
-
-    form_class = ProfileForm
-    template_name = "corecode/siteconfig.html"
-
-    def get(self, request, *args, **kwargs):
-        # if request.user
+    def get(self, request):
+        if not request.user.is_faculty:
+            return redirect('configs')
         user = request.user
-        form = ProfileForm(instance=user)
-        context = {"form": form}
-        return render(request, self.template_name, context)
+        try:
+            staff = Staff.objects.get(email=request.user.username)
+        except Staff.DoesNotExist:
+            messages.error(request, 'Unable to fetch details. Please try again.')
+            return redirect('home')
 
-    def post(self, request, *args, **kwargs):
+        custom_user_form = CustomUserForm(instance=user)
+        staff_profile_form = StaffProfileForm(instance=staff)
+        return render(request, 'corecode/facultyprofile.html', {'custom_user_form': custom_user_form, 'staff_profile_form': staff_profile_form})
+
+    def post(self, request):
+        if not request.user.is_faculty:
+           return redirect('configs')
         user = request.user
-
-        if request.POST['email'] != user.email:
-            # send_activation_email(user, request, request.POST['email'])
-            messages.warning(request, "Please check your email to activate your new email address")
-        
-        form = ProfileForm(request.POST, instance=user)
-
-        if form.errors:
-            messages.error(request, "There was an error in the form. Please correct it and try again.")
-            context = {"form": form, "title": "Configuration"}
-            return render(request, self.template_name, context)
-        
-        if form.is_valid():
-            form.save()
-            # update_session_auth_hash(request, user)  # Keep user logged in
-            messages.success(request, "Configurations successfully updated")
-        context = {"form": form, "title": "Configuration"}
-        return render(request, self.template_name, context)
+        try:
+            staff = Staff.objects.get(email=request.user.username)
+        except Staff.DoesNotExist:
+            messages.error(request, 'Unable to fetch details. Please try again.')
+            return redirect('home')
+        custom_user_form = CustomUserForm(request.POST, instance=user)
+        staff_profile_form = StaffProfileForm(request.POST, request.FILES, instance=staff)
+        if custom_user_form.is_valid() and staff_profile_form.is_valid():
+            custom_user_form.save()
+            staff_profile_form.save()
+            messages.success(request, 'Configurations successfully updated.')
+            return redirect('faculty-profile')
+        elif custom_user_form.errors:
+            email_error = strip_tags(custom_user_form.errors.get('email', ''))
+            if email_error == 'Email already exists':
+                messages.error(request, email_error)
+            else:
+                messages.error(request, 'There was an error in the form. Please correct it and try again.')
+            return redirect('faculty-profile')
+        else:
+            messages.error(request, 'There was an error in the form. Please correct it and try again.')
+            return render(request, 'corecode/facultyprofile.html', {'custom_user_form': custom_user_form, 'staff_profile_form': staff_profile_form})
 
 class SessionListView(LoginRequiredMixin, SuccessMessageMixin, ListView):
     model = AcademicSession
