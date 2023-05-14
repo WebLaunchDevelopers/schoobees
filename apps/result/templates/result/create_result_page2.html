@@ -3,7 +3,7 @@
 
 
 {% block title %}
-  Select all the subjects you want to create
+  Select the fields
 {% endblock title %}
 
 
@@ -21,23 +21,22 @@
   </style>
 <div>
 
-  <p>You selected <b>{{ count }} students</b> from the previous page.</p>
-
   <form method="POST">
     {% csrf_token %}
 
     {{ form.non_field_errors }}
 
     <div class="form-group row">
-      {{ form.session.errors }}
-      <label class="col-2" for="{{ form.session.id_for_label }}">{{ form.session.label_tag}}</label>
-      <div class="col">{{ form.session | add_class:"form-control" }}</div>
+      {{ form.class_name.errors }}
+      <label class="col-2" for="{{ form.class_name.id_for_label }}">{{ form.class_name.label_tag}}</label>
+      <div class="col">{{ form.class_name | add_class:"form-control" }}</div>
     </div>
 
+
     <div class="form-group row">
-      {{ form.term.errors }}
-      <label class="col-2" for="{{ form.term.id_for_label }}">{{ form.term.label_tag}}</label>
-      <div class="col">{{ form.term | add_class:"form-control" }}</div>
+      {{ form.exam.errors }}
+      <label class="col-2" for="{{ form.exam.id_for_label }}">{{ form.exam.label_tag}}</label>
+      <div class="col">{{ form.exam | add_class:"form-control" }}</div>
     </div>
 
 

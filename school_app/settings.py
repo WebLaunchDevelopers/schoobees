@@ -49,7 +49,8 @@ INSTALLED_APPS = [
     "apps.result",
     "apps.base",
     "apps.api",
-    "apps.attendence"
+    "apps.attendence",
+    "crispy_forms"
 ]
 
 AUTH_USER_MODEL = "base.CustomUser"

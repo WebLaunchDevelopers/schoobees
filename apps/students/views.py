@@ -37,26 +37,26 @@ class StudentDetailView(LoginRequiredMixin, DetailView):
         context = super(StudentDetailView, self).get_context_data(**kwargs)
         context["payments"] = Invoice.objects.filter(student=self.object)
         results = Result.objects.filter(student=self.object)
-        subjects,subject,marks=dict(),list(),list()
-        score,total=0,0
+        subjects, subject, marks = dict(), list(), list()
+        score, total = 0, 0
         for result in results:
-            test=result.test_score
-            exam=result.exam_score
-            score=result.test_score + result.exam_score
-            total+=score
-            subjects[str(result.subject)]={"test":test,"exam":exam,"score":score}
+            test = result.test_score
+            exam = result.exam_score
+            score = result.test_score + result.exam_score
+            total += score
+            subjects[str(result.subject)] = {"test": test, "exam": exam, "score": score}
             
             subject.append(str(result.subject))
             marks.append(score)
         
-        df=pd.DataFrame(marks,subject)
-        fig = px.bar(df,color=subject)
+        df = pd.DataFrame(marks, subject)
+        fig = px.bar(df, color=subject)
         fig.update_traces(width=0.5)
-        chart=plot(fig,output_type="div")
+        chart = plot(fig, output_type="div")
 
-        context["result"]=subjects
-        context["total"]=total
-        context["chart"]=chart
+        context["result"] = subjects
+        context["total"] = total
+        context["chart"] = chart
         #print("---------------->",context)
         return context
     
