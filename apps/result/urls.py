@@ -1,9 +1,10 @@
 from django.urls import path
 
-from .views import create_result, edit_results, get_results
+from .views import CreateResultView, EditResultsView, GetResultsView
 
 urlpatterns = [
-    path("create/", create_result, name="create-result"),
-    path("edit-results/", edit_results, name="edit-results"),
-    path("view/all", get_results, name="view-results"),
+    path("create/", CreateResultView.as_view(), name="create-result"),
+    path("edit-results/", EditResultsView.as_view(), name="edit-results"),
+    path("view/all", GetResultsView.as_view(), name="view-results"),
 ]
+

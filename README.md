@@ -89,3 +89,6 @@ git remote set-url origin <new remote URL>
 virtualenv myenv
 myenv\Scripts\activate
 ```
+
+## requirements.txt
+pip freeze > requirements.txt
