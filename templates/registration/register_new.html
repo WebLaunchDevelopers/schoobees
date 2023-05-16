@@ -121,7 +121,7 @@ select#id_country {
 
 
 <div class="container">
-    <div class="row py-5 mt-4 align-items-center">
+    <div class="row py-3 mt-3 align-items-center">
         <!-- For Demo Purpose -->
         <div class="col-md-5 pr-lg-5 mb-5 mb-md-0">
             <img src="{% static 'dist/img/logos/logo_w.png' %}" alt="" class="img-fluid mb-3 d-none d-md-block">
@@ -132,29 +132,6 @@ select#id_country {
             <form method="post">
                 {% csrf_token %}
                 <div class="row">
-                <span class="error-msg"> 
-                    {% if form.errors %}
-                    <div class="alert alert-danger">
-                      {% for field_errors in form.errors.values %}
-                          {% for error in field_errors %}
-                              {{ error }}
-                          {% endfor %}
-                      {% endfor %}
-                  </div>
-                    <p class="error-msg">Your username and password didn't match. Please try again.</p>
-                    {% endif %}
-            
-                    {% if next %}
-                    {% if user.is_authenticated %}
-                    <p class="error-msg"> Your account doesn't have access to this page. To proceed,
-                      please login with an account that has access.</p>
-                    {% else %}
-                    </span>
-                    <p>Please Login to see this page.</p>
-                    {% endif %}
-                    {% endif %}
-                </span>
- 
                 <div class="wrap-input100 validate-input mx-2" data-validate="Enter username">
                     <input class="input100" id="id_username" name="username" type="text" placeholder="Username" required>
                       <span class="focus-input100"></span>
@@ -250,6 +227,18 @@ select#id_country {
                 </div>
                 
             </div>
+            <span class="error-msg"> 
+              {% if form_errors %}
+                  <p class="error-msg">
+                      {% for field, errors in form_errors.items %}
+                          <strong>{{ field }}:</strong>
+                          {% for error in errors %}
+                              {{ error }}<br>
+                          {% endfor %}
+                      {% endfor %}
+                  </p>
+              {% endif %}
+          </span>          
             </form>
         </div>
     </div>
