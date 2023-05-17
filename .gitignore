@@ -39,4 +39,5 @@ debug.log*
 static/admin
 static/rest_framework
 
-media/qrcode.png
+/media/*
+/media

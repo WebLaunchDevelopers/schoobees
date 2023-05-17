@@ -9,7 +9,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta http-equiv="x-ua-compatible" content="ie=edge">
 
-  <title>{{ school_name | default:"MySchool" }}</title>
+  <title>{{ school_name | default:"SchooBees | MySchool" }}</title>
+  <link rel="shortcut icon" href="{% static 'dist/img/logos/logo_y.png' %}" type="image/x-icon">
   
   <!-- Font Awesome Icons -->
   <link rel="stylesheet"
@@ -34,55 +35,14 @@
 
 <div class="limiter">
     <div class="container-login100">
+      <div class="pre-wrap-login100">
         <div class="wrap-login100">
             <div class="login100-pic js-tilt" style="width: 400px;">
-                <img src="{% static 'dist/img/login.png' %}">
+              <img src="{% static 'dist/img/logos/logo_w.png' %}">
             </div>
-            
-            <!-- <div class="testing">
-              <form method="post">
-                {% csrf_token %}
-                {{ form.as_p }}
-                {% if form.errors %}
-                    <div class="alert alert-danger">
-                        {% for field_errors in form.errors.values %}
-                            {% for error in field_errors %}
-                                {{ error }}
-                            {% endfor %}
-                        {% endfor %}
-                    </div>
-                {% endif %}
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </form>            
-            </div> -->
-
             <form class="login100-form validate-form" method="post" action="{% url 'login' %}">
                 {% csrf_token %}
-                <span class="login100-form-title">
-                   School Bee
-                                </span>
-                <span class="error-msg"> 
-                    {% if form.errors %}
-                    <div class="alert alert-danger">
-                      {% for field_errors in form.errors.values %}
-                          {% for error in field_errors %}
-                              {{ error }}
-                          {% endfor %}
-                      {% endfor %}
-                  </div>
-                    <p class="error-msg">Your username and password didn't match. Please try again.</p>
-                    {% endif %}
-            
-                    {% if next %}
-                    {% if user.is_authenticated %}
-                    <p class="error-msg"> Your account doesn't have access to this page. To proceed,
-                      please login with an account that has access.</p>
-                    {% else %}
-                    </span>
-                    <p>Please Login to see this page.</p>
-                    {% endif %}
-                    {% endif %}
-                </span>
+                <span class="login100-form-title">SchooBees</span>
                 <div class="wrap-input100 validate-input" data-validate="Valid email is required: ex@abc.xyz">
                   <!-- <input type="email" name="email" id="email" class="input100" placeholder="Username" required> -->
                   <input class="input100" id="id_username" name="username" type="text" placeholder="Username" required>
@@ -118,6 +78,18 @@
                 
             </form>
         </div>
+        <span class="error-msg" style="text-align: center;"> 
+          {% if form.errors %}
+          <p class="error-msg">
+            {% for field_errors in form.errors.values %}
+                {% for error in field_errors %}
+                    {{ error }}
+                {% endfor %}
+            {% endfor %}
+          </p>
+          {% endif %}
+      </span>
+      </div>
     </div>
 </div>
 

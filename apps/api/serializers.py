@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from apps.students.models import Student
-from apps.base.models import CustomUser
+from apps.base.models import CustomUser, UserProfile
 from apps.corecode.models import Driver
 
 class StudentSerializer(serializers.ModelSerializer):
@@ -12,7 +12,12 @@ class StudentSerializer(serializers.ModelSerializer):
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['chairman', 'principal', 'school_name', 'mobile_number', 'email', 'address', 'country']
+        fields = ['register_id', 'is_faculty', 'approved', 'email']
+
+class UserProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = UserProfile
+        fields = ['chairman', 'principal', 'school_name', 'mobile_number', 'address', 'country']
   
 class DriverSerializer(serializers.ModelSerializer):
 	class Meta:

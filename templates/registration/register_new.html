@@ -8,7 +8,9 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ school_name | default:"MySchool" }}</title>
+    <title>{{ school_name | default:"SchooBees | MySchool" }}</title>
+  <link rel="shortcut icon" href="{% static 'dist/img/logos/logo_y.png' %}" type="image/x-icon">
+
       <!-- Font Awesome Icons -->
   <link rel="stylesheet"
   href="{% static 'plugins/fontawesome-free/css/all.min.css' %}">
@@ -103,9 +105,6 @@ select#id_country {
 .login100-form-btn {
     width: auto;
 }
-.login100-form-btn:hover {
-    background-color: rgb(68, 208, 55);
-}
     </style>
 </head>
 <body>
@@ -114,21 +113,18 @@ select#id_country {
     <nav class="navbar navbar-expand-lg navbar-light py-3">
         <div class="container">
             <!-- Navbar Brand -->
-            <h1>
-              SchoolBees
-            </h1>
+            <h1>Create an Account</h1>
+            <p class="font-italic text-muted mb-0">Register Yourself</p>
         </div>
     </nav>
 </header>
 
 
 <div class="container">
-    <div class="row py-5 mt-4 align-items-center">
+    <div class="row py-3 mt-3 align-items-center">
         <!-- For Demo Purpose -->
         <div class="col-md-5 pr-lg-5 mb-5 mb-md-0">
-            <img src="https://bootstrapious.com/i/snippets/sn-registeration/illustration.svg" alt="" class="img-fluid mb-3 d-none d-md-block">
-            <h1>Create an Account</h1>
-            <p class="font-italic text-muted mb-0">Register Yourself</p>
+            <img src="{% static 'dist/img/logos/logo_w.png' %}" alt="" class="img-fluid mb-3 d-none d-md-block">
         </div>
 
         <!-- Registeration Form -->
@@ -136,29 +132,6 @@ select#id_country {
             <form method="post">
                 {% csrf_token %}
                 <div class="row">
-                <span class="error-msg"> 
-                    {% if form.errors %}
-                    <div class="alert alert-danger">
-                      {% for field_errors in form.errors.values %}
-                          {% for error in field_errors %}
-                              {{ error }}
-                          {% endfor %}
-                      {% endfor %}
-                  </div>
-                    <p class="error-msg">Your username and password didn't match. Please try again.</p>
-                    {% endif %}
-            
-                    {% if next %}
-                    {% if user.is_authenticated %}
-                    <p class="error-msg"> Your account doesn't have access to this page. To proceed,
-                      please login with an account that has access.</p>
-                    {% else %}
-                    </span>
-                    <p>Please Login to see this page.</p>
-                    {% endif %}
-                    {% endif %}
-                </span>
- 
                 <div class="wrap-input100 validate-input mx-2" data-validate="Enter username">
                     <input class="input100" id="id_username" name="username" type="text" placeholder="Username" required>
                       <span class="focus-input100"></span>
@@ -248,12 +221,24 @@ select#id_country {
                 <div class="d-flex justify-content-center">
                   <div class="form-group d-flex justify-content-center align-items-center mx-2 px-20">
                     <div class="col-sm-offset-2 col-sm-8 container-login100-form-btn">
-                      <button type="submit" class="btn btn-default login100-form-btn px-20">Submit</button>
+                      <button type="submit" class="btn btn-primary btn-block login100-form-btn">Submit</button>
                     </div>
                   </div>
                 </div>
                 
             </div>
+            <span class="error-msg"> 
+              {% if form_errors %}
+                  <p class="error-msg">
+                      {% for field, errors in form_errors.items %}
+                          <strong>{{ field }}:</strong>
+                          {% for error in errors %}
+                              {{ error }}<br>
+                          {% endfor %}
+                      {% endfor %}
+                  </p>
+              {% endif %}
+          </span>          
             </form>
         </div>
     </div>
