@@ -2,48 +2,43 @@
 
 {% block fullcard %}
 
-{% for key,result in results.items %}
+{% for clas, result in resultss.items %}
 
- <h1>Class {{key}}</h1>
+  <h1>Class {{ clas }}</h1>
 
-   <h1>{{i}}</h1>
-
- <div class="table-responsive">
-  <table id="studenttable" class="table table-bordered table-hover" data-page-length='100'>
-    <thead class="thead-light">
-      <tr>
-        <th>S/N</th>
-        <th>Registration Number</th>
-        {% for sub in result.subject%}
-          <th>{{sub}}</th>
-        {% endfor %}
-      </tr>
-    </thead>
-    <tbody>
-
-        <tr class='clickable-row' >
-
-      {% for student in result.students %}
-          {% for id,marks in student.items %}
-           <td>{{ forloop.parentloop.counter }}</td>
-           <td> {{id}} </td>
-             {% for mark in marks %}
-                <td> {{mark}} </td>
-             {% endfor %}
-           
+  <div class="table-responsive" style="overflow: scroll;">
+    <table id="studenttable" class="table table-bordered table-hover" data-page-length='100'>
+      <thead class="thead-light">
+        <tr>
+          <th>S/N</th>
+          {% if forloop.first %}
+            <th>Registration Number</th>
+            <th>Student Name</th>
+          {% endif %}
+          {% for subject in result.subjects %}
+            <th>{{ subject.name }}</th>
           {% endfor %}
-
-
         </tr>
-      {% endfor %}
+      </thead>
+      <tbody>
+        {% for student in result.students %}
+          <tr>
+            {% if forloop.first %}
+              <td>{{ forloop.counter }}</td>
+              <td>{{ student.registration_number }}</td>
+              <td>{{ student.last_name }} {{ student.first_name }}</td>
+            {% else %}
 
-    </tbody>
-  </table>
-</div>
-
-    
+            {% endif %}
+            {% for mark in student.marks %}
+              <td>{{ mark }}</td>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 
 {% endfor %}
-
 
 {% endblock fullcard %}
