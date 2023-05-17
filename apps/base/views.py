@@ -25,30 +25,18 @@ class RegisterView(View):
     def post(self, request):
         user_form = CustomUserCreationForm(request.POST)
         profile_form = UserProfileForm(request.POST)
-
         if user_form.is_valid() and profile_form.is_valid():
             user = user_form.save(commit=False)
             user.save()
-
             profile = profile_form.save(commit=False)
             profile.user = user
             profile.save()
-
+            # send_activation_email(user, request)
             messages.success(request, 'Your account has been created. Please check your email to activate your account.')
             return redirect('login')
         else:
-            # Combine form errors into a single dictionary
-            form_errors = {}
-            for form in [user_form, profile_form]:
-                for field, errors in form.errors.items():
-                    form_errors[field] = errors
-
             messages.error(request, 'Invalid details.')
-            return render(request, 'registration/register_new.html', {
-                'user_form': user_form,
-                'profile_form': profile_form,
-                'form_errors': form_errors,
-            })
+        return render(request, 'registration/register_new.html', {'user_form': user_form, 'profile_form': profile_form})
 
 class ActivateView(View):
     def get(self, request, uidb64, token):
