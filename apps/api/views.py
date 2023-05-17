@@ -3,10 +3,10 @@ from django.http import JsonResponse
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .serializers import StudentSerializer,DriverSerializer,CustomUserSerializer
+from .serializers import StudentSerializer,DriverSerializer,CustomUserSerializer,UserProfileSerializer
 
 from apps.students.models import Student
-from apps.base.models import CustomUser
+from apps.base.models import CustomUser, UserProfile
 from apps.corecode.models import Driver
 from rest_framework import status
 
@@ -20,7 +20,7 @@ def apiOverview(request):
 	api_urls = {
 		'Driver View':'/driver/<str:pk>/',
 		'Student View':'/student/<str:pk>/',
-		}
+	}
 
 	return Response(api_urls)
 
@@ -104,13 +104,15 @@ def student(request):
         try:
             userdata = CustomUser.objects.get(register_id=register_id)
             userserializer = CustomUserSerializer(userdata, many=False)
+            profiledata = userdata.userprofile
+            profileserializer = UserProfileSerializer(profiledata, many=False)
         except CustomUser.DoesNotExist:
             return Response({'error': 'School not found', 'status': status.HTTP_200_OK}, status=status.HTTP_200_OK)
 
         try:
             studentdata = Student.objects.get(user=userdata, registration_number=student_id)
             studentserializer = StudentSerializer(studentdata, many=False)
-            return Response({'status':status.HTTP_200_OK,'schooldata': userserializer.data, 'studentdata': studentserializer.data})
+            return Response({'status':status.HTTP_200_OK,'schooldata': userserializer.data,'schoolprofile':profileserializer.data,'studentdata': studentserializer.data})
         except Student.DoesNotExist:
             return Response({'error': 'Student not found', 'status': status.HTTP_200_OK}, status=status.HTTP_200_OK)
     else:
