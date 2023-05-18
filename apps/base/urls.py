@@ -1,6 +1,5 @@
 from django.urls import path
 from . import views
-from apps.base.views import PasswordResetView
 
 urlpatterns = [
     path('register/', views.RegisterView.as_view(), name='register'),
