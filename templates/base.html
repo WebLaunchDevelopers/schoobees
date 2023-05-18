@@ -179,7 +179,7 @@
           </li>
 
             <li class="nav-header">Others</li>
-            <li class="nav-item has-treeview">
+                 <li class="nav-item has-treeview">
               <a href="#" class="nav-link">
                 <i class="nav-icon fas fa-copy"></i>
                 <p>
@@ -191,46 +191,37 @@
                 <li class="nav-item">
                   <a href="{% url 'sessions' %}" class="nav-link">
                     <i class="nav-icon fas fa-bars"></i>
-                    <p>
-                      Sessions
-                    </p>
+                    <p>Sessions</p>
                   </a>
                 </li>
                 <li class="nav-item">
                   <a href="{% url 'terms' %}" class="nav-link">
                     <i class="nav-icon fas fa-bars"></i>
-                    <p>
-                      Terms
-                      <i class="right"></i>
-                    </p>
+                    <p>Terms</p>
                   </a>
                 </li>
                 <li class="nav-item">
                   <a href="{% url 'subjects' %}" class="nav-link">
                     <i class="nav-icon fas fa-bars"></i>
-                    <p>
-                      Subjects
-                    </p>
+                    <p>Subjects</p>
                   </a>
                 </li>
                 <li class="nav-item">
                   <a href="{% url 'classes' %}" class="nav-link">
                     <i class="nav-icon fas fa-bars"></i>
-                    <p>
-                      Classes
-                    </p>
+                    <p>Classes</p>
                   </a>
                 </li>
               </ul>
             </li>
+
             <li class="nav-item">
               <a href="{% url 'configs' %}" class="nav-link">
                 <i class="nav-icon fas fa-cog"></i>
-                <p>
-                  Communication
-                </p>
+                <p>Communication</p>
               </a>
             </li>
+          </ul>
 
 
           </ul>
@@ -336,7 +327,19 @@
       });
     })(jQuery)
 
-  </script>
+  // Toggle the Management dropdown menu
+  $('.nav-link').click(function () {
+    $('#management-dropdown').toggleClass('show');
+  });
+
+  // Close the Management dropdown menu when clicking outside
+  $(document).on('click', function (e) {
+    if ($(e.target).closest('.nav-link').length === 0) {
+      $('#management-dropdown').removeClass('show');
+    }
+  });
+</script>
+
 
   {% block morejs %}
 
