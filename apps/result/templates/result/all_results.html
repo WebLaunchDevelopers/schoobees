@@ -6,15 +6,13 @@
 
   <h1>Class {{ clas }}</h1>
 
-  <div class="table-responsive" style="overflow: scroll;">
+  <div class="table-responsive">
     <table id="studenttable" class="table table-bordered table-hover" data-page-length='100'>
       <thead class="thead-light">
         <tr>
           <th>S/N</th>
-          {% if forloop.first %}
-            <th>Registration Number</th>
-            <th>Student Name</th>
-          {% endif %}
+          <th>Registration Number</th>
+          <th>Student Name</th>
           {% for subject in result.subjects %}
             <th>{{ subject.name }}</th>
           {% endfor %}
@@ -22,16 +20,18 @@
       </thead>
       <tbody>
         {% for student in result.students %}
-          <tr>
-            {% if forloop.first %}
-              <td>{{ forloop.counter }}</td>
-              <td>{{ student.registration_number }}</td>
-              <td>{{ student.last_name }} {{ student.first_name }}</td>
-            {% else %}
-
-            {% endif %}
-            {% for mark in student.marks %}
-              <td>{{ mark }}</td>
+          <tr class='clickable-row'>
+            <td>{{ forloop.counter }}</td>
+            <td>{{ student.registration_number }}</td>
+            <td>{{ student.last_name }} {{ student.first_name }}</td>
+            {% for subject in result.subjects %}
+              <td>
+                {% for res in results %}
+                  {% if res.student == student and res.subject == subject %}
+                    {{ res.test_score }} + {{ res.exam_score }} = {{ res.test_score|add:res.exam_score }}
+                  {% endif %}
+                {% endfor %}
+              </td>
             {% endfor %}
           </tr>
         {% endfor %}

@@ -5,7 +5,7 @@ WIP 2. Parent Management: The web application can have a parent management syste
 
 NOT TOUCHED 3. Attendance Management: The web application can have an attendance management system to record and manage student attendance, including absences, tardiness, and early departures.
 
-NOT TOUCHED 4. Exam Management: The web application can have an exam management system to manage and record student exam results, including grades, test scores, and progress reports.
+WIP 4. Exam Management: The web application can have an exam management system to manage and record student exam results, including grades, test scores, and progress reports.
 
 WIP 5. Fee Management: The web application can have a fee management system to manage and record student fees and expenses, including payments and outstanding balances.
 

@@ -7,9 +7,7 @@ from .models import Result
 
 class CreateResults(forms.Form):
     exam = forms.ModelChoiceField(queryset=AcademicTerm.objects.all())
-    subjects = forms.ModelMultipleChoiceField(
-        queryset=Subject.objects.all(), widget=forms.CheckboxSelectMultiple
-    )
+    subjects = forms.ModelChoiceField(queryset=Subject.objects.all())
     class_name = forms.ModelChoiceField(queryset=StudentClass.objects.none())
 
     def __init__(self, *args, user=None, **kwargs):

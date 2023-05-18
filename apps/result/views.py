@@ -23,13 +23,12 @@ class CreateResultView(LoginRequiredMixin, View):
             exam = form.cleaned_data["exam"]
             results = []
             for student in Student.objects.filter(current_class=class_name):
-                for subject in subjects:
-                    check = Result.objects.filter(current_class=class_name, subject=subject, student=student).first()
+                    check = Result.objects.filter(current_class=class_name, subject=subjects, student=student).first()
                     if not check:
                         result = Result(
                             user=request.user,
                             current_class=class_name,
-                            subject=subject,
+                            subject=subjects,
                             student=student,
                         )
                         results.append(result)
@@ -40,7 +39,7 @@ class CreateResultView(LoginRequiredMixin, View):
 
 class EditResultsView(LoginRequiredMixin, View):
     def get(self, request):
-        results = Result.objects.all()
+        results = Result.objects.filter(user=request.user)
         formset = EditResults(queryset=results)
         return render(request, "result/edit_results.html", {"formset": formset})
 
@@ -63,14 +62,10 @@ class GetResultsView(LoginRequiredMixin, View):
             subjects, students = [], []
             unique_subjects = Result.objects.filter(user=request.user, current_class=clas).values("subject").distinct()
             unique_students = Result.objects.filter(user=request.user, current_class=clas).values("student").distinct()
-            test_score = Result.objects.filter(user=request.user).values("test_score")
-            print(test_score)
-            exam_score = Result.objects.filter(user=request.user).values("exam_score")
-            print(exam_score)
-            # total_score = sum(test_score[test_score],exam_score[exam_score])
             for subject in unique_subjects:
                 subjects.append(Subject.objects.get(pk=subject["subject"]))
             for student in unique_students:
                 students.append(Student.objects.get(pk=student["student"]))
-            resultss[clas] = {"subjects": subjects, "students": students, "total_score": test_score}
+            resultss[clas] = {"subjects": subjects, "students": students}
         return render(request, "result/all_results.html", {"results": results, "resultss": resultss})
+
