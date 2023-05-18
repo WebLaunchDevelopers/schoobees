@@ -7,7 +7,7 @@ from .views import (
     StaffListView,
     StaffUpdateView,
     StaffBulkUploadView,
-    DownloadCSVViewdownloadcsv,
+    DownloadstaffCSVViewdownloadcsv,
 )
 
 urlpatterns = [
@@ -17,5 +17,5 @@ urlpatterns = [
     path("upload/", StaffBulkUploadView.as_view(), name="staff-upload"),
     path("<int:pk>/update/", StaffUpdateView.as_view(), name="staff-update"),
     path("<int:pk>/delete/", StaffDeleteView.as_view(), name="staff-delete"),
-    path("download-csv/", DownloadCSVViewdownloadcsv.as_view(), name="download-csv"),
+    path("download-csv/", DownloadstaffCSVViewdownloadcsv.as_view(), name="staff-download-csv"),
 ]

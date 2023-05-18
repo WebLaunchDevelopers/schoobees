@@ -18,6 +18,8 @@ from apps.corecode.models import StudentClass
 from plotly.offline import plot
 import plotly.express as px 
 import pandas as pd
+from django.core.exceptions import ValidationError
+from django.contrib import messages
 
 class StudentListView(LoginRequiredMixin, ListView):
     model = Student
@@ -131,6 +133,40 @@ class StudentBulkUploadView(LoginRequiredMixin, SuccessMessageMixin, CreateView)
     fields = ["csv_file"]
     success_url = "/student/list"
     success_message = "Successfully uploaded students"
+    expected_fields = [
+                "registration_number",
+                "first_name",
+                "last_name",
+                "guardian_name"
+                "gender",
+                "parent_number",
+                "address",
+                "current_class",
+                "comments"
+                       ]
+
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        # Retrieving the uploaded file
+        csv_file = form.cleaned_data.get("csv_file")
+        try:
+            # Reading the CSV file
+            reader = csv.DictReader(csv_file)
+            # Checking if the CSV file contains all the expected fields
+            csv_fields = reader.fieldnames
+            if not all(field in csv_fields for field in self.expected_fields):
+                raise ValidationError("The uploaded CSV file is missing some fields.")
+            # Performing further processing and saving
+
+        except csv.Error:
+            form.add_error(None, "Invalid CSV file format.")
+            return self.form_invalid(form)
+
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, "Invalid CSV file")
+        return super().form_invalid(form)
 
 
 class DownloadCSVViewdownloadcsv(LoginRequiredMixin, View):
