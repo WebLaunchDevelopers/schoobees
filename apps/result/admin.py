@@ -1,12 +1,18 @@
 from django.contrib import admin
 from .models import Result
 
+@admin.register(Result)
 class ResultAdmin(admin.ModelAdmin):
-    # list_display = ('id', 'name', 'roll_number', 'department')
-    # list_display_links = ('id', 'name')
-    # list_filter = ('department',)
-    # search_fields = ('name', 'roll_number')
-    class Meta:
-        model = Result
+    list_display = ["student", "current_class", "subject", "test_score", "exam_score", "total_score", "grade"]
+    list_filter = ["current_class", "subject"]
+    search_fields = ["student__first_name", "student__last_name", "subject__name"]
+    ordering = ["subject"]
 
-admin.site.register(Result, ResultAdmin)
+    def total_score(self, obj):
+        return obj.total_score()
+
+    def grade(self, obj):
+        return obj.grade()
+
+    total_score.short_description = "Total Score"
+    grade.short_description = "Grade"
