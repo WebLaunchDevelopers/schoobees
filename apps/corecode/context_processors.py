@@ -1,5 +1,6 @@
 from .models import SiteConfig, AcademicSession, AcademicTerm
 from apps.base.models import CustomUser, UserProfile
+from apps.staffs.models import Staff
 
 def site_defaults(request):
     contexts = {}
@@ -19,7 +20,12 @@ def site_defaults(request):
         custom_user = CustomUser.objects.get(username=request.user.username)
 
         try:
-            user_profile = UserProfile.objects.get(user=custom_user)
+            if custom_user.is_faculty:
+                staffrecord = Staff.objects.get(email=custom_user.username)
+                finaluser = staffrecord.user
+            else:
+                finaluser = custom_user
+            user_profile = UserProfile.objects.get(user=finaluser)
             contexts['school_name'] = user_profile.school_name
         except UserProfile.DoesNotExist:
             # Handle the case where no matching UserProfile object is found

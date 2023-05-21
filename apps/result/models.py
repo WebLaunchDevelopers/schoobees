@@ -28,8 +28,8 @@ class Result(models.Model):
     class Meta:
         ordering = ["subject"]
 
-    def __str__(self):
-        return f"{self.student} {self.session} {self.term} {self.subject}"
+    # def __str__(self):
+    #     return f"{self.student} {self.session} {self.term} {self.subject}"
 
     def total_score(self):
         return self.test_score + self.exam_score

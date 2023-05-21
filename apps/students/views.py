@@ -62,26 +62,25 @@ class StudentDetailView(LoginRequiredMixin, DetailView):
         #print("---------------->",context)
         return context
     
-
 class StudentCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Student
-    fields = ['current_status','registration_number', 'first_name', 'last_name', 'guardian_name', 'gender', 'date_of_birth', 'current_class', 'date_of_admission', 'parent_mobile_number', 'address', 'comments', 'passport']
-    success_message = "New student successfully added."
+    fields = ['current_status', 'registration_number', 'first_name', 'last_name', 'guardian_name', 'gender', 'date_of_birth', 'current_class', 'date_of_admission', 'parent_mobile_number', 'address', 'comments', 'passport']
+    success_url = reverse_lazy("student-list")  # Redirect URL after successful form submission
 
-    def get_form(self):
-        """add date picker in forms"""
-        form = super(StudentCreateView, self).get_form()
+    def get_form(self, form_class=None):
+        """Add date picker in forms"""
+        form = super().get_form(form_class)
         form.fields["date_of_birth"].widget = widgets.DateInput(attrs={"type": "date"})
         form.fields["date_of_admission"].widget = widgets.DateInput(attrs={"type": "date"})
         form.fields["address"].widget = widgets.Textarea(attrs={"rows": 2})
         form.fields["comments"].widget = widgets.Textarea(attrs={"rows": 2})
+        form.fields["current_class"].queryset = StudentClass.objects.filter(user=self.request.user)  # Filter the queryset based on the logged-in user
+        print(form.fields)
         return form
-    
-    def form_valid(self, form):
-        form.instance.user = self.request.user
-        return super().form_valid(form)
 
-from django.http import Http404
+    def form_valid(self, form):
+        form.instance.user = self.request.user  # Assign the logged-in user to the student's user field
+        return super().form_valid(form)
 
 class StudentUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = Student
