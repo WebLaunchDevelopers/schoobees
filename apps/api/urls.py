@@ -1,8 +1,9 @@
-from django.urls import path,include
-from . import views
+from django.urls import path
+from .views import ApiOverviewAPIView, DriverAPIView, StudentAPIView, FeedbackAPIView
 
 urlpatterns = [
-    path('', views.apiOverview,name="api-overview"),
-    path('driver/', views.driver,name="driver"),
-    path('student/', views.student,name="student"),
+    path('', ApiOverviewAPIView.as_view(), name="api-overview"),
+    path('driver/', DriverAPIView.as_view(), name="driver"),
+    path('student/', StudentAPIView.as_view(), name="student"),
+    path('feedback/', FeedbackAPIView.as_view(), name="feedback"),
 ]

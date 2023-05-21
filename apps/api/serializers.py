@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from apps.students.models import Student
+from apps.students.models import Student, Feedback
 from apps.base.models import CustomUser, UserProfile
 from apps.corecode.models import Driver
 
@@ -23,3 +23,8 @@ class DriverSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Driver
 		fields = ['name', 'phone_number', 'alternate_number', 'email', 'address', 'aadhaar_number', 'license_number', 'vehicle_name', 'vehicle_model', 'vehicle_number']
+
+class FeedbackSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Feedback
+        fields = '__all__'

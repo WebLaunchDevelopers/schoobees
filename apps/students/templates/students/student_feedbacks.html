@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}Students Feedbacks{% endblock title %}
+
+{% block content %}
+    <ul>
+        {% for feedback in feedbacks %}
+            <li>
+                <strong>Created at: {{ feedback.created_at }}</strong>
+                <p>{{ feedback.content }}</p>
+            </li>
+        {% empty %}
+            <li>No feedbacks available.</li>
+        {% endfor %}
+    </ul>
+{% endblock content %}

@@ -11,7 +11,8 @@ from django.shortcuts import render
 
 from apps.finance.models import Invoice
 
-from .models import Student, StudentBulkUpload
+from .models import Student, StudentBulkUpload, Feedback
+
 
 from apps.result.models import Result
 from apps.corecode.models import StudentClass
@@ -189,3 +190,13 @@ class DownloadCSVViewdownloadcsv(LoginRequiredMixin, View):
         )
 
         return response
+    
+class FeedbackListView(LoginRequiredMixin, ListView):
+    model = Feedback
+    template_name = 'students/student_feedbacks.html'
+    context_object_name = 'feedbacks'
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        queryset = queryset.filter(user=self.request.user)
+        return queryset

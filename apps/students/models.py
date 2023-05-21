@@ -50,3 +50,12 @@ class StudentBulkUpload(models.Model):
     user = models.ForeignKey(CustomUser, on_delete = models.CASCADE)
     date_uploaded = models.DateTimeField(auto_now=True)
     csv_file = models.FileField(upload_to="students/bulkupload/")
+
+class Feedback(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    content = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['-created_at']
+

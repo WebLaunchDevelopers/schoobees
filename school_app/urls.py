@@ -18,8 +18,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import include, path
 
-admin.site.site_header = 'SchoolBee Admin Panel'
-admin.site.site_title = 'School Bee'
+admin.site.site_header = 'SchooBee Admin Panel'
+admin.site.site_title = 'SchooBee'
 admin.site.index_title = 'Administration'
 
 urlpatterns = [
