@@ -14,6 +14,9 @@ from .models import Invoice, InvoiceItem, Receipt
 class InvoiceListView(LoginRequiredMixin, ListView):
     model = Invoice
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.filter(user=self.request.user)
 
 class InvoiceCreateView(LoginRequiredMixin, CreateView):
     model = Invoice

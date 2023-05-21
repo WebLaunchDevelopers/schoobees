@@ -12,9 +12,15 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .models import Staff,StaffBulkUpload
 
-class StaffListView(ListView):
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+
+class StaffListView(LoginRequiredMixin, ListView):
     model = Staff
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.filter(user=self.request.user)
 
 class StaffDetailView(DetailView):
     model = Staff
