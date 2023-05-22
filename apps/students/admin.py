@@ -3,7 +3,7 @@ from .models import Student, StudentBulkUpload, Feedback
 
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
-    list_display = ["registration_number", "first_name", "last_name"]
+    list_display = ["user", "registration_number", "first_name", "last_name"]
     search_fields = ["registration_number", "first_name", "last_name"]
     list_filter = ["current_status", "gender", "current_class"]
     ordering = ["registration_number"]
