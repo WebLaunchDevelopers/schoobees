@@ -3,42 +3,60 @@
 {% block fullcard %}
 
 {% for clas, result in resultss.items %}
+  {% if result.students and result.subjects %}
+    <h1>Class {{ clas }}</h1>
 
-  <h1>Class {{ clas }}</h1>
-
-  <div class="table-responsive">
-    <table id="studenttable" class="table table-bordered table-hover" data-page-length='100'>
-      <thead class="thead-light">
-        <tr>
-          <th>S/N</th>
-          <th>Registration Number</th>
-          <th>Student Name</th>
-          {% for subject in result.subjects %}
-            <th>{{ subject.name }}</th>
-          {% endfor %}
-        </tr>
-      </thead>
-      <tbody>
-        {% for student in result.students %}
-          <tr class='clickable-row'>
-            <td>{{ forloop.counter }}</td>
-            <td>{{ student.registration_number }}</td>
-            <td>{{ student.last_name }} {{ student.first_name }}</td>
+    <div class="table-responsive">
+      <table id="studenttable" class="table table-bordered table-hover" data-page-length='100'>
+        <thead class="thead-light">
+          <tr>
+            <th>S/N</th>
+            <th>Registration Number</th>
+            <th>Student Name</th>
             {% for subject in result.subjects %}
-              <td>
-                {% for res in results %}
-                  {% if res.student == student and res.subject == subject %}
-                    {{ res.test_score }} + {{ res.exam_score }} = {{ res.test_score|add:res.exam_score }}
-                  {% endif %}
-                {% endfor %}
-              </td>
+              <th>{{ subject.name }}</th>
             {% endfor %}
           </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {% for student in result.students %}
+            <tr class='clickable-row'>
+              <td>{{ forloop.counter }}</td>
+              <td>{{ student.registration_number }}</td>
+              <td>{{ student.last_name }} {{ student.first_name }}</td>
+              {% for subject in result.subjects %}
+                <td>
+                  {% for res in results %}
+                    {% if res.student == student and res.subject == subject %}
+                      {{ res.test_score }} + {{ res.exam_score }} = {{ res.test_score|add:res.exam_score }}
+                    {% endif %}
+                  {% empty %}
+                    <span class="no-records">No records found</span>
+                  {% endfor %}
+                </td>
+              {% endfor %}
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+{% empty %}
+  <div class="no-records-container">
+    <p class="no-records">No records found</p>
   </div>
-
 {% endfor %}
+<style>
+  .no-records-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px; /* Adjust the height as needed */
+}
 
+.no-records {
+  font-size: 18px;
+  color: #999;
+}
+</style>
 {% endblock fullcard %}

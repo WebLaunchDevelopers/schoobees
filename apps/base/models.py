@@ -20,6 +20,7 @@ class CustomUser(AbstractUser):
 
 class UserProfile(models.Model):
     COUNTRY_CHOICES = (
+        ('IN', 'India (+91)'),
         ('US', 'United States (+1)'),
         ('CA', 'Canada (+1)'),
         ('MX', 'Mexico (+52)'),
@@ -28,7 +29,6 @@ class UserProfile(models.Model):
         ('DE', 'Germany (+49)'),
         ('JP', 'Japan (+81)'),
         ('CN', 'China (+86)'),
-        ('IN', 'India (+91)'),
         ('AU', 'Australia (+61)'),
     )
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)

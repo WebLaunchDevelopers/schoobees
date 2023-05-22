@@ -1,14 +1,14 @@
 from django import forms
 from django.forms import modelformset_factory
 
-from apps.corecode.models import AcademicSession, AcademicTerm, Subject, StudentClass
+from apps.corecode.models import AcademicSession, AcademicTerm, Subject, StudentClass, Exams
 
 from .models import Result
 
 class CreateResults(forms.Form):
-    exam = forms.ModelChoiceField(queryset=AcademicTerm.objects.all())
+    exam = forms.ModelChoiceField(queryset=Exams.objects.all())
     subjects = forms.ModelChoiceField(queryset=Subject.objects.all())
-    class_name = forms.ModelChoiceField(queryset=StudentClass.objects.none())
+    class_name = forms.ModelChoiceField(queryset=StudentClass.objects.all())
 
     def __init__(self, *args, user=None, **kwargs):
         super().__init__(*args, **kwargs)

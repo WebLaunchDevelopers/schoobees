@@ -109,4 +109,12 @@ class Driver(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
 
 
+class Exams(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    session = models.ForeignKey(AcademicSession, on_delete=models.CASCADE)
+    term = models.ForeignKey(AcademicTerm, on_delete=models.CASCADE)
+    exam_name = models.CharField(max_length=100, blank=True)
+    exam_date = models.DateField()
 
+    def __str__(self):
+        return f"{self.exam_name}"

@@ -5,6 +5,7 @@ from apps.corecode.models import (
     AcademicTerm,
     StudentClass,
     Subject,
+    Exams
 )
 from apps.students.models import Student
 
@@ -21,6 +22,7 @@ class Result(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     current_class = models.ForeignKey(StudentClass, on_delete=models.CASCADE)
+    exam = models.ForeignKey(Exams, on_delete=models.CASCADE, null=True)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     test_score = models.IntegerField(default=0,validators=[MaxValueValidator(25, message="Test score cannot exceed 25.")])
     exam_score = models.IntegerField(default=0,validators=[MaxValueValidator(75, message="Exam score cannot exceed 75.")])

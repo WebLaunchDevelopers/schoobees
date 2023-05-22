@@ -8,7 +8,8 @@ from .models import (
     StudentClass,
     Subject,
     Calendar,
-    Driver
+    Driver,
+    Exams
 )
 
 from apps.base.models import UserProfile, CustomUser
@@ -155,3 +156,15 @@ class DriverForm(forms.ModelForm):
     class Meta:
         model = Driver
         fields = ('name', 'phone_number', 'alternate_number', 'email', 'address', 'aadhaar_number', 'license_number', 'vehicle_name', 'vehicle_model', 'vehicle_number')
+
+
+class ExamsForm(forms.ModelForm):
+    session = forms.ModelChoiceField(queryset=AcademicSession.objects.all(), widget=forms.Select(attrs={'class': 'custom-select'}))
+    term = forms.ModelChoiceField(queryset=AcademicTerm.objects.all(), widget=forms.Select(attrs={'class': 'custom-select'}))
+    exam_name = forms.CharField(max_length=200, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    exam_date = forms.DateField(widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}))
+
+
+    class Meta:
+        model = Exams
+        fields = ['session', 'term', 'exam_name', 'exam_date']

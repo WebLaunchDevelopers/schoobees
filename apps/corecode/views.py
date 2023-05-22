@@ -14,10 +14,6 @@ from django.core.files.storage import FileSystemStorage
 import os
 from django.utils.html import strip_tags
 
-from apps.base.utils import send_activation_email
-
-# from django.views import View
-
 from .forms import (
     AcademicSessionForm,
     AcademicTermForm,
@@ -31,6 +27,7 @@ from .forms import (
     SubjectForm,
     CalendarForm,
     DriverForm,
+    ExamsForm
 )
 from .models import (
     AcademicSession,
@@ -39,7 +36,8 @@ from .models import (
     StudentClass,
     Subject,
     Calendar,
-    Driver
+    Driver,
+    Exams
 )
 
 import json
@@ -569,3 +567,36 @@ class DriverDeleteView(LoginRequiredMixin, DeleteView):
     model = Driver
     template_name = "corecode/core_confirm_delete.html"
     success_url = reverse_lazy("drivers-view")
+
+
+class ExamsListView(LoginRequiredMixin, ListView):
+    model = Exams
+    template_name = 'corecode/exams_list.html'
+    context_object_name = 'exams'
+
+class ExamsCreateView(LoginRequiredMixin, CreateView):
+    model = Exams
+    form_class = ExamsForm
+    template_name = 'corecode/exams_form.html'
+    success_url = reverse_lazy('exams_list')
+    success_message = "Exams added successfully."
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        if form.is_valid():
+            form.instance.user = self.request.user
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+
+class ExamsUpdateView(LoginRequiredMixin, UpdateView):
+    model = Exams
+    form_class = ExamsForm
+    template_name = 'corecode/exams_form.html'
+    success_url = reverse_lazy('exams_list')
+
+class ExamsDeleteView(LoginRequiredMixin, DeleteView):
+    model = Exams
+    template_name = 'corecode/core_confirm_delete.html'
+    success_url = reverse_lazy('exams_list')

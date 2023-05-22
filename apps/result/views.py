@@ -58,6 +58,8 @@ class GetResultsView(LoginRequiredMixin, View):
         results = Result.objects.filter(user=request.user)
         classes = StudentClass.objects.filter(user=request.user)
         resultss = {}
+        has_records = False
+
         for clas in classes:
             subjects, students = [], []
             unique_subjects = Result.objects.filter(user=request.user, current_class=clas).values("subject").distinct()
@@ -66,6 +68,8 @@ class GetResultsView(LoginRequiredMixin, View):
                 subjects.append(Subject.objects.get(pk=subject["subject"]))
             for student in unique_students:
                 students.append(Student.objects.get(pk=student["student"]))
-            resultss[clas] = {"subjects": subjects, "students": students}
-        return render(request, "result/all_results.html", {"results": results, "resultss": resultss})
+            if subjects or students:
+                has_records = True
+                resultss[clas] = {"subjects": subjects, "students": students}
 
+        return render(request, "result/all_results.html", {"results": results, "resultss": resultss, "has_records": has_records})
