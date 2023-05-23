@@ -2,6 +2,7 @@ from rest_framework import serializers
 from apps.students.models import Student, Feedback
 from apps.base.models import CustomUser, UserProfile
 from apps.corecode.models import Driver
+from apps.finance.models import Invoice, InvoiceItem, Receipt
 
 class StudentSerializer(serializers.ModelSerializer):
     current_class_name = serializers.ReadOnlyField(source='current_class.name')
@@ -28,3 +29,18 @@ class FeedbackSerializer(serializers.ModelSerializer):
     class Meta:
         model = Feedback
         fields = '__all__'
+
+class InvoiceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Invoice
+        fields = ['balance_from_previous_term', 'balance']
+
+class InvoiceItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = InvoiceItem
+        fields = ['id', 'description', 'amount']
+
+class ReceiptSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Receipt
+        fields = ['id', 'amount_paid', 'date_paid', 'comment']
