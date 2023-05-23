@@ -12,6 +12,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic import ListView, View
 from django.urls import reverse_lazy
+from django.urls import reverse
 
 class CreateResultView(LoginRequiredMixin, View):
     def get(self, request):
@@ -40,26 +41,38 @@ class CreateResultView(LoginRequiredMixin, View):
                     results.append(result)
 
             Result.objects.bulk_create(results)
-            return redirect("edit-results")
+            redirect_url = reverse("edit-results")
+            redirect_url += f"?classid={class_name.id}&subjectid={subject.id}&examid={exam.id}"
+            return redirect(redirect_url)
         return render(request, "result/create_result_page2.html", {"form": form})
 
 
 class EditResultsView(LoginRequiredMixin, View):
     def get(self, request):
-        results = Result.objects.filter(user=request.user)
+        classid = request.GET.get("classid")
+        subjectid = request.GET.get("subjectid")
+        examid = request.GET.get("examid")
+        results = Result.objects.filter(user=request.user, current_class=classid, subject=subjectid, exam=examid)
         formset = EditResults(queryset=results)
         return render(request, "result/edit_results.html", {"formset": formset})
 
     def post(self, request):
+        classid = request.GET.get("classid")
+        subjectid = request.GET.get("subjectid")
+        examid = request.GET.get("examid")
         formset = EditResults(request.POST)
         if formset.is_valid():
             formset.save()
             messages.success(request, "Results successfully updated")
-            return redirect("edit-results")
+            redirect_url = reverse("edit-results")
+            redirect_url += f"?classid={classid}&subjectid={subjectid}&examid={examid}"
+            return redirect(redirect_url)
         else:
             print(formset.errors)
             messages.error(request, "Results not updated")
-            return redirect("edit-results")
+            redirect_url = reverse("edit-results")
+            redirect_url += f"?classid={classid}&subjectid={subjectid}&examid={examid}"
+            return redirect(redirect_url)
 
 class GetResultsView(LoginRequiredMixin, View):
     def get(self, request):
