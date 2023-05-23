@@ -26,13 +26,14 @@ class CreateResultView(LoginRequiredMixin, View):
             exam = form.cleaned_data["exam"]
             results = []
             for student in Student.objects.filter(current_class=class_name):
-                    check = Result.objects.filter(current_class=class_name, subject=subject, student=student).first()
+                    check = Result.objects.filter(current_class=class_name, subject=subject, student=student, exam=exam).first()
                     if not check:
                         result = Result(
                             user=request.user,
                             current_class=class_name,
                             subject=subject,
                             student=student,
+                            exam=exam,
                         )
                         results.append(result)
 
@@ -53,6 +54,7 @@ class EditResultsView(LoginRequiredMixin, View):
             messages.success(request, "Results successfully updated")
             return redirect("edit-results")
         else:
+            print(formset.errors)
             messages.error(request, "Results not updated")
             return redirect("edit-results")
 
