@@ -43,4 +43,4 @@ class InvoiceItemSerializer(serializers.ModelSerializer):
 class ReceiptSerializer(serializers.ModelSerializer):
     class Meta:
         model = Receipt
-        fields = ['id', 'amount_paid', 'date_paid', 'comment']
+        fields = ['id', 'amount_paid', 'date_paid', 'payment_method', 'comment']

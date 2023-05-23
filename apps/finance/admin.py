@@ -19,6 +19,6 @@ class InvoiceItemAdmin(admin.ModelAdmin):
 
 @admin.register(Receipt)
 class ReceiptAdmin(admin.ModelAdmin):
-    list_display = ('invoice', 'amount_paid', 'date_paid')
-    search_fields = ('invoice__student__first_name', 'invoice__student__last_name')
+    list_display = ('invoice', 'amount_paid', 'date_paid', 'payment_method')
+    search_fields = ('invoice__student__first_name', 'invoice__student__last_name', 'payment_method')
     list_filter = ('invoice__session', 'invoice__term', 'invoice__class_for')
