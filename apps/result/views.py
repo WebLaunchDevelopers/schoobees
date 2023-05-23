@@ -22,16 +22,16 @@ class CreateResultView(LoginRequiredMixin, View):
         form = CreateResults(request.POST, user=request.user)
         if form.is_valid():
             class_name = form.cleaned_data["class_name"]
-            subjects = form.cleaned_data["subjects"]
+            subject = form.cleaned_data["subjects"]
             exam = form.cleaned_data["exam"]
             results = []
             for student in Student.objects.filter(current_class=class_name):
-                    check = Result.objects.filter(current_class=class_name, subject=subjects, student=student).first()
+                    check = Result.objects.filter(current_class=class_name, subject=subject, student=student).first()
                     if not check:
                         result = Result(
                             user=request.user,
                             current_class=class_name,
-                            subject=subjects,
+                            subject=subject,
                             student=student,
                         )
                         results.append(result)
