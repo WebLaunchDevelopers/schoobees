@@ -32,8 +32,7 @@ class Result(models.Model):
     current_class = models.ForeignKey(StudentClass, on_delete=models.CASCADE)
     exam = models.ForeignKey(Exam, on_delete=models.CASCADE, null=True)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
-    test_score = models.IntegerField(default=0,validators=[MaxValueValidator(25, message="Test score cannot exceed 25.")])
-    exam_score = models.IntegerField(default=0,validators=[MaxValueValidator(75, message="Exam score cannot exceed 75.")])
+    exam_score = models.IntegerField(default=0,validators=[MaxValueValidator(100, message="Exam score cannot exceed 100.")])
 
     class Meta:
         ordering = ["subject"]
@@ -42,7 +41,7 @@ class Result(models.Model):
     #     return f"{self.student} {self.session} {self.term} {self.subject}"
 
     def total_score(self):
-        return self.test_score + self.exam_score
+        return self.exam_score
 
     def grade(self):
         return score_grade(self.total_score())

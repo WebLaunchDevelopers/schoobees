@@ -28,7 +28,7 @@
                 <td>
                   {% for res in results %}
                     {% if res.student == student and res.subject == subject %}
-                      {{ res.test_score }} + {{ res.exam_score }} = {{ res.test_score|add:res.exam_score }}
+                       {{ res.exam_score }}
                     {% endif %}
                   {% empty %}
                     <span class="no-records">No records found</span>

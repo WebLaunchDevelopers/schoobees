@@ -16,7 +16,7 @@ class CreateResults(forms.Form):
             self.fields['class_name'].queryset = StudentClass.objects.filter(user=user)
 
 EditResults = modelformset_factory(
-    Result, fields=("id", "test_score", "exam_score"), extra=0, can_delete=True
+    Result, fields=("id", "exam_score"), extra=0, can_delete=True
 )
 
 class ExamsForm(forms.ModelForm):

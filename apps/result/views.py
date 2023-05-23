@@ -69,7 +69,7 @@ class EditResultsView(LoginRequiredMixin, View):
             return redirect(redirect_url)
         else:
             print(formset.errors)
-            messages.error(request, "Results not updated")
+            messages.error(request, "Exam score should not exceed 100")
             redirect_url = reverse("edit-results")
             redirect_url += f"?classid={classid}&subjectid={subjectid}&examid={examid}"
             return redirect(redirect_url)
