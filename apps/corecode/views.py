@@ -393,7 +393,7 @@ class CurrentSessionAndTermView(LoginRequiredMixin, View):
         return render(request, self.template_name, {"form": form})
 
     def post(self, request, *args, **kwargs):
-        form = self.form_Class(request.POST)
+        form = self.form_class(request.POST)
         if form.is_valid():
             session = form.cleaned_data["current_session"]
             term = form.cleaned_data["current_term"]
