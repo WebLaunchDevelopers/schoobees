@@ -13,7 +13,8 @@ Update Results
   <table id="studenttable" class="table table-sm">
     <thead>
       <tr>
-        <th></th>
+        <th>S/N</th>
+        <th>id</th>
         <th>Name</th>
         <th>Subject</th>
         <th>Test Score</th>
@@ -27,6 +28,7 @@ Update Results
       {% for form in formset %}
         <tr>
           <td>{{ forloop.counter }}</td>
+          <td>{{ form.id }}</td>
           <td>{{ form.instance.student }}</td>
           <td>{{ form.instance.subject }}</td>
           <td style="width: 10%;">{{ form.test_score | add_class:"form-control form-control-sm" }}</td>

@@ -26,20 +26,23 @@ class CreateResultView(LoginRequiredMixin, View):
             exam = form.cleaned_data["exam"]
             results = []
             for student in Student.objects.filter(current_class=class_name):
-                    check = Result.objects.filter(current_class=class_name, subject=subject, student=student, exam=exam).first()
-                    if not check:
-                        result = Result(
-                            user=request.user,
-                            current_class=class_name,
-                            subject=subject,
-                            student=student,
-                            exam=exam,
-                        )
-                        results.append(result)
+                check = Result.objects.filter(current_class=class_name, subject=subject, student=student, exam=exam).first()
+                if not check:
+                    result = Result(
+                        user=request.user,
+                        current_class=class_name,
+                        subject=subject,
+                        student=student,
+                        exam=exam,
+                        test_score=0,
+                        exam_score=0,
+                    )
+                    results.append(result)
 
             Result.objects.bulk_create(results)
             return redirect("edit-results")
         return render(request, "result/create_result_page2.html", {"form": form})
+
 
 class EditResultsView(LoginRequiredMixin, View):
     def get(self, request):
