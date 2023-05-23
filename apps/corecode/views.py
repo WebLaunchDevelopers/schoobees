@@ -27,7 +27,6 @@ from .forms import (
     SubjectForm,
     CalendarForm,
     DriverForm,
-    ExamsForm
 )
 from .models import (
     AcademicSession,
@@ -37,7 +36,6 @@ from .models import (
     Subject,
     Calendar,
     Driver,
-    Exams
 )
 
 import json
@@ -78,7 +76,6 @@ class IndexView(LoginRequiredMixin, ListView):
         context.update({
             'event_list': json.dumps(event_list)
         })
-        print(context)
         return context
     
 class SiteConfigView(LoginRequiredMixin, View):
@@ -521,7 +518,6 @@ class DriversView(LoginRequiredMixin, SuccessMessageMixin, View):
             driver_form = DriverForm()
             messages.success(request, "Record Saved")
         else:
-            print(driver_form.errors)
             context = {
                 'driver_form': driver_form,
                 'drivers': drivers
@@ -567,36 +563,3 @@ class DriverDeleteView(LoginRequiredMixin, DeleteView):
     model = Driver
     template_name = "corecode/core_confirm_delete.html"
     success_url = reverse_lazy("drivers-view")
-
-
-class ExamsListView(LoginRequiredMixin, ListView):
-    model = Exams
-    template_name = 'corecode/exams_list.html'
-    context_object_name = 'exams'
-
-class ExamsCreateView(LoginRequiredMixin, CreateView):
-    model = Exams
-    form_class = ExamsForm
-    template_name = 'corecode/exams_form.html'
-    success_url = reverse_lazy('exams_list')
-    success_message = "Exams added successfully."
-
-    def post(self, request, *args, **kwargs):
-        form = self.get_form()
-        if form.is_valid():
-            form.instance.user = self.request.user
-            return self.form_valid(form)
-        else:
-            return self.form_invalid(form)
-
-
-class ExamsUpdateView(LoginRequiredMixin, UpdateView):
-    model = Exams
-    form_class = ExamsForm
-    template_name = 'corecode/exams_form.html'
-    success_url = reverse_lazy('exams_list')
-
-class ExamsDeleteView(LoginRequiredMixin, DeleteView):
-    model = Exams
-    template_name = 'corecode/core_confirm_delete.html'
-    success_url = reverse_lazy('exams_list')

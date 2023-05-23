@@ -60,7 +60,6 @@ class StudentDetailView(LoginRequiredMixin, DetailView):
         context["result"] = subjects
         context["total"] = total
         context["chart"] = chart
-        #print("---------------->",context)
         return context
     
 class StudentCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
@@ -76,7 +75,6 @@ class StudentCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         form.fields["address"].widget = widgets.Textarea(attrs={"rows": 2})
         form.fields["comments"].widget = widgets.Textarea(attrs={"rows": 2})
         form.fields["current_class"].queryset = StudentClass.objects.filter(user=self.request.user)  # Filter the queryset based on the logged-in user
-        print(form.fields)
         return form
 
     def form_valid(self, form):
@@ -113,11 +111,8 @@ class StudentUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
         return obj
 
     def get(self, request, *args, **kwargs):
-        print("in get")
         self.object = self.get_object()
-        print("views.py: ")
         if self.object is None:
-            print("in None")
             return HttpResponse("No student found matching the query")
         context = self.get_context_data(object=self.object)
         return self.render_to_response(context)

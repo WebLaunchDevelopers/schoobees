@@ -4,11 +4,14 @@ from django.contrib import messages
 from django.forms import modelformset_factory
 from apps.corecode.models import Subject, StudentClass, AcademicTerm
 from apps.students.models import Student
-from .models import Result
-from .forms import CreateResults, EditResults
+from .models import Result, Exam
+from .forms import CreateResults, EditResults, ExamsForm
 from django.utils.decorators import method_decorator
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.views.generic import ListView, View
+from django.urls import reverse_lazy
 
 class CreateResultView(LoginRequiredMixin, View):
     def get(self, request):
@@ -60,16 +63,51 @@ class GetResultsView(LoginRequiredMixin, View):
         resultss = {}
         has_records = False
 
-        for clas in classes:
+        for eachclass in classes:
             subjects, students = [], []
-            unique_subjects = Result.objects.filter(user=request.user, current_class=clas).values("subject").distinct()
-            unique_students = Result.objects.filter(user=request.user, current_class=clas).values("student").distinct()
+            unique_subjects = Result.objects.filter(user=request.user, current_class=eachclass).values("subject").distinct()
+            unique_students = Result.objects.filter(user=request.user, current_class=eachclass).values("student").distinct()
+            unique_student_ids = list(set(item["student"] for item in unique_students))
+
             for subject in unique_subjects:
                 subjects.append(Subject.objects.get(pk=subject["subject"]))
-            for student in unique_students:
-                students.append(Student.objects.get(pk=student["student"]))
+
+            for student_id in unique_student_ids:
+                students.append(Student.objects.get(pk=student_id))
+
             if subjects or students:
                 has_records = True
-                resultss[clas] = {"subjects": subjects, "students": students}
+                resultss[eachclass] = {"subjects": subjects, "students": students}
 
         return render(request, "result/all_results.html", {"results": results, "resultss": resultss, "has_records": has_records})
+
+class ExamsListView(LoginRequiredMixin, ListView):
+    model = Exam
+    template_name = 'corecode/exams_list.html'
+    context_object_name = 'exams'
+
+class ExamsCreateView(LoginRequiredMixin, CreateView):
+    model = Exam
+    form_class = ExamsForm
+    template_name = 'corecode/exams_form.html'
+    success_url = reverse_lazy('exams_list')
+    success_message = "Exams added successfully."
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        if form.is_valid():
+            form.instance.user = self.request.user
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+class ExamsUpdateView(LoginRequiredMixin, UpdateView):
+    model = Exam
+    form_class = ExamsForm
+    template_name = 'corecode/exams_form.html'
+    success_url = reverse_lazy('exams_list')
+
+class ExamsDeleteView(LoginRequiredMixin, DeleteView):
+    model = Exam
+    template_name = 'corecode/core_confirm_delete.html'
+    success_url = reverse_lazy('exams_list')

@@ -29,7 +29,6 @@ def send_activation_email(user, request, newmail=None):
         tomail = newmail
     else:
         tomail = user.email
-    print(tomail)
     send_mail(
         'Activate your account',
         f'Please click the following link to activate your account: {activation_link}',

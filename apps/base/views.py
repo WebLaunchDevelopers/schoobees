@@ -32,7 +32,7 @@ class RegisterView(View):
             profile.user = user
             profile.save()
             # send_activation_email(user, request)
-            messages.success(request, 'Your account has been created. Please check your email to activate your account.')
+            messages.success(request, 'Your account has been created. Please wait for the approval of your account.')
             return redirect('login')
         else:
             messages.error(request, 'Invalid details.')
