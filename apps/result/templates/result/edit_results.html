@@ -14,7 +14,6 @@ Update Results
     <thead>
       <tr>
         <th>S/N</th>
-        <th>id</th>
         <th>Name</th>
         <th>Subject</th>
         <th>Test Score</th>
@@ -28,7 +27,6 @@ Update Results
       {% for form in formset %}
         <tr>
           <td>{{ forloop.counter }}</td>
-          <td>{{ form.id }}</td>
           <td>{{ form.instance.student }}</td>
           <td>{{ form.instance.subject }}</td>
           <td style="width: 10%;">{{ form.test_score | add_class:"form-control form-control-sm" }}</td>
@@ -36,6 +34,7 @@ Update Results
           <td>{{ form.instance.total_score }}</td>
           <td>{{ form.instance.current_class }}</td>
           <td>{{ form.DELETE }}</td>
+          <td style="display: none;">{{ form.id }}</td>
         </tr>
       {% empty %}
         <tr>
