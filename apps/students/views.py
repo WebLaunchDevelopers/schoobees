@@ -43,11 +43,9 @@ class StudentDetailView(LoginRequiredMixin, DetailView):
         subjects, subject, marks = dict(), list(), list()
         score, total = 0, 0
         for result in results:
-            test = result.test_score
             exam = result.exam_score
-            score = result.test_score + result.exam_score
-            total += score
-            subjects[str(result.subject)] = {"test": test, "exam": exam, "score": score}
+            total += exam
+            subjects[str(result.subject)] = {"exam": exam, "score": score}
             
             subject.append(str(result.subject))
             marks.append(score)

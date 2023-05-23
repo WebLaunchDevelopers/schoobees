@@ -6,9 +6,12 @@ from apps.corecode.models import AcademicSession, AcademicTerm, Subject, Student
 from .models import Result, Exam
 
 class CreateResults(forms.Form):
-    exam = forms.ModelChoiceField(queryset=Exam.objects.all())
-    subjects = forms.ModelChoiceField(queryset=Subject.objects.all())
-    class_name = forms.ModelChoiceField(queryset=StudentClass.objects.all())
+    OPTIONS = [
+        ('', 'Select one'),
+    ]
+    exam = forms.ModelChoiceField(empty_label='Select One Exam',queryset=Exam.objects.all())
+    subjects = forms.ModelChoiceField(empty_label='Select One Subject',queryset=Subject.objects.all())
+    class_name = forms.ModelChoiceField(empty_label='Select One Class',queryset=StudentClass.objects.all())
 
     def __init__(self, *args, user=None, **kwargs):
         super().__init__(*args, **kwargs)
