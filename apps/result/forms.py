@@ -7,11 +7,11 @@ from .models import Result, Exam
 
 class CreateResults(forms.Form):
     OPTIONS = [
-        ('', 'Select one'),
+        ('', 'Select'),
     ]
-    exam = forms.ModelChoiceField(empty_label='Select One Exam',queryset=Exam.objects.all())
-    subjects = forms.ModelChoiceField(empty_label='Select One Subject',queryset=Subject.objects.all())
-    class_name = forms.ModelChoiceField(empty_label='Select One Class',queryset=StudentClass.objects.all())
+    exam = forms.ModelChoiceField(empty_label='Select Exam',queryset=Exam.objects.all())
+    subjects = forms.ModelChoiceField(empty_label='Select Subject',queryset=Subject.objects.all())
+    class_name = forms.ModelChoiceField(empty_label='Select Class',queryset=StudentClass.objects.all())
 
     def __init__(self, *args, user=None, **kwargs):
         super().__init__(*args, **kwargs)
