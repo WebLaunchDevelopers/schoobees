@@ -82,6 +82,7 @@
       <th>S/N</th>
       <th>Amount Paid</th>
       <th>Date Paid</th>
+      <th>Payment Method</th>
       <th>Comment Paid</th>
     </tr>
   </thead>
@@ -91,6 +92,7 @@
       <td>{{ forloop.counter }}</td>
       <td>{{ receipt.amount_paid }}</td>
       <td>{{ receipt.date_paid }}</td>
+      <td>{{ receipt.payment_method }}</td>
       <td>{{ receipt.comment }}</td>
     </tr>
     {% endfor %}
