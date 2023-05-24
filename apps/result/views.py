@@ -35,7 +35,6 @@ class CreateResultView(LoginRequiredMixin, View):
                         subject=subject,
                         student=student,
                         exam=exam,
-                        test_score=0,
                         exam_score=0,
                     )
                     results.append(result)
@@ -68,7 +67,6 @@ class EditResultsView(LoginRequiredMixin, View):
             redirect_url += f"?classid={classid}&subjectid={subjectid}&examid={examid}"
             return redirect(redirect_url)
         else:
-            print(formset.errors)
             messages.error(request, "Exam score should not exceed 100")
             redirect_url = reverse("edit-results")
             redirect_url += f"?classid={classid}&subjectid={subjectid}&examid={examid}"
