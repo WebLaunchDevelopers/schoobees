@@ -16,18 +16,20 @@
             {% for subject in result.subjects %}
               <th>{{ subject.name }}</th>
             {% endfor %}
+            <th>Total</th>
+            <th>Percentage</th>
           </tr>
         </thead>
         <tbody>
-          {% for student in result.students %}
-            <tr class='clickable-row'>
+          {% for student_data in result.students %}
+            <tr class='clickable-row' data-href="{% url 'student-detail' student_data.student.pk %}">
               <td>{{ forloop.counter }}</td>
-              <td>{{ student.registration_number }}</td>
-              <td>{{ student.last_name }} {{ student.first_name }}</td>
+              <td>{{ student_data.student.registration_number }}</td>
+              <td>{{ student_data.student.last_name }} {{ student_data.student.first_name }}</td>
               {% for subject in result.subjects %}
                 <td>
                   {% for res in results %}
-                    {% if res.student == student and res.subject == subject %}
+                    {% if res.student == student_data.student and res.subject == subject %}
                        {{ res.exam_score }}
                     {% endif %}
                   {% empty %}
@@ -35,6 +37,8 @@
                   {% endfor %}
                 </td>
               {% endfor %}
+              <td>{{ student_data.total_score }}</td>  <!-- Add the total score column -->
+              <td>{{ student_data.percent }}%</td>
             </tr>
           {% endfor %}
         </tbody>

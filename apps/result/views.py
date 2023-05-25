@@ -92,13 +92,25 @@ class GetResultsView(LoginRequiredMixin, View):
                 subjects.append(Subject.objects.get(pk=subject["subject"]))
 
             for student_id in unique_student_ids:
-                students.append(Student.objects.get(pk=student_id))
+                student = Student.objects.get(pk=student_id)
+                total_score = 0  # Initialize the total score for each student
+                count = 0
+
+                for subject in subjects:
+                    # Retrieve the result for the current student and subject
+                    result = Result.objects.filter(user=request.user, current_class=eachclass, student=student, subject=subject).first()
+                    if result:
+                        count += 1  # Increment the count of results retrieved
+                        total_score += result.exam_score  # Add the exam score to the total score
+                percent = (total_score/(count*100))*100
+                students.append({"student": student, "total_score": total_score, "percent": percent})
 
             if subjects or students:
                 has_records = True
                 resultss[eachclass] = {"subjects": subjects, "students": students}
 
         return render(request, "result/all_results.html", {"results": results, "resultss": resultss, "has_records": has_records})
+
 
 class ExamsListView(LoginRequiredMixin, ListView):
     model = Exam

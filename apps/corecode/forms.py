@@ -18,6 +18,7 @@ from django.contrib.auth import get_user_model
 # CustomUser = get_user_model()
 from django.contrib.auth.forms import UserCreationForm
 from django.db import transaction
+from django.core.exceptions import ValidationError
 
 class CustomUserForm(forms.ModelForm):
     email = forms.EmailField(required=True)
@@ -95,14 +96,22 @@ class AcademicTermForm(ModelForm):
         model = AcademicTerm
         fields = ["name", "current"]
 
-
-class SubjectForm(ModelForm):
+class SubjectForm(forms.ModelForm):
     prefix = "Subject"
 
     class Meta:
         model = Subject
         fields = ["name"]
 
+    def __init__(self, *args, **kwargs):
+        self.user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+
+    def clean_name(self):
+        name = self.cleaned_data["name"]
+        if self.user and Subject.objects.filter(user=self.user, name=name).exists():
+            raise forms.ValidationError("Subject with this name already exists.")
+        return name
 
 class StudentClassForm(ModelForm):
     prefix = "Class"

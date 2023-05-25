@@ -59,7 +59,7 @@ class Subject(models.Model):
     """Subject"""
 
     user = models.ForeignKey(CustomUser, on_delete = models.CASCADE)
-    name = models.CharField(max_length=200, unique=True, default="Telugu")
+    name = models.CharField(max_length=200, default="Telugu")
 
     class Meta:
         ordering = ["name"]

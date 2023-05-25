@@ -40,8 +40,11 @@ class Result(models.Model):
     # def __str__(self):
     #     return f"{self.student} {self.session} {self.term} {self.subject}"
 
-    def total_score(self):
+    def percentage(self):
+        return (self.exam_score*100)/100
+    
+    def score(self):
         return self.exam_score
 
     def grade(self):
-        return score_grade(self.total_score())
+        return score_grade(self.score())

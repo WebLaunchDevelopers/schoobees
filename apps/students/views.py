@@ -39,7 +39,7 @@ class StudentDetailView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(StudentDetailView, self).get_context_data(**kwargs)
         context["payments"] = Invoice.objects.filter(student=self.object)
-        results = Result.objects.filter(student=self.object)
+        results = Result.objects.filter(user=self.request.user, student=self.object)
         subjects, subject, marks = dict(), list(), list()
         score, total = 0, 0
         for result in results:
@@ -49,6 +49,7 @@ class StudentDetailView(LoginRequiredMixin, DetailView):
             
             subject.append(str(result.subject))
             marks.append(score)
+        percentage = (total / (len(results)*100)) * 100
         
         df = pd.DataFrame(marks, subject)
         fig = px.bar(df, color=subject)
@@ -57,6 +58,7 @@ class StudentDetailView(LoginRequiredMixin, DetailView):
 
         context["result"] = subjects
         context["total"] = total
+        context["percentage"] = percentage
         context["chart"] = chart
         return context
     
