@@ -159,6 +159,10 @@ class SessionListView(LoginRequiredMixin, SuccessMessageMixin, ListView):
     model = AcademicSession
     template_name = "corecode/session_list.html"
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.filter(user=self.request.user)
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["form"] = AcademicSessionForm()
@@ -220,6 +224,10 @@ class SessionDeleteView(LoginRequiredMixin, DeleteView):
 class TermListView(LoginRequiredMixin, SuccessMessageMixin, ListView):
     model = AcademicTerm
     template_name = "corecode/term_list.html"
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.filter(user=self.request.user)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -385,6 +393,7 @@ class CurrentSessionAndTermView(LoginRequiredMixin, View):
             except AcademicTerm.DoesNotExist:
                 pass
         form = self.form_class(
+            user=request.user,
             initial={
                 "current_session": current_session,
                 "current_term": current_term,
@@ -406,6 +415,10 @@ class CurrentSessionAndTermView(LoginRequiredMixin, View):
 class SubjectListView(LoginRequiredMixin, SuccessMessageMixin, ListView):
     model = Subject
     template_name = "corecode/subject_list.html"
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.filter(user=self.request.user)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

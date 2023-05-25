@@ -113,14 +113,23 @@ class StudentClassForm(ModelForm):
 
 
 class CurrentSessionForm(forms.Form):
-    current_session = forms.ModelChoiceField(empty_label='Select One Session',
-        queryset=AcademicSession.objects.all(),
-        help_text='Click <a href="/session/create/?next=current-session/">here</a> to add new session',
+    current_session = forms.ModelChoiceField(
+        empty_label='Select One Session',
+        queryset=AcademicSession.objects.none(),
+        help_text='Click <a href="/session/create/?next=current-session/">here</a> to add new session'
     )
     current_term = forms.ModelChoiceField(
-        queryset=AcademicTerm.objects.all(), empty_label='Select One Term',
-        help_text='Click <a href="/term/create/?next=current-session/">here</a> to add new term',
+        queryset=AcademicTerm.objects.none(),
+        empty_label='Select One Term',
+        help_text='Click <a href="/term/create/?next=current-session/">here</a> to add new term'
     )
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        if user:
+            self.fields['current_session'].queryset = AcademicSession.objects.filter(user=user)
+            self.fields['current_term'].queryset = AcademicTerm.objects.filter(user=user)
 
 class CalendarForm(forms.ModelForm):
     EVENT_TYPE = 'event'

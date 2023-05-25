@@ -3,11 +3,21 @@ from django.http import JsonResponse
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from .serializers import StudentSerializer,DriverSerializer,CustomUserSerializer,UserProfileSerializer,FeedbackSerializer,InvoiceSerializer, InvoiceItemSerializer, ReceiptSerializer
+from .serializers import (
+    StudentSerializer,
+    DriverSerializer,
+    CustomUserSerializer,
+    UserProfileSerializer,
+    FeedbackSerializer,
+    InvoiceSerializer,
+    InvoiceItemSerializer,
+    ReceiptSerializer,
+    RouteSerializer
+)
 
 from apps.students.models import Student, Feedback
 from apps.base.models import CustomUser, UserProfile
-from apps.corecode.models import Driver
+from apps.corecode.models import Driver, Route
 from apps.finance.models import Invoice, InvoiceItem, Receipt
 from rest_framework import status
 
@@ -332,6 +342,109 @@ class InvoiceAPIView(APIView):
                     {'error': 'Invoice not found', 'status': status.HTTP_200_OK},
                     status=status.HTTP_200_OK
                 )
+        else:
+            return Response(
+                {'error': 'Invalid parameter value', 'status': status.HTTP_400_BAD_REQUEST},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+class RouteAPIView(APIView):
+    def post(self, request):
+        # Concatenate the words and encode as UTF-8
+        text = "DriverAppToWebFromWebLaunch".encode("utf-8")
+        # Generate a SHA-256 hash from the text
+        hash_object = sha256(text)
+        # Convert the hash to a hexadecimal string
+        token = hash_object.hexdigest()
+        print(token)
+
+        # Check if registerid is present in query params
+        register_id = request.data.get('registerid')
+        if not register_id:
+            return Response(
+                {'error': 'Missing required parameter(registerid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+
+        # Check if modid is present in query params
+        modid = request.data.get('modid')
+        if not modid:
+            return Response(
+                {'error': 'Missing required parameter(modid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+        
+        #  Check if routeid is present in request data
+        routeid = request.data.get('id')
+        if not routeid:
+            routeid = None
+        
+        # Check if token is present in request data
+        paramstoken = request.data.get('token')
+        if not paramstoken:
+            return Response(
+                {'error': 'Missing required parameter(token)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+
+        if token == paramstoken and modid in MODLIST:
+            try:
+                schoolUser = CustomUser.objects.get(register_id=register_id)
+            except CustomUser.DoesNotExist:
+                return Response(
+                    {'error': 'School not found', 'status': status.HTTP_200_OK},
+                    status=status.HTTP_200_OK
+                )
+            if routeid is not None:
+                oldroute = Route.objects.filter(user=schoolUser, id=routeid)
+            else:
+                oldroute = None
+
+            # Create a new feedback instance
+            route = Route(user=schoolUser)
+
+            # Check if content is present in request data
+            area = request.data.get('area')
+            if not area:
+                return Response(
+                    {'error': 'Missing required parameter(area)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                    status=status.HTTP_422_UNPROCESSABLE_ENTITY
+                )
+            latitude = request.data.get('latitude')
+            if not latitude:
+                return Response(
+                    {'error': 'Missing required parameter(latitude)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                    status=status.HTTP_422_UNPROCESSABLE_ENTITY
+                )
+            longitude = request.data.get('longitude')
+            if not longitude:
+                return Response(
+                    {'error': 'Missing required parameter(longitude)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                    status=status.HTTP_422_UNPROCESSABLE_ENTITY
+                )
+            
+            route.area = area
+            route.latitude = latitude
+            route.longitude = longitude
+            if oldroute is not None:
+                oldroute_instance = oldroute.first()
+                route.prev = oldroute_instance
+
+            # Save the feedback
+            route.save()
+            
+            # If oldroute is not None, then set the nxt of the oldroute to the new route
+            if oldroute_instance is not None:
+                oldroute_instance.nxt = route
+                oldroute_instance.save()
+
+            # Serialize the feedback data
+            routeserializer = RouteSerializer(route)
+
+            return Response(
+                {'status': status.HTTP_201_CREATED, 'route': routeserializer.data},
+                status=status.HTTP_201_CREATED
+            )
         else:
             return Response(
                 {'error': 'Invalid parameter value', 'status': status.HTTP_400_BAD_REQUEST},

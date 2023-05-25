@@ -107,3 +107,15 @@ class Driver(models.Model):
     vehicle_number = models.CharField(max_length=20)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+class Route(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    area = models.CharField(max_length=100)
+    latitude = models.CharField(max_length=10)
+    longitude = models.CharField(max_length=10)
+    prev = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True, related_name='prev_routes')
+    nxt = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True, related_name='next_routes')
+
+    def __str__(self):
+        return self.area
+

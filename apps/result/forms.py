@@ -17,18 +17,26 @@ class CreateResults(forms.Form):
         super().__init__(*args, **kwargs)
         if user:
             self.fields['class_name'].queryset = StudentClass.objects.filter(user=user)
+            self.fields['exam'].queryset = Exam.objects.filter(user=user)
+            self.fields['subjects'].queryset = Subject.objects.filter(user=user)
 
 EditResults = modelformset_factory(
     Result, fields=("id", "exam_score"), extra=0, can_delete=True
 )
 
 class ExamsForm(forms.ModelForm):
-    session = forms.ModelChoiceField(queryset=AcademicSession.objects.all(), widget=forms.Select(attrs={'class': 'custom-select'}))
-    term = forms.ModelChoiceField(queryset=AcademicTerm.objects.all(), widget=forms.Select(attrs={'class': 'custom-select'}))
+    session = forms.ModelChoiceField(queryset=AcademicSession.objects.none(), widget=forms.Select(attrs={'class': 'custom-select'}))
+    term = forms.ModelChoiceField(queryset=AcademicTerm.objects.none(), widget=forms.Select(attrs={'class': 'custom-select'}))
     exam_name = forms.CharField(max_length=200, widget=forms.TextInput(attrs={'class': 'form-control'}))
     exam_date = forms.DateField(widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}))
-
 
     class Meta:
         model = Exam
         fields = ['session', 'term', 'exam_name', 'exam_date']
+
+    def __init__(self, *args, **kwargs):
+        user = kwargs.pop('user', None)
+        super().__init__(*args, **kwargs)
+        if user:
+            self.fields['session'].queryset = AcademicSession.objects.filter(user=user)
+            self.fields['term'].queryset = AcademicTerm.objects.filter(user=user)

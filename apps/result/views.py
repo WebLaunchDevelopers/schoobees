@@ -26,8 +26,8 @@ class CreateResultView(LoginRequiredMixin, View):
             subject = form.cleaned_data["subjects"]
             exam = form.cleaned_data["exam"]
             results = []
-            for student in Student.objects.filter(current_class=class_name):
-                check = Result.objects.filter(current_class=class_name, subject=subject, student=student, exam=exam).first()
+            for student in Student.objects.filter(user=request.user, current_class=class_name):
+                check = Result.objects.filter(user=request.user, current_class=class_name, subject=subject, student=student, exam=exam).first()
                 if not check:
                     result = Result(
                         user=request.user,
@@ -53,7 +53,10 @@ class EditResultsView(LoginRequiredMixin, View):
         examid = request.GET.get("examid")
         results = Result.objects.filter(user=request.user, current_class=classid, subject=subjectid, exam=examid)
         formset = EditResults(queryset=results)
-        return render(request, "result/edit_results.html", {"formset": formset})
+        records = False
+        if results.exists():
+            records = True
+        return render(request, "result/edit_results.html", {"formset": formset, "records": records})
 
     def post(self, request):
         classid = request.GET.get("classid")
@@ -102,12 +105,21 @@ class ExamsListView(LoginRequiredMixin, ListView):
     template_name = 'corecode/exams_list.html'
     context_object_name = 'exams'
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.filter(user=self.request.user)
+
 class ExamsCreateView(LoginRequiredMixin, CreateView):
     model = Exam
     form_class = ExamsForm
     template_name = 'corecode/exams_form.html'
     success_url = reverse_lazy('exams_list')
     success_message = "Exams added successfully."
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
 
     def post(self, request, *args, **kwargs):
         form = self.get_form()

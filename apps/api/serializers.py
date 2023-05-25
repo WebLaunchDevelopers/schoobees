@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from apps.students.models import Student, Feedback
 from apps.base.models import CustomUser, UserProfile
-from apps.corecode.models import Driver
+from apps.corecode.models import Driver, Route
 from apps.finance.models import Invoice, InvoiceItem, Receipt
 
 class StudentSerializer(serializers.ModelSerializer):
@@ -24,6 +24,11 @@ class DriverSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Driver
 		fields = ['name', 'phone_number', 'alternate_number', 'email', 'address', 'aadhaar_number', 'license_number', 'vehicle_name', 'vehicle_model', 'vehicle_number']
+
+class RouteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Route
+        fields = '__all__'
 
 class FeedbackSerializer(serializers.ModelSerializer):
     class Meta:
