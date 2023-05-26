@@ -16,6 +16,7 @@ class Invoice(models.Model):
     term = models.ForeignKey(AcademicTerm, on_delete=models.CASCADE)
     class_for = models.ForeignKey(StudentClass, on_delete=models.CASCADE)
     balance_from_previous_term = models.IntegerField(default=0)
+    payment_due = models.DateField(default=timezone.now, null=True, blank=True)
     status = models.CharField(
         max_length=20,
         choices=[("active", "Active"), ("closed", "Closed")],

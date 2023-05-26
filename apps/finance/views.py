@@ -4,10 +4,11 @@ from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.forms import DateInput
 
 from apps.students.models import Student
 
-from .forms import InvoiceItemFormset, InvoiceReceiptFormSet, Invoices
+from .forms import InvoiceItemFormset, InvoiceReceiptFormSet, Invoices, InvoiceForm
 from .models import Invoice, InvoiceItem, Receipt
 
 
@@ -20,7 +21,7 @@ class InvoiceListView(LoginRequiredMixin, ListView):
 
 class InvoiceCreateView(LoginRequiredMixin, CreateView):
     model = Invoice
-    fields = ['student', 'session', 'term', 'class_for', 'balance_from_previous_term', 'status']
+    form_class = InvoiceForm
     success_url = "/finance/list"
 
     def get_context_data(self, **kwargs):
@@ -58,7 +59,7 @@ class InvoiceDetailView(LoginRequiredMixin, DetailView):
 
 class InvoiceUpdateView(LoginRequiredMixin, UpdateView):
     model = Invoice
-    fields = ["student", "session", "term", "class_for", "balance_from_previous_term"]
+    form_class = InvoiceForm
 
     def get_context_data(self, **kwargs):
         context = super(InvoiceUpdateView, self).get_context_data(**kwargs)

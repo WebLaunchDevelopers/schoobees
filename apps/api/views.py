@@ -373,6 +373,7 @@ class InvoiceAPIView(APIView):
                     {
                         'status': status.HTTP_200_OK,
                         'invoicedata': {
+                            'status': invoiceserializer.data['status'],
                             'balance_from_previous_term': invoiceserializer.data['balance_from_previous_term'],
                             'class_for': class_for,
                             'current_session_balance': current_session,
@@ -380,7 +381,8 @@ class InvoiceAPIView(APIView):
                             'invoicedetail':  invoicedetailserializer.data,
                             'receiptdetail': receiptdetailserializer.data,
                             'finalbalance': invoiceserializer.data['balance'],
-                            }
+                            'payment_due':  invoiceserializer.data['payment_due'],
+                        }
                     },
                     status=status.HTTP_200_OK
                 )

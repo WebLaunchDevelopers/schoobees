@@ -38,7 +38,7 @@ class FeedbackSerializer(serializers.ModelSerializer):
 class InvoiceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Invoice
-        fields = ['balance_from_previous_term', 'balance']
+        fields = ['status', 'balance_from_previous_term', 'balance', 'payment_due']
 
 class InvoiceItemSerializer(serializers.ModelSerializer):
     class Meta:
