@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from apps.students.models import Student, Feedback
 from apps.base.models import CustomUser, UserProfile
-from apps.corecode.models import Driver, Route
+from apps.corecode.models import Driver, Route, Calendar
 from apps.finance.models import Invoice, InvoiceItem, Receipt
 
 class StudentSerializer(serializers.ModelSerializer):
@@ -49,3 +49,8 @@ class ReceiptSerializer(serializers.ModelSerializer):
     class Meta:
         model = Receipt
         fields = ['id', 'amount_paid', 'date_paid', 'payment_method', 'comment']
+
+class CalendarSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Calendar
+        fields = ['id', 'title', 'date', 'type']

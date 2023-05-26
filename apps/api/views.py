@@ -12,12 +12,13 @@ from .serializers import (
     InvoiceSerializer,
     InvoiceItemSerializer,
     ReceiptSerializer,
-    RouteSerializer
+    RouteSerializer,
+    CalendarSerializer
 )
 
 from apps.students.models import Student, Feedback
 from apps.base.models import CustomUser, UserProfile
-from apps.corecode.models import Driver, Route
+from apps.corecode.models import Driver, Route, Calendar
 from apps.finance.models import Invoice, InvoiceItem, Receipt
 from rest_framework import status
 
@@ -83,8 +84,8 @@ class DriverAPIView(APIView):
                 userdata = CustomUser.objects.get(register_id=register_id)
             except CustomUser.DoesNotExist:
                 return Response(
-                    {'error': 'School not found', 'status': status.HTTP_200_OK},
-                    status=status.HTTP_200_OK
+                    {'error': 'School not found', 'status': status.HTTP_404_NOT_FOUND},
+                    status=status.HTTP_404_NOT_FOUND
                 )
 
             try:
@@ -96,8 +97,8 @@ class DriverAPIView(APIView):
                 )
             except Driver.DoesNotExist:
                 return Response(
-                    {'error': 'Driver not found', 'status': status.HTTP_200_OK},
-                    status=status.HTTP_200_OK
+                    {'error': 'Driver not found', 'status': status.HTTP_404_NOT_FOUND},
+                    status=status.HTTP_404_NOT_FOUND
                 )
         else:
             return Response(
@@ -155,8 +156,8 @@ class StudentAPIView(APIView):
                 profileserializer = UserProfileSerializer(profiledata, many=False)
             except CustomUser.DoesNotExist:
                 return Response(
-                    {'error': 'School not found', 'status': status.HTTP_200_OK},
-                    status=status.HTTP_200_OK
+                    {'error': 'School not found', 'status': status.HTTP_404_NOT_FOUND},
+                    status=status.HTTP_404_NOT_FOUND
                 )
 
             try:
@@ -173,8 +174,8 @@ class StudentAPIView(APIView):
                 )
             except Student.DoesNotExist:
                 return Response(
-                    {'error': 'Student not found', 'status': status.HTTP_200_OK},
-                    status=status.HTTP_200_OK
+                    {'error': 'Student not found', 'status': status.HTTP_404_NOT_FOUND},
+                    status=status.HTTP_404_NOT_FOUND
                 )
         else:
             return Response(
@@ -221,8 +222,8 @@ class FeedbackAPIView(APIView):
                 schoolUser = CustomUser.objects.get(register_id=register_id)
             except CustomUser.DoesNotExist:
                 return Response(
-                    {'error': 'School not found', 'status': status.HTTP_200_OK},
-                    status=status.HTTP_200_OK
+                    {'error': 'School not found', 'status': status.HTTP_404_NOT_FOUND},
+                    status=status.HTTP_404_NOT_FOUND
                 )
 
             # Create a new feedback instance
@@ -301,15 +302,15 @@ class InvoiceAPIView(APIView):
                 schooluser = CustomUser.objects.get(register_id=register_id)
             except CustomUser.DoesNotExist:
                 return Response(
-                    {'error': 'School not found', 'status': status.HTTP_200_OK},
-                    status=status.HTTP_200_OK
+                    {'error': 'School not found', 'status': status.HTTP_404_NOT_FOUND},
+                    status=status.HTTP_404_NOT_FOUND
                 )
             try:
                 studentinstance = Student.objects.get(user=schooluser, registration_number=student_id)
             except Student.DoesNotExist:
                 return Response(
-                    {'error': 'Student not found', 'status': status.HTTP_200_OK},
-                    status=status.HTTP_200_OK
+                    {'error': 'Student not found', 'status': status.HTTP_404_NOT_FOUND},
+                    status=status.HTTP_404_NOT_FOUND
                 )
 
             try:
@@ -339,8 +340,8 @@ class InvoiceAPIView(APIView):
                 )
             except Invoice.DoesNotExist:
                 return Response(
-                    {'error': 'Invoice not found', 'status': status.HTTP_200_OK},
-                    status=status.HTTP_200_OK
+                    {'error': 'Invoice not found', 'status': status.HTTP_404_NOT_FOUND},
+                    status=status.HTTP_404_NOT_FOUND
                 )
         else:
             return Response(
@@ -392,8 +393,8 @@ class RouteAPIView(APIView):
                 schoolUser = CustomUser.objects.get(register_id=register_id)
             except CustomUser.DoesNotExist:
                 return Response(
-                    {'error': 'School not found', 'status': status.HTTP_200_OK},
-                    status=status.HTTP_200_OK
+                    {'error': 'School not found', 'status': status.HTTP_404_NOT_FOUND},
+                    status=status.HTTP_404_NOT_FOUND
                 )
             if routeid is not None:
                 oldroute = Route.objects.filter(user=schoolUser, id=routeid)
@@ -444,6 +445,61 @@ class RouteAPIView(APIView):
             return Response(
                 {'status': status.HTTP_201_CREATED, 'route': routeserializer.data},
                 status=status.HTTP_201_CREATED
+            )
+        else:
+            return Response(
+                {'error': 'Invalid parameter value', 'status': status.HTTP_400_BAD_REQUEST},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+class CalendarAPIView(APIView):
+    def get(self, request):
+        # Concatenate the words and encode as UTF-8
+        text = "StudentAppToWebFromWebLaunch".encode("utf-8")
+        # Generate a SHA-256 hash from the text
+        hash_object = sha256(text)
+        # Convert the hash to a hexadecimal string
+        token = hash_object.hexdigest()
+        print(token)
+
+        # Check if registerid is present in query params
+        register_id = request.query_params.get('registerid')
+        if not register_id:
+            return Response(
+                {'error': 'Missing required parameter(registerid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+
+        # Check if modid is present in query params
+        modid = request.query_params.get('modid')
+        if not modid:
+            return Response(
+                {'error': 'Missing required parameter(modid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+                )
+        # Check if token is present in query params
+        paramstoken = request.query_params.get('token')
+        if not paramstoken:
+            return Response(
+                {'error': 'Missing required parameter(token)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+        
+        if token == paramstoken and modid in MODLIST:
+            try:
+                schoolUser = CustomUser.objects.get(register_id=register_id)
+            except CustomUser.DoesNotExist:
+                return Response(
+                    {'error': 'School not found', 'status': status.HTTP_404_NOT_FOUND},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+            # Get all the events for the school
+            events = Calendar.objects.filter(user=schoolUser)
+            # Serialize the events
+            calendarserializer = CalendarSerializer(events, many=True)
+            return Response(
+                {'status': status.HTTP_200_OK, 'events': calendarserializer.data},
+                status=status.HTTP_200_OK
             )
         else:
             return Response(
