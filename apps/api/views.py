@@ -184,76 +184,122 @@ class StudentAPIView(APIView):
             )
 
 class FeedbackAPIView(APIView):
-    def post(self, request):
+    params = ["registerid", "modid", "token", "studentid"]
+
+    def check_post_params(self, request):
+        for param in self.params:
+            if param not in request.data:
+                return Response(
+                    {'error': f'Missing required parameter({param})', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                    status=status.HTTP_422_UNPROCESSABLE_ENTITY
+                )
+        return None
+    def check_get_params(self, request):
+        for param in self.params:
+            if param not in request.query_params:
+                return Response(
+                    {'error': f'Missing required parameter({param})', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                    status=status.HTTP_422_UNPROCESSABLE_ENTITY
+                )
+        return None
+
+    def generate_token(self, text):
         # Concatenate the words and encode as UTF-8
-        text = "StudentAppToWebFromWebLaunch".encode("utf-8")
+        text = text.encode("utf-8")
         # Generate a SHA-256 hash from the text
         hash_object = sha256(text)
         # Convert the hash to a hexadecimal string
         token = hash_object.hexdigest()
-        print(token)
+        return token
 
-        # Check if registerid is present in query params
-        register_id = request.data.get('registerid')
-        if not register_id:
-            return Response(
-                {'error': 'Missing required parameter(registerid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
-                status=status.HTTP_422_UNPROCESSABLE_ENTITY
-            )
+    def get(self, request):
+        check_result = self.check_get_params(request)
+        if check_result:
+            return check_result
 
-        # Check if modid is present in query params
-        modid = request.data.get('modid')
-        if not modid:
-            return Response(
-                {'error': 'Missing required parameter(modid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
-                status=status.HTTP_422_UNPROCESSABLE_ENTITY
-            )
-        
-        # Check if token is present in request data
-        paramstoken = request.data.get('token')
-        if not paramstoken:
-            return Response(
-                {'error': 'Missing required parameter(token)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
-                status=status.HTTP_422_UNPROCESSABLE_ENTITY
-            )
+        register_id = request.query_params.get('registerid')
+        modid = request.query_params.get('modid')
+        paramstoken = request.query_params.get('token')
+        student_id = request.query_params.get('studentid')
 
-        if token == paramstoken and modid in MODLIST:
-            try:
-                schoolUser = CustomUser.objects.get(register_id=register_id)
-            except CustomUser.DoesNotExist:
-                return Response(
-                    {'error': 'School not found', 'status': status.HTTP_404_NOT_FOUND},
-                    status=status.HTTP_404_NOT_FOUND
-                )
+        token = self.generate_token("StudentAppToWebFromWebLaunch")
 
-            # Create a new feedback instance
-            feedback = Feedback(user=schoolUser)
-
-            # Check if content is present in request data
-            content = request.data.get('content')
-            if not content:
-                return Response(
-                    {'error': 'Missing required parameter(content)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
-                    status=status.HTTP_422_UNPROCESSABLE_ENTITY
-                )
-            
-            feedback.content = content
-
-            # Save the feedback
-            feedback.save()
-
-            # Serialize the feedback data
-            feedbackserializer = FeedbackSerializer(feedback)
-
-            return Response(
-                {'status': status.HTTP_201_CREATED, 'feedback': feedbackserializer.data},
-                status=status.HTTP_201_CREATED
-            )
-        else:
+        if paramstoken != token or modid not in MODLIST:
             return Response(
                 {'error': 'Invalid parameter value', 'status': status.HTTP_400_BAD_REQUEST},
                 status=status.HTTP_400_BAD_REQUEST
             )
+
+        try:
+            schoolUser = CustomUser.objects.get(register_id=register_id)
+        except CustomUser.DoesNotExist:
+            return Response(
+                {'error': 'School not found', 'status': status.HTTP_404_NOT_FOUND},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        try:
+            studentinstance = Student.objects.get(user=schoolUser, registration_number=student_id)
+        except Student.DoesNotExist:
+            return Response(
+                {'error': 'Student not found', 'status': status.HTTP_404_NOT_FOUND},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        feedbacks = Feedback.objects.filter(user=schoolUser, student=studentinstance)
+        feedbackserializer = FeedbackSerializer(feedbacks, many=True)
+        return Response(
+            {'status': status.HTTP_200_OK, 'feedbacks': feedbackserializer.data},
+            status=status.HTTP_200_OK
+        )
+
+    def post(self, request):
+        check_result = self.check_post_params(request)
+        if check_result:
+            return check_result
+
+        register_id = request.data['registerid']
+        modid = request.data['modid']
+        paramstoken = request.data['token']
+        student_id = request.data['studentid']
+
+        token = self.generate_token("StudentAppToWebFromWebLaunch")
+
+        if paramstoken != token or modid not in MODLIST:
+            return Response(
+                {'error': 'Invalid parameter value', 'status': status.HTTP_400_BAD_REQUEST},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            schoolUser = CustomUser.objects.get(register_id=register_id)
+        except CustomUser.DoesNotExist:
+            return Response(
+                {'error': 'School not found', 'status': status.HTTP_404_NOT_FOUND},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        try:
+            studentinstance = Student.objects.get(user=schoolUser, registration_number=student_id)
+        except Student.DoesNotExist:
+            return Response(
+                {'error': 'Student not found', 'status': status.HTTP_404_NOT_FOUND},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        content = request.data.get('content')
+        if not content:
+            return Response(
+                {'error': 'Missing required parameter(content)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+
+        feedback = Feedback(user=schoolUser, student=studentinstance, content=content)
+        feedback.save()
+
+        feedbackserializer = FeedbackSerializer(feedback)
+        return Response(
+            {'status': status.HTTP_201_CREATED, 'feedback': feedbackserializer.data},
+            status=status.HTTP_201_CREATED
+        )
 
 class InvoiceAPIView(APIView):
     def get(self, request):

@@ -33,7 +33,7 @@ class RouteSerializer(serializers.ModelSerializer):
 class FeedbackSerializer(serializers.ModelSerializer):
     class Meta:
         model = Feedback
-        fields = '__all__'
+        fields = ['id', 'content', 'created_at']
 
 class InvoiceSerializer(serializers.ModelSerializer):
     class Meta:
