@@ -45,7 +45,6 @@ class CreateResultView(LoginRequiredMixin, View):
             return redirect(redirect_url)
         return render(request, "result/create_result_page2.html", {"form": form})
 
-
 class EditResultsView(LoginRequiredMixin, View):
     def get(self, request):
         classid = request.GET.get("classid")

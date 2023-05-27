@@ -1,72 +1,36 @@
 {% extends 'base.html' %}
+{% load widget_tweaks %}
 
 
 {% block title %}
-  Update Attendence
+  Filter the data
 {% endblock title %}
 
-{"""
-{% block content-header %}
+
+{% block content %}
+<div>
+
   <form method="POST">
-  {% csrf_token %}
-    <div class="card-header">
-      <div class="card-tools">
-      <p class="small btn btn-tool">You can also search by name/class by typing in the search box</p>
-      </div>
+    {% csrf_token %}
+
+    {{ form.non_field_errors }}
+
+    <div class="form-group row">
+      {{ form.class_name.errors }}
+      <label class="col-2" for="{{ form.class_name.id_for_label }}">{{ form.class_name.label_tag}}</label>
+      <div class="col">{{ form.class_name | add_class:"form-control" }}</div>
     </div>
-    {% endblock content-header %} """}
-    {% block content %}
-      {{ form.as_p }}
-    <table id="studenttable" class="table table-sm table-bordered" data-page-length='100'>
-    <thead class="thead-light">
-        <tr>
-            <td></td>
-            <td name="student_name">Student Name</td>
-            {% for subject in subjects %}
-                <td name="subject">{{ subject }}</td>
-            {% endfor %}
-        </tr>
-    </thead>
-    <tbody>
-        {% for student in students %}
-          <tr>
-            <td><input type="checkbox" id="{{ student.pk }}" name="students" value="{{ student.pk}}"></td>
-            <td name="student">{{student}} </td>
-            {% for i in subjects %}
-              <td name="attendence_choices">
-                    <input type="radio" name="{{ student.id }}" value="Present"> Present
-                    <input type="radio" name="{{ student.id }}" value="Absent"> Absent
-                    <input type="radio" name="{{ student.id }}" value="Late"> Late
-                    <input type="radio" name="{{ student.id }}" value="Excused">  Excused
-              </td>
-            {% endfor %}
-          </tr>
-        {% endfor %}
 
-    </tbody>
-</table>
+    <div class="form-group row">
+      {{ form.subjects.errors }}
+      <label class="col-2" for="{{ form.subjects.id_for_label }}">{{ form.subjects.label_tag}}</label>
+      <div class="col">{{ form.subjects | add_class:"form-control" }}</div>
+    </div>
 
-    <input type="submit" class="btn btn-success mt-2" value="Proceed">
+    <input type="hidden" name="finish" value="True">
+    <input type="hidden" name="students" value="{{ students }}">
 
-
+    <input type="submit" class="btn btn-success" value="Submit">
   </form>
+
 {% endblock content %}
-
-
-{% block morejs %}
-<script>
-  $('#studenttable').DataTable({
-    "ordering": false
-  });
-
-  $("#selecter").change(function () {
-    if (this.checked) {
-      $('input[name="students"]').prop('checked', true);
-    }
-    else {
-      $('input[name="students"]').prop('checked', false);
-    }
-  });
-</script>
-
-{% endblock morejs %}

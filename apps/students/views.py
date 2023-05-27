@@ -46,11 +46,15 @@ class StudentDetailView(LoginRequiredMixin, DetailView):
             exam = result.exam_score
             total += exam
             subjects[str(result.subject)] = {"exam": exam, "score": score}
-            
+
             subject.append(str(result.subject))
             marks.append(score)
-        percentage = (total / (len(results)*100)) * 100
-        
+
+        if len(results) > 0:
+            percentage = (total / (len(results) * 100)) * 100
+        else:
+            percentage = 0
+
         df = pd.DataFrame(marks, subject)
         fig = px.bar(df, color=subject)
         fig.update_traces(width=0.5)
@@ -61,7 +65,8 @@ class StudentDetailView(LoginRequiredMixin, DetailView):
         context["percentage"] = percentage
         context["chart"] = chart
         return context
-    
+
+
 class StudentCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Student
     fields = ['current_status', 'registration_number', 'first_name', 'last_name', 'guardian_name', 'gender', 'date_of_birth', 'current_class', 'date_of_admission', 'parent_mobile_number', 'address', 'comments', 'passport']

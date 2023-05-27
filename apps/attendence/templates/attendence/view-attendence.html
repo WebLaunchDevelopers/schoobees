@@ -2,48 +2,62 @@
 
 {% block fullcard %}
 
-{% for key,result in results.items %}
+{% for clas, status in attendence_state.items %}
+  {% if status.students and status.subjects %}
+    <h1>Class {{ clas }}</h1>
 
- <h1>Class {{key}}</h1>
-
-   <h1>{{i}}</h1>
-
- <div class="table-responsive">
-  <table id="studenttable" class="table table-bordered table-hover" data-page-length='100'>
-    <thead class="thead-light">
-      <tr>
-        <th>S/N</th>
-        <th>Registration Number</th>
-        {% for sub in result.subject%}
-          <th>{{sub}}</th>
-        {% endfor %}
-      </tr>
-    </thead>
-    <tbody>
-
-        <tr class='clickable-row' >
-
-      {% for student in result.students %}
-          {% for id,marks in student.items %}
-           <td>{{ forloop.parentloop.counter }}</td>
-           <td> {{id}} </td>
-             {% for mark in marks %}
-                <td> {{mark}} </td>
-             {% endfor %}
-           
+    <div class="table-responsive">
+      <table id="studenttable" class="table table-bordered table-hover" data-page-length='100'>
+        <thead class="thead-light">
+          <tr>
+            <th>S/N</th>
+            <th>Registration Number</th>
+            <th>Student Name</th>
+            {% for subject in attendence.subjects %}
+              <th>{{ subject.name }}</th>
+            {% endfor %}
+            <th>Attendence Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for student_data in attendence.students %}
+            <tr class='clickable-row' data-href="{% url 'student-detail' student_data.student.pk %}">
+              <td>{{ forloop.counter }}</td>
+              <td>{{ student_data.student.registration_number }}</td>
+              <td>{{ student_data.student.last_name }} {{ student_data.student.first_name }}</td>
+              {% for subject in attendence_status.subjects %}
+                <td>
+                  {% for status in attendence %}
+                    {% if status.student == student_data.student and status.subject == subject %}
+                       {{ status.exam_score }}
+                    {% endif %}
+                  {% empty %}
+                    <span class="no-records">No records found</span>
+                  {% endfor %}
+                </td>
+              {% endfor %}
+            </tr>
           {% endfor %}
-
-
-        </tr>
-      {% endfor %}
-
-    </tbody>
-  </table>
-</div>
-
-    
-
+        </tbody>
+      </table>
+    </div>
+  {% endif %}
+{% empty %}
+  <div class="no-records-container">
+    <p class="no-records">No records found</p>
+  </div>
 {% endfor %}
+<style>
+  .no-records-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 200px; /* Adjust the height as needed */
+}
 
-
+.no-records {
+  font-size: 18px;
+  color: #999;
+}
+</style>
 {% endblock fullcard %}
