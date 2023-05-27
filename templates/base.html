@@ -54,17 +54,17 @@
       <ul class="navbar-nav ml-auto">
         <!-- Notifications Dropdown Menu -->
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'exams_list' %}" role="button">
+          <a class="nav-link" href="{% url 'exams_list' %}" id="examIcon" role="button" title="Exams">
             <i class="fas fa-book-reader"></i>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="{% url 'feedback-list' %}" role="button">
+          <a class="nav-link" href="{% url 'feedback-list' %}" id="feedbackIcon" role="button" title="Feedbacks">
             <i class="fas fa-envelope"></i>
           </a>
         </li>
         <li class="nav-item dropdown">
-          <a class="nav-link" data-toggle="dropdown" href="#">
+          <a class="nav-link" data-toggle="dropdown" href="#" title="Menu">
             <i class="far fa-user"></i>
           </a>
           <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
@@ -89,7 +89,7 @@
         </li>
         <li class="nav-item">
           <a class="nav-link" data-widget="control-sidebar" data-slide="true"
-            href="#" role="button"><i class="fas fa-th-large"></i></a>
+            href="#" role="button" title="Customize Panel"><i class="fas fa-th-large"></i></a>
         </li>
       </ul>
     </nav>

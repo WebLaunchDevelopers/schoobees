@@ -13,13 +13,15 @@ from .serializers import (
     InvoiceItemSerializer,
     ReceiptSerializer,
     RouteSerializer,
-    CalendarSerializer
+    CalendarSerializer,
+    PerformanceSerializer
 )
 
 from apps.students.models import Student, Feedback
 from apps.base.models import CustomUser, UserProfile
 from apps.corecode.models import Driver, Route, Calendar
 from apps.finance.models import Invoice, InvoiceItem, Receipt
+from apps.result.models import Result
 from rest_framework import status
 
 from rest_framework.views import APIView
@@ -547,6 +549,97 @@ class CalendarAPIView(APIView):
             calendarserializer = CalendarSerializer(events, many=True)
             return Response(
                 {'status': status.HTTP_200_OK, 'events': calendarserializer.data},
+                status=status.HTTP_200_OK
+            )
+        else:
+            return Response(
+                {'error': 'Invalid parameter value', 'status': status.HTTP_400_BAD_REQUEST},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+class PerformanceAPIView(APIView):
+    def get(self, request):
+        # Concatenate the words and encode as UTF-8
+        text = "StudentAppToWebFromWebLaunch".encode("utf-8")
+        # Generate a SHA-256 hash from the text
+        hash_object = sha256(text)
+        # Convert the hash to a hexadecimal string
+        token = hash_object.hexdigest()
+        print(token)
+
+        # Check if registerid is present in query params
+        register_id = request.query_params.get('registerid')
+        if not register_id:
+            return Response(
+                {'error': 'Missing required parameter(registerid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+        
+        student_id  = request.query_params.get('studentid')
+        if not student_id:
+            return Response(
+                {'error': 'Missing required parameter(studentid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+
+        # Check if modid is present in query params
+        modid = request.query_params.get('modid')
+        if not modid:
+            return Response(
+                {'error': 'Missing required parameter(modid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+        
+        # Check if token is present in query params
+        paramstoken = request.query_params.get('token')
+        if not paramstoken:
+            return Response(
+                {'error': 'Missing required parameter(token)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+        
+        if token == paramstoken and modid in MODLIST:
+            try:
+                schoolUser = CustomUser.objects.get(register_id=register_id)
+            except CustomUser.DoesNotExist:
+                return Response(
+                    {'error': 'School not found', 'status': status.HTTP_404_NOT_FOUND},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+            try:
+                studentinstance = Student.objects.get(user=schoolUser, registration_number=student_id)
+            except Student.DoesNotExist:
+                return Response(
+                    {'error': 'Student not found', 'status': status.HTTP_404_NOT_FOUND},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+            
+            # Get all the results for the school and student
+            results = Result.objects.filter(user=schoolUser, student=studentinstance)
+            
+            # Calculate the total score and count the number of records
+            total_score = 0
+            record_count = len(results)
+            for result in results:
+                total_score += result.exam_score
+            
+            # Calculate the percentage
+            if record_count > 0:
+                percentage = (total_score / (record_count * 100)) * 100
+            else:
+                percentage = 0
+            
+            # Serialize the results
+            performanceserializer = PerformanceSerializer(results, many=True)
+            return Response(
+                {
+                    'status': status.HTTP_200_OK,
+                    'results': performanceserializer.data,
+                    'max_score_per_subject': 100,
+                    'total_score': total_score,
+                    'total_subjects': record_count,
+                    'final_percentage': percentage
+                },
                 status=status.HTTP_200_OK
             )
         else:

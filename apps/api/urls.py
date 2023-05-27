@@ -6,7 +6,8 @@ from .views import (
     FeedbackAPIView,
     InvoiceAPIView,
     RouteAPIView,
-    CalendarAPIView
+    CalendarAPIView,
+    PerformanceAPIView
 )
 
 urlpatterns = [
@@ -17,4 +18,5 @@ urlpatterns = [
     path('feedback/', FeedbackAPIView.as_view(), name="feedback"),
     path('invoc/', InvoiceAPIView.as_view(), name="invoice"),
     path('calendar/',  CalendarAPIView.as_view(), name="calendar"),
+    path('performance/',  PerformanceAPIView.as_view(), name="performance"),
 ]

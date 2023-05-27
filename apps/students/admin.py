@@ -17,8 +17,8 @@ class StudentBulkUploadAdmin(admin.ModelAdmin):
 
 @admin.register(Feedback)
 class FeedbackAdmin(admin.ModelAdmin):
-    list_display = ('user', 'created_at')
-    list_filter = ('user', 'created_at')
+    list_display = ('user', 'created_at', 'is_seen')
+    list_filter = ('user', 'created_at', 'is_seen')
     search_fields = ('user__username',)
     ordering = ["-created_at"]
 

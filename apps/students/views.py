@@ -185,7 +185,7 @@ class DownloadCSVViewdownloadcsv(LoginRequiredMixin, View):
         )
 
         return response
-    
+
 class FeedbackListView(LoginRequiredMixin, ListView):
     model = Feedback
     template_name = 'students/student_feedbacks.html'
@@ -195,3 +195,8 @@ class FeedbackListView(LoginRequiredMixin, ListView):
         queryset = super().get_queryset()
         queryset = queryset.filter(user=self.request.user)
         return queryset
+
+    def get(self, request, *args, **kwargs):
+        feedbacks = self.get_queryset()
+        feedbacks.update(is_seen=True)  # Update is_seen to True for all feedbacks
+        return super().get(request, *args, **kwargs)
