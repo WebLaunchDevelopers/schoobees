@@ -58,3 +58,7 @@ Avinash - todo for assigning
 
 class timetable
 http://127.0.0.1:8000/student/list --> minimum entries
+
+https://schoobees.com/finance/list giving 404 when we create a invoice
+
+reduce driver auth length
