@@ -66,3 +66,14 @@ reduce driver auth length
 activation account remove in base model
 
 80.33333333333333 % in http://127.0.0.1:8000/student/2/ and http://127.0.0.1:8000/result/view/all
+
+
+
+one write api is for route name
+another write api for multiple stops right?
+
+readapi for routelist?
+
+driverlist --> attached route for him
+
+
