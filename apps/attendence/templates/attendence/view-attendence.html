@@ -13,23 +13,22 @@
             <th>S/N</th>
             <th>Registration Number</th>
             <th>Student Name</th>
-            {% for subject in attendence.subjects %}
+            {% for subject in status.subjects %}
               <th>{{ subject.name }}</th>
             {% endfor %}
-            <th>Attendence Status</th>
           </tr>
         </thead>
         <tbody>
-          {% for student_data in attendence.students %}
+          {% for student_data in status.students %}
             <tr class='clickable-row' data-href="{% url 'student-detail' student_data.student.pk %}">
               <td>{{ forloop.counter }}</td>
               <td>{{ student_data.student.registration_number }}</td>
               <td>{{ student_data.student.last_name }} {{ student_data.student.first_name }}</td>
-              {% for subject in attendence_status.subjects %}
+              {% for subject in status.subjects %}
                 <td>
                   {% for status in attendence %}
                     {% if status.student == student_data.student and status.subject == subject %}
-                       {{ status.exam_score }}
+                       {{ status.attendence_status }}
                     {% endif %}
                   {% empty %}
                     <span class="no-records">No records found</span>
