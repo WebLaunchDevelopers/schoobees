@@ -93,14 +93,17 @@ class GetAttendenceView(LoginRequiredMixin, View):
             for subject in unique_subjects:
                 subjects.append(Subject.objects.get(pk=subject["subject"]))
 
+            students = []
             for student_id in unique_student_ids:
                 student = Student.objects.get(pk=student_id)
-                attendence_status = None
-                count = 0
+                attendance_status = {}
 
                 for subject in subjects:
-                     attendence = Attendance.objects.filter(user=request.user, current_class=eachclass, student=student, subject=subject).first()
-                students.append({"student": student, "attendence_status": attendence_status})
+                    attendance = Attendance.objects.filter(user=request.user, current_class=eachclass, student=student,
+                                                           subject=subject).first()
+                    attendance_status[subject] = attendance
+
+                students.append({"student": student, "attendance_status": attendance_status})
 
             if subjects or students:
                 has_records = True
