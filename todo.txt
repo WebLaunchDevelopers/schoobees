@@ -62,3 +62,7 @@ http://127.0.0.1:8000/student/list --> minimum entries
 https://schoobees.com/finance/list giving 404 when we create a invoice
 
 reduce driver auth length
+
+activation account remove in base model
+
+80.33333333333333 % in http://127.0.0.1:8000/student/2/ and http://127.0.0.1:8000/result/view/all

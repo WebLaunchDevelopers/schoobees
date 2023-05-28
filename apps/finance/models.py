@@ -19,8 +19,8 @@ class Invoice(models.Model):
     payment_due = models.DateField(default=timezone.now, null=True, blank=True)
     status = models.CharField(
         max_length=20,
-        choices=[("active", "Active"), ("closed", "Closed")],
-        default="active",
+        choices=[("unpaid", "Unpaid"), ("paid", "Paid")],
+        default="unpaid",
     )
 
     class Meta:

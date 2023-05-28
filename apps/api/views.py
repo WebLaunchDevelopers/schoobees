@@ -304,7 +304,7 @@ class FeedbackAPIView(APIView):
         )
 
 class InvoiceAPIView(APIView):
-    def get(self, request):
+    def post(self, request):
         # Concatenate the words and encode as UTF-8
         text = "StudentAppToWebForInvoiceFromWebLaunch".encode("utf-8")
         # Generate a SHA-256 hash from the text
@@ -314,7 +314,7 @@ class InvoiceAPIView(APIView):
         print(token)
 
         # Check if studentid is present in query params
-        student_id = request.query_params.get('studentid')
+        student_id = request.data['studentid']
         if not student_id:
             return Response(
                 {'error': 'Missing required parameter(studentid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
@@ -322,7 +322,7 @@ class InvoiceAPIView(APIView):
             )
 
         # Check if registerid is present in query params
-        register_id = request.query_params.get('registerid')
+        register_id = request.data['registerid']
         if not register_id:
             return Response(
                 {'error': 'Missing required parameter(registerid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
@@ -330,7 +330,7 @@ class InvoiceAPIView(APIView):
             )
 
         # Check if modid is present in query params
-        modid = request.query_params.get('modid')
+        modid = request.data['modid']
         if not modid:
             return Response(
                 {'error': 'Missing required parameter(modid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
@@ -338,7 +338,7 @@ class InvoiceAPIView(APIView):
             )
 
         # Check if token is present in query params
-        paramstoken = request.query_params.get('token')
+        paramstoken = request.data['token']
         if not paramstoken:
             return Response(
                 {'error': 'Missing required parameter(token)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
@@ -400,107 +400,123 @@ class InvoiceAPIView(APIView):
             )
         
 class RouteAPIView(APIView):
-    def post(self, request):
+    params = ["registerid", "modid", "token"]
+
+    def check_post_params(self, request):
+        for param in self.params:
+            if param not in request.data:
+                return Response(
+                    {'error': f'Missing required parameter({param})', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                    status=status.HTTP_422_UNPROCESSABLE_ENTITY
+                )
+        return None
+    def check_get_params(self, request):
+        for param in self.params:
+            if param not in request.query_params:
+                return Response(
+                    {'error': f'Missing required parameter({param})', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                    status=status.HTTP_422_UNPROCESSABLE_ENTITY
+                )
+        return None
+
+    def generate_token(self, text):
         # Concatenate the words and encode as UTF-8
-        text = "DriverAppToWebFromWebLaunch".encode("utf-8")
+        text = text.encode("utf-8")
         # Generate a SHA-256 hash from the text
         hash_object = sha256(text)
         # Convert the hash to a hexadecimal string
         token = hash_object.hexdigest()
-        print(token)
+        return token
 
-        # Check if registerid is present in query params
-        register_id = request.data.get('registerid')
-        if not register_id:
-            return Response(
-                {'error': 'Missing required parameter(registerid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
-                status=status.HTTP_422_UNPROCESSABLE_ENTITY
-            )
+    def get(self, request):
+        check_result = self.check_get_params(request)
+        if check_result:
+            return check_result
 
-        # Check if modid is present in query params
-        modid = request.data.get('modid')
-        if not modid:
-            return Response(
-                {'error': 'Missing required parameter(modid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
-                status=status.HTTP_422_UNPROCESSABLE_ENTITY
-            )
-        
-        #  Check if routeid is present in request data
-        routeid = request.data.get('id')
-        if not routeid:
-            routeid = None
-        
-        # Check if token is present in request data
-        paramstoken = request.data.get('token')
-        if not paramstoken:
-            return Response(
-                {'error': 'Missing required parameter(token)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
-                status=status.HTTP_422_UNPROCESSABLE_ENTITY
-            )
+        register_id = request.query_params.get('registerid')
+        modid = request.query_params.get('modid')
+        paramstoken = request.query_params.get('token')
 
-        if token == paramstoken and modid in MODLIST:
-            try:
-                schoolUser = CustomUser.objects.get(register_id=register_id)
-            except CustomUser.DoesNotExist:
-                return Response(
-                    {'error': 'School not found', 'status': status.HTTP_404_NOT_FOUND},
-                    status=status.HTTP_404_NOT_FOUND
-                )
-            if routeid is not None:
-                oldroute = Route.objects.filter(user=schoolUser, id=routeid)
-            else:
-                oldroute = None
+        token = self.generate_token("DriverAppToWebFromWebLaunch")
 
-            # Create a new feedback instance
-            route = Route(user=schoolUser)
-
-            # Check if content is present in request data
-            area = request.data.get('area')
-            if not area:
-                return Response(
-                    {'error': 'Missing required parameter(area)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
-                    status=status.HTTP_422_UNPROCESSABLE_ENTITY
-                )
-            latitude = request.data.get('latitude')
-            if not latitude:
-                return Response(
-                    {'error': 'Missing required parameter(latitude)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
-                    status=status.HTTP_422_UNPROCESSABLE_ENTITY
-                )
-            longitude = request.data.get('longitude')
-            if not longitude:
-                return Response(
-                    {'error': 'Missing required parameter(longitude)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
-                    status=status.HTTP_422_UNPROCESSABLE_ENTITY
-                )
-            
-            route.area = area
-            route.latitude = latitude
-            route.longitude = longitude
-            if oldroute is not None:
-                oldroute_instance = oldroute.first()
-                route.prev = oldroute_instance
-
-            # Save the feedback
-            route.save()
-            
-            # If oldroute is not None, then set the nxt of the oldroute to the new route
-            if oldroute_instance is not None:
-                oldroute_instance.nxt = route
-                oldroute_instance.save()
-
-            # Serialize the feedback data
-            routeserializer = RouteSerializer(route)
-
-            return Response(
-                {'status': status.HTTP_201_CREATED, 'route': routeserializer.data},
-                status=status.HTTP_201_CREATED
-            )
-        else:
+        if paramstoken != token or modid not in MODLIST:
             return Response(
                 {'error': 'Invalid parameter value', 'status': status.HTTP_400_BAD_REQUEST},
                 status=status.HTTP_400_BAD_REQUEST
             )
+
+        try:
+            schoolUser = CustomUser.objects.get(register_id=register_id)
+        except CustomUser.DoesNotExist:
+            return Response(
+                {'error': 'School not found', 'status': status.HTTP_404_NOT_FOUND},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        routes = Route.objects.filter(user=schoolUser)
+        route_serializer = RouteSerializer(routes, many=True)
+
+        return Response(
+            {'status': status.HTTP_200_OK, 'routes': route_serializer.data},
+            status=status.HTTP_200_OK
+        )
+
+    def post(self, request):
+        check_result = self.check_post_params(request)
+        if check_result:
+            return check_result
+
+        register_id = request.data['registerid']
+        modid = request.data['modid']
+        paramstoken = request.data['token']
+
+        token = self.generate_token("DriverAppToWebFromWebLaunch")
+
+        if paramstoken != token or modid not in MODLIST:
+            return Response(
+                {'error': 'Invalid parameter value', 'status': status.HTTP_400_BAD_REQUEST},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            schoolUser = CustomUser.objects.get(register_id=register_id)
+        except CustomUser.DoesNotExist:
+            return Response(
+                {'error': 'School not found', 'status': status.HTTP_404_NOT_FOUND},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        route_id = request.data.get('id')
+        if route_id:
+            old_route = Route.objects.filter(user=schoolUser, id=route_id)
+        else:
+            old_route = None
+
+        area = request.data['area']
+        latitude = request.data['latitude']
+        longitude = request.data['longitude']
+
+        if not area or not latitude or not longitude:
+            return Response(
+                {'error': 'Missing required parameters', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+
+        route = Route(user=schoolUser, area=area, latitude=latitude, longitude=longitude)
+        route.prev = old_route.first() if old_route else None
+        route.save()
+
+        if old_route:
+            old_route_instance = old_route.first()
+            old_route_instance.nxt = route
+            old_route_instance.save()
+
+        route_serializer = RouteSerializer(route)
+
+        return Response(
+            {'status': status.HTTP_201_CREATED, 'route': route_serializer.data},
+            status=status.HTTP_201_CREATED
+        )
 
 class CalendarAPIView(APIView):
     def get(self, request):
