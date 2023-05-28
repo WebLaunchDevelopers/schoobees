@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Student, StudentBulkUpload, Feedback
+from .models import Student, StudentBulkUpload, Feedback,  Notification
 
 @admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):
@@ -22,4 +22,8 @@ class FeedbackAdmin(admin.ModelAdmin):
     search_fields = ('user__username',)
     ordering = ["-created_at"]
 
-
+@admin.register(Notification)
+class NotificationAdmin(admin.ModelAdmin):
+    list_display = ('title', 'sender', 'recipients', 'created_at')
+    list_filter = ('sender', 'created_at',)
+    search_fields = ('title', 'message', 'sender__username')

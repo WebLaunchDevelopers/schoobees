@@ -14,11 +14,12 @@ from .serializers import (
     ReceiptSerializer,
     RouteSerializer,
     CalendarSerializer,
-    PerformanceSerializer
+    PerformanceSerializer,
+    NotificationSerializer
 )
 
-from apps.students.models import Student, Feedback
-from apps.base.models import CustomUser, UserProfile
+from apps.students.models import Student, Feedback, Notification
+from apps.base.models import CustomUser
 from apps.corecode.models import Driver, Route, Calendar
 from apps.finance.models import Invoice, InvoiceItem, Receipt
 from apps.result.models import Result
@@ -655,6 +656,85 @@ class PerformanceAPIView(APIView):
                     'total_score': total_score,
                     'total_subjects': record_count,
                     'final_percentage': percentage
+                },
+                status=status.HTTP_200_OK
+            )
+        else:
+            return Response(
+                {'error': 'Invalid parameter value', 'status': status.HTTP_400_BAD_REQUEST},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+class NotificationAPIView(APIView):
+    def get(self, request):
+        # Concatenate the words and encode as UTF-8
+        text = "StudentAppToWebFromWebLaunch".encode("utf-8")
+        # Generate a SHA-256 hash from the text
+        hash_object = sha256(text)
+        # Convert the hash to a hexadecimal string
+        token = hash_object.hexdigest()
+        print(token)
+
+        # Check if studentid is present in query params
+        student_id = request.query_params.get('studentid')
+        if not student_id:
+            return Response(
+                {'error': 'Missing required parameter(studentid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+
+        # Check if registerid is present in query params
+        register_id = request.query_params.get('registerid')
+        if not register_id:
+            return Response(
+                {'error': 'Missing required parameter(registerid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+        
+        # Check if modid is present in query params
+        modid = request.query_params.get('modid')
+        if not modid:
+            return Response(
+                {'error': 'Missing required parameter(modid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+        
+        # Check if token is present in query params
+        paramstoken = request.query_params.get('token')
+        if not paramstoken:
+            return Response(
+                {'error': 'Missing required parameter(token)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+        
+        if token == paramstoken and modid in MODLIST:
+            try:
+                schoolUser = CustomUser.objects.get(register_id=register_id)
+            except CustomUser.DoesNotExist:
+                return Response(
+                    {'error': 'School not found', 'status': status.HTTP_404_NOT_FOUND},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+            try:
+                studentinstance = Student.objects.get(user=schoolUser, registration_number=student_id)
+            except Student.DoesNotExist:
+                return Response(
+                    {'error': 'Student not found', 'status': status.HTTP_404_NOT_FOUND},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+            
+            student_notifications  = Notification.objects.filter(sender=schoolUser, recipients = 'student', student=studentinstance)
+            studentnotificationserializer = NotificationSerializer(student_notifications, many=True)
+            class_notifications  = Notification.objects.filter(sender=schoolUser, recipients = 'class', class_for=studentinstance.current_class)
+            classnotificationserializer = NotificationSerializer(class_notifications, many=True)
+            school_notifications  = Notification.objects.filter(sender=schoolUser, recipients = 'school', student=None, class_for=None)
+            schoolnotificationserializer = NotificationSerializer(school_notifications, many=True)
+            return Response(
+                {
+                    'status': status.HTTP_200_OK,
+                    'student_notifications': studentnotificationserializer.data,
+                    'class_notifications': classnotificationserializer.data,
+                    'school_notifications': schoolnotificationserializer.data,
                 },
                 status=status.HTTP_200_OK
             )

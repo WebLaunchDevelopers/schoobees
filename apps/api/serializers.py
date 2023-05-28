@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from apps.students.models import Student, Feedback
+from apps.students.models import Student, Feedback, Notification
 from apps.base.models import CustomUser, UserProfile
 from apps.corecode.models import Driver, Route, Calendar
 from apps.finance.models import Invoice, InvoiceItem, Receipt
@@ -64,3 +64,8 @@ class PerformanceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Result
         fields = ['id', 'exam_score', 'exam_name', 'subject_name', 'current_class_name', 'percentage', 'grade']
+
+class NotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notification
+        fields = ['title', 'message', 'created_at', 'recipients']

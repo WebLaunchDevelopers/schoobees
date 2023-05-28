@@ -7,7 +7,8 @@ from .views import (
     InvoiceAPIView,
     RouteAPIView,
     CalendarAPIView,
-    PerformanceAPIView
+    PerformanceAPIView,
+    NotificationAPIView
 )
 
 urlpatterns = [
@@ -19,4 +20,5 @@ urlpatterns = [
     path('invoc/', InvoiceAPIView.as_view(), name="invoice"),
     path('calendar/',  CalendarAPIView.as_view(), name="calendar"),
     path('performance/',  PerformanceAPIView.as_view(), name="performance"),
+    path('notification/',  NotificationAPIView.as_view(), name="notification"),
 ]
