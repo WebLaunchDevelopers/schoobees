@@ -143,7 +143,7 @@ class StudentBulkUploadView(LoginRequiredMixin, SuccessMessageMixin, CreateView)
                 "address",
                 "current_class",
                 "comments"
-                       ]
+    ]
 
     def form_valid(self, form):
         form.instance.user = self.request.user
@@ -180,7 +180,7 @@ class DownloadCSVViewdownloadcsv(LoginRequiredMixin, View):
                 "registration_number",
                 "first_name",
                 "last_name",
-                "guardian_name"
+                "guardian_name",
                 "gender",
                 "parent_number",
                 "address",
