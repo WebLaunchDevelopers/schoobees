@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}
+Update Attendence
+{% endblock title %}
+
+{% block content %}
+<form method="POST">
+  {% csrf_token %}
+  {{ formset.management_form }}
+
+  <table id="studenttable" class="table table-sm">
+    <thead>
+      <tr>
+        <th>S/N</th>
+        <th>Name</th>
+        <th>Class</th>
+        <th>Subject</th>
+        <th>Attendence Status</th>
+        <th>Delete</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for form in formset %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ form.instance.student }}</td>
+          <td>{{ form.instance.current_class }}</td>
+          <td>{{ form.instance.subject }}</td>
+          <td style="width: 10%;">{{ form.attendence_status | add_class:"form-control form-control-sm" }}</td>
+          <td>{{ form.DELETE }}</td>
+          <td style="display: none;">{{ form.id }}</td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="8" class="no-records">No records found</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+  {% if formset.non_form_errors %}
+    <div class="alert alert-danger">
+      {% for error in formset.non_form_errors %}
+        {{ error }}
+      {% endfor %}
+    </div>
+  {% endif %}
+  {% if records %}
+   <input type="submit" class="btn btn-success" value="Save">
+  {% endif %}
+</form>
+
+<style>
+  .no-records {
+    text-align: center;
+    font-style: italic;
+    color: gray;
+  }
+</style>
+{% endblock content %}
