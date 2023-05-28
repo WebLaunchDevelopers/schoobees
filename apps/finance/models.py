@@ -8,7 +8,6 @@ from django.contrib.auth import get_user_model
 
 CustomUser = get_user_model()
 
-
 class Invoice(models.Model):
     user = models.ForeignKey(CustomUser, on_delete = models.CASCADE)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
