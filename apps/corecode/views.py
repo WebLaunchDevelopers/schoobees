@@ -46,6 +46,11 @@ from apps.corecode.models import Driver
 class IndexView(LoginRequiredMixin, ListView):
     template_name = "index.html"
     model = StudentClass
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.is_superuser:
+            return redirect('/admin/login')
+        return super().dispatch(request, *args, **kwargs)
     
     def get_queryset(self):
         # Retrieve all objects associated with the logged-in user
@@ -84,6 +89,8 @@ class SiteConfigView(LoginRequiredMixin, View):
     def get(self, request):
         if request.user.is_faculty:
             return redirect('faculty-profile')
+        elif request.user.is_superuser:
+            return redirect('/admin/login')
         user = request.user
         custom_user_form = CustomUserForm(instance=user)
         user_profile_form = UserProfileForm(instance=user.userprofile)
@@ -558,25 +565,6 @@ class DriversView(LoginRequiredMixin, SuccessMessageMixin, View):
 class DriverDetailView(LoginRequiredMixin, DetailView):
     model = Driver
     template_name = 'corecode/driver_details.html'
-    qrcodeimg = None  # initialize img variable
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        driver = self.get_object()
-        data = {'driver_auth': driver.id, 'register_id': self.request.user.register_id}
-        qr = qrcode.QRCode(version=1, box_size=10, border=5)
-        qr.add_data(str(data))
-        qr.make(fit=True)
-        qrcodeimg = qr.make_image(fill='black', back_color='white')
-        # Save the image to a temporary file
-        tmp_filename = os.path.join(settings.MEDIA_ROOT, 'qrcode.png')
-        with open(tmp_filename, 'wb') as f:
-            qrcodeimg.save(f)
-        # Get the URL of the temporary file
-        fs = FileSystemStorage()
-        img_url = fs.url(tmp_filename)
-        context['img_url'] = img_url
-        return context
 
 class DriverDeleteView(LoginRequiredMixin, DeleteView):
     model = Driver

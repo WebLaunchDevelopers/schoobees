@@ -76,7 +76,7 @@ urlpatterns = [
     path('calendar/<int:pk>/delete/', CalendarDeleteView.as_view(), name='calendar-delete'),
 
     path('drivers/view/', DriversView.as_view(), name='drivers-view'),
-    path('drivers/<uuid:pk>/', DriverDetailView.as_view(), name='driver-details'),
-    path("drivers/<uuid:pk>/update/", DriverUpdateView.as_view(), name="driver-update"),
-    path("drivers/delete/<uuid:pk>/", DriverDeleteView.as_view(), name="driver-delete"),
+    path('drivers/<str:pk>/', DriverDetailView.as_view(), name='driver-details'),
+    path("drivers/<str:pk>/update/", DriverUpdateView.as_view(), name="driver-update"),
+    path("drivers/delete/<str:pk>/", DriverDeleteView.as_view(), name="driver-delete"),
 ]
