@@ -7,20 +7,25 @@ from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, ListView, View
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 from apps.finance.models import Invoice
 
-from .models import Student, StudentBulkUpload, Feedback
+from .models import Student, StudentBulkUpload, Feedback, Notification
 
-from django.utils import timezone
 from apps.result.models import Result
-from apps.corecode.models import StudentClass, AcademicTerm, AcademicSession
+from apps.corecode.models import StudentClass
+from apps.base.models import CustomUser
 from plotly.offline import plot
 import plotly.express as px 
 import pandas as pd
 from django.core.exceptions import ValidationError
 from django.contrib import messages
+from django import forms
+
+from django.views.generic import FormView
+
+
 
 class StudentListView(LoginRequiredMixin, ListView):
     model = Student
@@ -29,10 +34,8 @@ class StudentListView(LoginRequiredMixin, ListView):
     
     def get_queryset(self):
         queryset = super().get_queryset()
-        current_session = AcademicSession.objects.filter(user=self.request.user, current=True).first()
-        current_term = AcademicTerm.objects.filter(user=self.request.user, current=True).first()
+        return queryset.filter(user=self.request.user)
 
-        return queryset.filter(user=self.request.user, session=current_session, term=current_term)
 
 class StudentDetailView(LoginRequiredMixin, DetailView):
     model = Student
@@ -86,11 +89,6 @@ class StudentCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.user = self.request.user  # Assign the logged-in user to the student's user field
-        current_session = AcademicSession.objects.filter(user=self.request.user, current=True).first()
-        current_term = AcademicTerm.objects.filter(user=self.request.user, current=True).first()
-
-        form.instance.session = current_session
-        form.instance.term = current_term
         return super().form_valid(form)
 
 class StudentUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
@@ -150,7 +148,7 @@ class StudentBulkUploadView(LoginRequiredMixin, SuccessMessageMixin, CreateView)
                 "address",
                 "current_class",
                 "comments"
-                       ]
+    ]
 
     def form_valid(self, form):
         form.instance.user = self.request.user
@@ -187,7 +185,7 @@ class DownloadCSVViewdownloadcsv(LoginRequiredMixin, View):
                 "registration_number",
                 "first_name",
                 "last_name",
-                "guardian_name"
+                "guardian_name",
                 "gender",
                 "parent_number",
                 "address",
@@ -212,3 +210,33 @@ class FeedbackListView(LoginRequiredMixin, ListView):
         feedbacks = self.get_queryset()
         feedbacks.update(is_seen=True)  # Update is_seen to True for all feedbacks
         return super().get(request, *args, **kwargs)
+
+
+class SendNotificationView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
+    model = Notification
+    fields = ['title', 'message', 'recipients', 'class_for', 'student']
+    template_name = 'students/send_notification.html'
+    success_url = reverse_lazy('send-notification')
+    success_message = "Notification sent successfully!"
+
+    def get(self, request, *args, **kwargs):
+        form = self.get_form()
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        if form.is_valid():
+            notification = form.save(commit=False)
+            notification.sender = request.user
+            notification.save()
+            
+            messages.success(self.request, self.success_message)
+            return redirect(self.success_url)
+
+        return render(request, self.template_name, {'form': form})
+
+    def get_form(self, form_class=None):
+        form = super().get_form(form_class)
+        form.fields['student'].queryset = Student.objects.filter(user=self.request.user)
+        form.fields['class_for'].queryset = StudentClass.objects.filter(user=self.request.user)
+        return form

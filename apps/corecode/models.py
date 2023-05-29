@@ -110,11 +110,19 @@ class Driver(models.Model):
 
 class Route(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
+    name = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.name
+
+
+class RouteNodes(models.Model):
+    route = models.ForeignKey(Route, on_delete=models.CASCADE)
     area = models.CharField(max_length=100)
     latitude = models.CharField(max_length=10)
     longitude = models.CharField(max_length=10)
-    prev = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True, related_name='prev_routes')
-    nxt = models.ForeignKey('self', on_delete=models.CASCADE, blank=True, null=True, related_name='next_routes')
+    is_start_stop = models.BooleanField(default=False)
+    is_destination_stop = models.BooleanField(default=False)
 
     def __str__(self):
         return self.area

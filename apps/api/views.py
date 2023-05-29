@@ -13,13 +13,15 @@ from .serializers import (
     InvoiceItemSerializer,
     ReceiptSerializer,
     RouteSerializer,
+    RouteNodesSerializer,
     CalendarSerializer,
-    PerformanceSerializer
+    PerformanceSerializer,
+    NotificationSerializer
 )
 
-from apps.students.models import Student, Feedback
-from apps.base.models import CustomUser, UserProfile
-from apps.corecode.models import Driver, Route, Calendar
+from apps.students.models import Student, Feedback, Notification
+from apps.base.models import CustomUser
+from apps.corecode.models import Driver, Route, Calendar, RouteNodes
 from apps.finance.models import Invoice, InvoiceItem, Receipt
 from apps.result.models import Result
 from rest_framework import status
@@ -418,6 +420,107 @@ class RouteAPIView(APIView):
                     status=status.HTTP_422_UNPROCESSABLE_ENTITY
                 )
         return None
+    def generate_token(self, text):
+        # Concatenate the words and encode as UTF-8
+        text = text.encode("utf-8")
+        # Generate a SHA-256 hash from the text
+        hash_object = sha256(text)
+        # Convert the hash to a hexadecimal string
+        token = hash_object.hexdigest()
+        return token
+    
+    def get(self, request):
+        check_result = self.check_get_params(request)
+        if check_result:
+            return check_result
+
+        register_id = request.query_params.get('registerid')
+        modid = request.query_params.get('modid')
+        paramstoken = request.query_params.get('token')
+
+        token = self.generate_token("DriverAppToWebFromWebLaunch")
+
+        if paramstoken != token or modid not in MODLIST:
+            return Response(
+                {'error': 'Invalid parameter value', 'status': status.HTTP_400_BAD_REQUEST},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            schoolUser = CustomUser.objects.get(register_id=register_id)
+        except CustomUser.DoesNotExist:
+            return Response(
+                {'error': 'School not found', 'status': status.HTTP_404_NOT_FOUND},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        routes = Route.objects.filter(user=schoolUser)
+        routeserializer = RouteSerializer(routes, many=True)
+
+        return Response(
+            {'status': status.HTTP_200_OK, 'routes': routeserializer.data},
+            status=status.HTTP_200_OK
+        )
+    
+    def post(self, request):
+        check_result = self.check_post_params(request)
+        if check_result:
+            return check_result
+
+        register_id = request.data.get('registerid')
+        modid = request.data.get('modid')
+        paramstoken = request.data.get('token')
+
+        token = self.generate_token("DriverAppToWebFromWebLaunch")
+
+        if paramstoken != token or modid not in MODLIST:
+            return Response(
+                {'error': 'Invalid parameter value', 'status': status.HTTP_400_BAD_REQUEST},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            schoolUser = CustomUser.objects.get(register_id=register_id)
+        except CustomUser.DoesNotExist:
+            return Response(
+                {'error': 'School not found', 'status': status.HTTP_404_NOT_FOUND},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        routename = request.data['routename']
+        if not routename:
+            return Response(
+                {'error': 'Route name is required', 'status': status.HTTP_400_BAD_REQUEST},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        route = Route(user=schoolUser, name=routename)
+        route.save()
+
+        route_serializer = RouteSerializer(route, many=False)
+
+        return Response(
+            {'status': status.HTTP_201_CREATED, 'route': route_serializer.data},
+            status=status.HTTP_201_CREATED
+        )
+
+        
+class RouteNodesAPIView(APIView):
+    params = ["registerid", "modid", "token", "route_id"]
+
+    def check_post_params(self, request):
+        for param in self.params:
+            if param not in request.data:
+                return Response(
+                    {'error': f'Missing required parameter({param})', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                    status=status.HTTP_422_UNPROCESSABLE_ENTITY
+                )
+        return None
+    def check_get_params(self, request):
+        for param in self.params:
+            if param not in request.query_params:
+                return Response(
+                    {'error': f'Missing required parameter({param})', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                    status=status.HTTP_422_UNPROCESSABLE_ENTITY
+                )
+        return None
 
     def generate_token(self, text):
         # Concatenate the words and encode as UTF-8
@@ -452,12 +555,27 @@ class RouteAPIView(APIView):
                 {'error': 'School not found', 'status': status.HTTP_404_NOT_FOUND},
                 status=status.HTTP_404_NOT_FOUND
             )
+        
+        route_id =  request.query_params.get('route_id')
+        if not route_id:
+            return Response(
+                {'error': 'Route id is required', 'status': status.HTTP_400_BAD_REQUEST},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            parentRoute = Route.objects.get(id=route_id, user=schoolUser)
+        except Route.DoesNotExist:
+            return Response(
+                {'error': 'Route not found', 'status': status.HTTP_404_NOT_FOUND},
+                status=status.HTTP_404_NOT_FOUND
+            )
 
-        routes = Route.objects.filter(user=schoolUser)
-        route_serializer = RouteSerializer(routes, many=True)
+        routenodes = RouteNodes.objects.filter(route=parentRoute)
+        route_nodes_serializer = RouteNodesSerializer(routenodes, many=True)
 
         return Response(
-            {'status': status.HTTP_200_OK, 'routes': route_serializer.data},
+            {'status': status.HTTP_200_OK, 'routes': route_nodes_serializer.data},
             status=status.HTTP_200_OK
         )
 
@@ -486,35 +604,58 @@ class RouteAPIView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        route_id = request.data.get('id')
-        if route_id:
-            old_route = Route.objects.filter(user=schoolUser, id=route_id)
-        else:
-            old_route = None
-
-        area = request.data['area']
-        latitude = request.data['latitude']
-        longitude = request.data['longitude']
-
-        if not area or not latitude or not longitude:
+        route_id = request.data.get('route_id')
+        if not route_id:
             return Response(
-                {'error': 'Missing required parameters', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
-                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+                {'error': 'Route id is required', 'status': status.HTTP_400_BAD_REQUEST},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try: 
+            parentRoute = Route.objects.get(id=route_id, user=schoolUser)
+        except Route.DoesNotExist:
+            return Response(
+                {'error': 'Route not found', 'status': status.HTTP_404_NOT_FOUND},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        nodedata = request.data.get('nodedata')
+
+        if not nodedata or not isinstance(nodedata, list):
+            return Response(
+                {'error': 'Invalid node data', 'status': status.HTTP_400_BAD_REQUEST},
+                status=status.HTTP_400_BAD_REQUEST
             )
 
-        route = Route(user=schoolUser, area=area, latitude=latitude, longitude=longitude)
-        route.prev = old_route.first() if old_route else None
-        route.save()
+        route_nodes = []
+        for node in nodedata:
+            stop_name = node.get('stop_name')
+            latitude = node.get('latitude')
+            longitude = node.get('longitude')
+            is_start_stop = node.get('is_start_stop', False)
+            is_destination_stop = node.get('is_destination_stop', False)
 
-        if old_route:
-            old_route_instance = old_route.first()
-            old_route_instance.nxt = route
-            old_route_instance.save()
+            route_node = RouteNodes(
+                route=parentRoute,
+                area=stop_name,
+                latitude=latitude,
+                longitude=longitude,
+                is_start_stop=is_start_stop,
+                is_destination_stop=is_destination_stop
+            )
+            route_nodes.append(route_node)
 
-        route_serializer = RouteSerializer(route)
+        # Create all the RouteNodes objects in a single database query
+        RouteNodes.objects.bulk_create(route_nodes)
+
+        # Retrieve all the created RouteNodes objects for the given route
+        created_route_nodes = RouteNodes.objects.filter(route=parentRoute)
+
+        # Serialize the created RouteNodes objects
+        route_nodes_serializer = RouteNodesSerializer(created_route_nodes, many=True)
 
         return Response(
-            {'status': status.HTTP_201_CREATED, 'route': route_serializer.data},
+            {'status': status.HTTP_201_CREATED, 'routenodes': route_nodes_serializer.data},
             status=status.HTTP_201_CREATED
         )
 
@@ -655,6 +796,85 @@ class PerformanceAPIView(APIView):
                     'total_score': total_score,
                     'total_subjects': record_count,
                     'final_percentage': percentage
+                },
+                status=status.HTTP_200_OK
+            )
+        else:
+            return Response(
+                {'error': 'Invalid parameter value', 'status': status.HTTP_400_BAD_REQUEST},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+class NotificationAPIView(APIView):
+    def get(self, request):
+        # Concatenate the words and encode as UTF-8
+        text = "StudentAppToWebFromWebLaunch".encode("utf-8")
+        # Generate a SHA-256 hash from the text
+        hash_object = sha256(text)
+        # Convert the hash to a hexadecimal string
+        token = hash_object.hexdigest()
+        print(token)
+
+        # Check if studentid is present in query params
+        student_id = request.query_params.get('studentid')
+        if not student_id:
+            return Response(
+                {'error': 'Missing required parameter(studentid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+
+        # Check if registerid is present in query params
+        register_id = request.query_params.get('registerid')
+        if not register_id:
+            return Response(
+                {'error': 'Missing required parameter(registerid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+        
+        # Check if modid is present in query params
+        modid = request.query_params.get('modid')
+        if not modid:
+            return Response(
+                {'error': 'Missing required parameter(modid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+        
+        # Check if token is present in query params
+        paramstoken = request.query_params.get('token')
+        if not paramstoken:
+            return Response(
+                {'error': 'Missing required parameter(token)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+        
+        if token == paramstoken and modid in MODLIST:
+            try:
+                schoolUser = CustomUser.objects.get(register_id=register_id)
+            except CustomUser.DoesNotExist:
+                return Response(
+                    {'error': 'School not found', 'status': status.HTTP_404_NOT_FOUND},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+            try:
+                studentinstance = Student.objects.get(user=schoolUser, registration_number=student_id)
+            except Student.DoesNotExist:
+                return Response(
+                    {'error': 'Student not found', 'status': status.HTTP_404_NOT_FOUND},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+            
+            student_notifications  = Notification.objects.filter(sender=schoolUser, recipients = 'student', student=studentinstance)
+            studentnotificationserializer = NotificationSerializer(student_notifications, many=True)
+            class_notifications  = Notification.objects.filter(sender=schoolUser, recipients = 'class', class_for=studentinstance.current_class)
+            classnotificationserializer = NotificationSerializer(class_notifications, many=True)
+            school_notifications  = Notification.objects.filter(sender=schoolUser, recipients = 'school', student=None, class_for=None)
+            schoolnotificationserializer = NotificationSerializer(school_notifications, many=True)
+            return Response(
+                {
+                    'status': status.HTTP_200_OK,
+                    'student_notifications': studentnotificationserializer.data,
+                    'class_notifications': classnotificationserializer.data,
+                    'school_notifications': schoolnotificationserializer.data,
                 },
                 status=status.HTTP_200_OK
             )

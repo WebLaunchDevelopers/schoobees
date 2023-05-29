@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+      <div class="card">
+        <div class="card-header">
+          <h1>Send Notification</h1>
+        </div>
+        <div class="card-body">
+          <form method="post" id="sendNotificationForm">
+            {% csrf_token %}
+            <div class="form-group">
+              <label for="id_title" class="font-weight-bold">Title:</label>
+              <input type="text" name="title" id="id_title" class="form-control" required>
+            </div>
+            <div class="form-group">
+              <label for="id_message" class="font-weight-bold">Message:</label>
+              <textarea name="message" id="id_message" rows="3" class="form-control" required></textarea>
+            </div>
+            <div class="form-group">
+              <label for="id_recipients" class="font-weight-bold">Recipient Type:</label>
+              <select name="recipients" id="id_recipients" class="form-control" required>
+                <option value="student">Student</option>
+                <option value="class">Class</option>
+                <option value="school">School</option>
+              </select>
+            </div>
+            <div class="form-group" id="studentField" style="display: block;">
+              <label for="id_student" class="font-weight-bold">Select Student:</label>
+              <select name="student" id="id_student" class="form-control">
+                <option value="" selected>Select Student</option>
+                {% for student in form.fields.student.queryset %}
+                  <option value="{{ student.id }}">{{ student.last_name }} {{ student.first_name }} ({{student.registration_number}})</option>
+                {% endfor %}
+              </select>
+            </div>
+            <div class="form-group" id="classField" style="display: none;">
+              <label for="id_class_for" class="font-weight-bold">Select Class:</label>
+              <select name="class_for" id="id_class_for" class="form-control">
+                <option value="" selected>Select Class</option>
+                {% for class in form.fields.class_for.queryset %}
+                  <option value="{{ class.id }}">{{ class.name }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Send</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.getElementById('id_recipients').addEventListener('change', function() {
+    var selectedRecipient = this.value;
+    var studentField = document.getElementById('studentField');
+    var classField = document.getElementById('classField');
+
+    if (selectedRecipient === 'student') {
+      studentField.style.display = 'block';
+      classField.style.display = 'none';
+    } else if (selectedRecipient === 'class') {
+      studentField.style.display = 'none';
+      classField.style.display = 'block';
+    } else {
+      studentField.style.display = 'none';
+      classField.style.display = 'none';
+    }
+  });
+</script>
+{% endblock %}

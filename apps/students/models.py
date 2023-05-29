@@ -74,3 +74,20 @@ class Feedback(models.Model):
     class Meta:
         ordering = ['-created_at']
 
+class Notification(models.Model):
+    RECIPIENT_CHOICES = [
+        ('student', 'Student'),
+        ('class', 'Class'),
+        ('school', 'School'),
+    ]
+
+    sender = models.ForeignKey(CustomUser, on_delete=models.CASCADE, related_name='sent_notifications')
+    title = models.CharField(max_length=200)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    recipients = models.CharField(max_length=10, choices=RECIPIENT_CHOICES)
+    class_for = models.ForeignKey(StudentClass, on_delete=models.CASCADE, null=True, blank=True)
+    student = models.ForeignKey(Student, on_delete=models.CASCADE, null=True, blank=True)
+
+    def __str__(self):
+        return self.title

@@ -1,7 +1,7 @@
 from rest_framework import serializers
-from apps.students.models import Student, Feedback
+from apps.students.models import Student, Feedback, Notification
 from apps.base.models import CustomUser, UserProfile
-from apps.corecode.models import Driver, Route, Calendar
+from apps.corecode.models import Driver, Route, Calendar, RouteNodes
 from apps.finance.models import Invoice, InvoiceItem, Receipt
 from apps.result.models import Result
 
@@ -29,6 +29,11 @@ class DriverSerializer(serializers.ModelSerializer):
 class RouteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Route
+        fields = ['id', 'name']
+
+class RouteNodesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RouteNodes
         fields = '__all__'
 
 class FeedbackSerializer(serializers.ModelSerializer):
@@ -64,3 +69,13 @@ class PerformanceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Result
         fields = ['id', 'exam_score', 'exam_name', 'subject_name', 'current_class_name', 'percentage', 'grade']
+
+class NotificationSerializer(serializers.ModelSerializer):
+    created_at = serializers.SerializerMethodField()
+
+    def get_created_at(self, obj):
+        return obj.created_at.strftime("%Y-%m-%d %I:%M%p")
+    
+    class Meta:
+        model = Notification
+        fields = ['title', 'message', 'created_at', 'recipients']
