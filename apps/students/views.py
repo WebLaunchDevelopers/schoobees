@@ -13,9 +13,9 @@ from apps.finance.models import Invoice
 
 from .models import Student, StudentBulkUpload, Feedback
 
-
+from django.utils import timezone
 from apps.result.models import Result
-from apps.corecode.models import StudentClass
+from apps.corecode.models import StudentClass, AcademicTerm, AcademicSession
 from plotly.offline import plot
 import plotly.express as px 
 import pandas as pd
@@ -29,8 +29,10 @@ class StudentListView(LoginRequiredMixin, ListView):
     
     def get_queryset(self):
         queryset = super().get_queryset()
-        return queryset.filter(user=self.request.user)
+        current_session = AcademicSession.objects.filter(user=self.request.user, current=True).first()
+        current_term = AcademicTerm.objects.filter(user=self.request.user, current=True).first()
 
+        return queryset.filter(user=self.request.user, session=current_session, term=current_term)
 
 class StudentDetailView(LoginRequiredMixin, DetailView):
     model = Student
@@ -84,6 +86,11 @@ class StudentCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.user = self.request.user  # Assign the logged-in user to the student's user field
+        current_session = AcademicSession.objects.filter(user=self.request.user, current=True).first()
+        current_term = AcademicTerm.objects.filter(user=self.request.user, current=True).first()
+
+        form.instance.session = current_session
+        form.instance.term = current_term
         return super().form_valid(form)
 
 class StudentUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):

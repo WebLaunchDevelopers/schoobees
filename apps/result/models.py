@@ -33,6 +33,8 @@ class Result(models.Model):
     exam = models.ForeignKey(Exam, on_delete=models.CASCADE, null=True)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     exam_score = models.IntegerField(default=0,validators=[MaxValueValidator(100, message="Exam score cannot exceed 100.")])
+    session = models.ForeignKey(AcademicSession, on_delete=models.CASCADE)
+    term = models.ForeignKey(AcademicTerm, on_delete=models.CASCADE)
 
     class Meta:
         ordering = ["subject"]

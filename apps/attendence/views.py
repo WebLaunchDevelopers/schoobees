@@ -9,7 +9,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.forms import modelformset_factory
-from apps.corecode.models import Subject, StudentClass, AcademicTerm
+from apps.corecode.models import Subject, StudentClass, AcademicTerm, AcademicSession
 from apps.students.models import Student
 from django.utils.decorators import method_decorator
 from django.views import View
@@ -29,17 +29,24 @@ class UpdateAttendenceView(LoginRequiredMixin, View):
         if form.is_valid():
             class_name = form.cleaned_data["class_name"]
             subject = form.cleaned_data["subjects"]
+            date_of_attendence = form.cleaned_data["date_of_attendence"]
             attendence_status = []
+
+            current_session = AcademicSession.objects.filter(user=self.request.user, current=True).first()
+            current_term = AcademicTerm.objects.filter(user=self.request.user, current=True).first()
 
             for student in Student.objects.filter(user=request.user, current_class=class_name):
                 check = Attendance.objects.filter(user=request.user, current_class=class_name, subject=subject,
-                                                  student=student).first()
+                                                  student=student, date_of_attendence=date_of_attendence, session=current_session,term=current_term).first()
                 if not check:
                     attendance = Attendance(
                         user=request.user,
                         current_class=class_name,
                         subject=subject,
                         student=student,
+                        date_of_attendence=date_of_attendence,
+                        session=current_session,
+                        term=current_term,
                     )
                     attendence_status.append(attendance)
 
@@ -79,15 +86,18 @@ class EditAttendenceView(LoginRequiredMixin, View):
 
 class GetAttendenceView(LoginRequiredMixin, View):
     def get(self, request):
-        attendence = Attendance.objects.filter(user=request.user)
+        current_session = AcademicSession.objects.get(current=True)
+        current_term = AcademicTerm.objects.get(current=True)
+
+        attendence = Attendance.objects.filter(user=request.user, session=current_session, term=current_term)
         classes = StudentClass.objects.filter(user=request.user)
         attendence_state = {}
         has_records = False
 
         for eachclass in classes:
             subjects, students = [], []
-            unique_subjects = Attendance.objects.filter(user=request.user, current_class=eachclass).values("subject").distinct()
-            unique_students = Attendance.objects.filter(user=request.user, current_class=eachclass).values("student").distinct()
+            unique_subjects = Attendance.objects.filter(user=request.user, current_class=eachclass, session=current_session, term=current_term).values("subject").distinct()
+            unique_students = Attendance.objects.filter(user=request.user, current_class=eachclass, session=current_session, term=current_term).values("student").distinct()
             unique_student_ids = list(set(item["student"] for item in unique_students))
 
             for subject in unique_subjects:
@@ -100,7 +110,7 @@ class GetAttendenceView(LoginRequiredMixin, View):
 
                 for subject in subjects:
                     attendance = Attendance.objects.filter(user=request.user, current_class=eachclass, student=student,
-                                                           subject=subject).first()
+                                                           subject=subject, session=current_session, term=current_term).first()
                     attendance_status[subject] = attendance
 
                 students.append({"student": student, "attendance_status": attendance_status})
