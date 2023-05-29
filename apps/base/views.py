@@ -54,11 +54,21 @@ class ActivateView(View):
 
 class LoginView(View):
     def get(self, request):
+        if request.user.is_authenticated:
+            if request.user.is_superuser:
+                  return redirect('/admin/login')
+            return redirect('home')
+
         form = LoginForm()
         next = request.GET.get('next')
         return render(request, 'registration/login.html', {'form': form, 'next': next})
 
     def post(self, request):
+        if request.user.is_authenticated:
+            if request.user.is_superuser:
+                  return redirect('/admin/login')
+            return redirect('home')
+        
         form = LoginForm(data=request.POST)
         next = request.POST.get('next')
         if form.is_valid():

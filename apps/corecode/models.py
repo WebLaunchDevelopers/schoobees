@@ -1,7 +1,8 @@
 from django.db import models
 from datetime import datetime
 from django.contrib.auth import get_user_model
-import uuid
+import random
+import string
 
 CustomUser = get_user_model()
 # Create your models here.
@@ -94,7 +95,7 @@ class Calendar(models.Model):
 
 class Driver(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    id = models.CharField(max_length=9, unique=True, primary_key=True, default=''.join(random.choices(string.ascii_uppercase + string.digits, k=9)), editable=False)
     name = models.CharField(max_length=255)
     phone_number = models.CharField(max_length=20)
     alternate_number = models.CharField(max_length=20)
