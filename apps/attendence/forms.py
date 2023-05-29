@@ -19,12 +19,14 @@ ATTENDANCE_CHOICES = [
 class UpdateAttendence(forms.Form):
     subjects = forms.ModelChoiceField(empty_label='Select Subject',queryset=Subject.objects.all())
     class_name = forms.ModelChoiceField(empty_label='Select Class',queryset=StudentClass.objects.all())
+    date_of_attendence = forms.DateField(widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}))
 
     def __init__(self, *args, user=None, **kwargs):
         super().__init__(*args, **kwargs)
         if user:
             self.fields['class_name'].queryset = StudentClass.objects.filter(user=user)
             self.fields['subjects'].queryset = Subject.objects.filter(user=user)
+
 
 EditAttendance = modelformset_factory(
     Attendance, fields=("id", "attendence_status"), extra=0, can_delete=True,

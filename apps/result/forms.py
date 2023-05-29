@@ -5,19 +5,23 @@ from apps.corecode.models import AcademicSession, AcademicTerm, Subject, Student
 
 from .models import Result, Exam
 
+
 class CreateResults(forms.Form):
     OPTIONS = [
         ('', 'Select'),
     ]
-    exam = forms.ModelChoiceField(empty_label='Select Exam',queryset=Exam.objects.all())
-    subjects = forms.ModelChoiceField(empty_label='Select Subject',queryset=Subject.objects.all())
-    class_name = forms.ModelChoiceField(empty_label='Select Class',queryset=StudentClass.objects.all())
+    exam = forms.ModelChoiceField(empty_label='Select Exam', queryset=Exam.objects.none())
+    subjects = forms.ModelChoiceField(empty_label='Select Subject', queryset=Subject.objects.all())
+    class_name = forms.ModelChoiceField(empty_label='Select Class', queryset=StudentClass.objects.all())
 
     def __init__(self, *args, user=None, **kwargs):
         super().__init__(*args, **kwargs)
         if user:
+            current_session = AcademicSession.objects.filter(user=user, current=True).first()
+            current_term = AcademicTerm.objects.filter(user=user, current=True).first()
+
             self.fields['class_name'].queryset = StudentClass.objects.filter(user=user)
-            self.fields['exam'].queryset = Exam.objects.filter(user=user)
+            self.fields['exam'].queryset = Exam.objects.filter(user=user, session=current_session, term=current_term)
             self.fields['subjects'].queryset = Subject.objects.filter(user=user)
 
 EditResults = modelformset_factory(

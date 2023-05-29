@@ -13,6 +13,7 @@
             <th>S/N</th>
             <th>Registration Number</th>
             <th>Student Name</th>
+            <th>Date of Attendence</th>
             {% for subject in status.subjects %}
               <th>{{ subject.name }}</th>
             {% endfor %}
@@ -24,16 +25,22 @@
               <td>{{ forloop.counter }}</td>
               <td>{{ student_data.student.registration_number }}</td>
               <td>{{ student_data.student.last_name }} {{ student_data.student.first_name }}</td>
+              {% for status in attendence %}
+                <td>{{ status.date_of_attendence }}</td>
+              {% endfor %}
+
               {% for subject in status.subjects %}
-                <td>
-                  {% for status in attendence %}
-                    {% if status.student == student_data.student and status.subject == subject %}
-                       {{ status.attendence_status }}
-                    {% endif %}
-                  {% empty %}
-                    <span class="no-records">No records found</span>
-                  {% endfor %}
-                </td>
+
+                    <td>
+                      {% for status in attendence %}
+                        {% if status.student == student_data.student and status.subject == subject %}
+                           {{ status.attendence_status }}
+                        {% endif %}
+                      {% empty %}
+                        <span class="no-records">No records found</span>
+                       {% endfor %}
+                    </td>
+
               {% endfor %}
             </tr>
           {% endfor %}
