@@ -11,7 +11,7 @@ from django.shortcuts import render, redirect
 
 from apps.finance.models import Invoice
 
-from .models import Student, StudentBulkUpload, Feedback, Notification
+from .models import Student, StudentBulkUpload, Feedback, Notification, AcademicSession,AcademicTerm
 
 from apps.result.models import Result
 from apps.corecode.models import StudentClass
@@ -34,7 +34,10 @@ class StudentListView(LoginRequiredMixin, ListView):
     
     def get_queryset(self):
         queryset = super().get_queryset()
-        return queryset.filter(user=self.request.user)
+        current_session = AcademicSession.objects.filter(user=self.request.user, current=True).first()
+        current_term = AcademicTerm.objects.filter(user=self.request.user, current=True,).first()
+
+        return queryset.filter(user=self.request.user,session=current_session, term=current_term)
 
 
 class StudentDetailView(LoginRequiredMixin, DetailView):
@@ -74,7 +77,9 @@ class StudentDetailView(LoginRequiredMixin, DetailView):
 
 class StudentCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Student
-    fields = ['current_status', 'registration_number', 'first_name', 'last_name', 'guardian_name', 'gender', 'date_of_birth', 'current_class', 'date_of_admission', 'parent_mobile_number', 'address', 'comments', 'passport']
+    fields = ['current_status', 'registration_number', 'first_name', 'last_name', 'guardian_name', 'gender',
+              'date_of_birth', 'current_class', 'date_of_admission', 'parent_mobile_number', 'address', 'comments',
+              'passport']
     success_url = reverse_lazy("student-list")  # Redirect URL after successful form submission
 
     def get_form(self, form_class=None):
@@ -84,12 +89,19 @@ class StudentCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         form.fields["date_of_admission"].widget = widgets.DateInput(attrs={"type": "date"})
         form.fields["address"].widget = widgets.Textarea(attrs={"rows": 2})
         form.fields["comments"].widget = widgets.Textarea(attrs={"rows": 2})
-        form.fields["current_class"].queryset = StudentClass.objects.filter(user=self.request.user)  # Filter the queryset based on the logged-in user
+        form.fields["current_class"].queryset = StudentClass.objects.filter(user=self.request.user)
         return form
 
     def form_valid(self, form):
-        form.instance.user = self.request.user  # Assign the logged-in user to the student's user field
+        form.instance.user = self.request.user  # Assigning the logged-in user to the student's user field
+        current_session = AcademicSession.objects.filter(user=self.request.user, current=True).first()
+        current_term = AcademicTerm.objects.filter(user=self.request.user, current=True).first()
+
+        form.instance.session = current_session  # Assigning the current session to the student's session field
+        form.instance.term = current_term  # Assigning the current term to the student's term field
+
         return super().form_valid(form)
+
 
 class StudentUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = Student
