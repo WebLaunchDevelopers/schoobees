@@ -96,6 +96,7 @@ class Calendar(models.Model):
 class Driver(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     id = models.CharField(max_length=9, unique=True, primary_key=True, default=''.join(random.choices(string.ascii_uppercase + string.digits, k=9)), editable=False)
+    is_driveradmin = models.BooleanField(default=False)
     name = models.CharField(max_length=255)
     phone_number = models.CharField(max_length=20)
     alternate_number = models.CharField(max_length=20)

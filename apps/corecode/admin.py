@@ -35,7 +35,7 @@ class CalendarAdmin(admin.ModelAdmin):
     search_fields = ('title',)
 
 class DriverAdmin(admin.ModelAdmin):
-    list_display = ('user', 'name', 'phone_number', 'email')
+    list_display = ('user', 'name', 'phone_number', 'email', 'is_driveradmin')
     search_fields = ('user', 'name', 'phone_number', 'email', 'address', 'aadhaar_number', 'license_number', 'vehicle_number')
     list_filter = ('user', 'vehicle_name', 'created_at', 'updated_at')
     readonly_fields = ('created_at', 'updated_at')
