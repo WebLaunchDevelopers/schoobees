@@ -32,7 +32,7 @@ class AcademicSession(models.Model):
             return f"{current_year}-{current_year + 1}"
     default_name = get_academic_year()
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    name = models.CharField(max_length=200, unique=True, default=default_name)
+    name = models.CharField(max_length=200, default=default_name)
     current = models.BooleanField(default=True)
 
     class Meta:
@@ -46,7 +46,7 @@ class AcademicTerm(models.Model):
     """Academic Term"""
 
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    name = models.CharField(max_length=20, unique=True, default="1st Term")
+    name = models.CharField(max_length=20, default="1st Term")
     current = models.BooleanField(default=True)
 
     class Meta:

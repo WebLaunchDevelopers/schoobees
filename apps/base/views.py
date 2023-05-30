@@ -33,6 +33,8 @@ class RegisterView(View):
             profile.save()
             # send_activation_email(user, request)
             messages.success(request, 'Your account has been created. Please wait for the approval of your account.')
+            if request.user.is_authenticated:
+                logout(request)
             return redirect('login')
         else:
             messages.error(request, 'Invalid details.')

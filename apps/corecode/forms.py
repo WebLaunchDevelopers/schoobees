@@ -88,6 +88,12 @@ class AcademicSessionForm(ModelForm):
         model = AcademicSession
         fields = ["name", "current"]
 
+    def clean_name(self):
+        name = self.cleaned_data["name"]
+        if self.user and AcademicSession.objects.filter(user=self.user, name=name).exists():
+            raise forms.ValidationError("Subject with this name already exists.")
+        return name
+
 
 class AcademicTermForm(ModelForm):
     prefix = "Academic Term"
@@ -95,6 +101,12 @@ class AcademicTermForm(ModelForm):
     class Meta:
         model = AcademicTerm
         fields = ["name", "current"]
+
+    def clean_name(self):
+        name = self.cleaned_data["name"]
+        if self.user and AcademicTerm.objects.filter(user=self.user, name=name).exists():
+            raise forms.ValidationError("Academic session with this Name already exists.")
+        return name
 
 class SubjectForm(forms.ModelForm):
     prefix = "Subject"
@@ -110,7 +122,7 @@ class SubjectForm(forms.ModelForm):
     def clean_name(self):
         name = self.cleaned_data["name"]
         if self.user and Subject.objects.filter(user=self.user, name=name).exists():
-            raise forms.ValidationError("Subject with this name already exists.")
+            raise forms.ValidationError("Academic term with this Name already exists.")
         return name
 
 class StudentClassForm(ModelForm):
@@ -124,11 +136,11 @@ class StudentClassForm(ModelForm):
 class CurrentSessionForm(forms.Form):
     current_session = forms.ModelChoiceField(
         empty_label='Select One Session',
-        queryset=AcademicSession.objects.none(),
+        queryset=AcademicSession.objects.all(),
         help_text='Click <a href="/session/create/?next=current-session/">here</a> to add new session'
     )
     current_term = forms.ModelChoiceField(
-        queryset=AcademicTerm.objects.none(),
+        queryset=AcademicTerm.objects.all(),
         empty_label='Select One Term',
         help_text='Click <a href="/term/create/?next=current-session/">here</a> to add new term'
     )
