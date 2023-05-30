@@ -351,6 +351,19 @@ class SubjectListView(LoginRequiredMixin, SuccessMessageMixin, ListView):
         context["form"] = SubjectForm()
         return context
 
+class SubjectListView(LoginRequiredMixin, SuccessMessageMixin, ListView):
+    model = Subject
+    template_name = "corecode/subject_list.html"
+
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.filter(user=self.request.user)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["form"] = SubjectForm()
+        return context
+
 
 class SubjectCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Subject
@@ -427,18 +440,6 @@ class CurrentSessionAndTermView(LoginRequiredMixin, View):
         return render(request, self.template_name, {"form": form})
 
 
-class SubjectListView(LoginRequiredMixin, SuccessMessageMixin, ListView):
-    model = Subject
-    template_name = "corecode/subject_list.html"
-
-    def get_queryset(self):
-        queryset = super().get_queryset()
-        return queryset.filter(user=self.request.user)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["form"] = SubjectForm()
-        return context
 
 class CalendarCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Calendar
