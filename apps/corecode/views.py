@@ -387,24 +387,18 @@ class SubjectDeleteView(LoginRequiredMixin, DeleteView):
         messages.success(self.request, self.success_message.format(obj.name))
         return super(SubjectDeleteView, self).delete(request, *args, **kwargs)
 
+
 class CurrentSessionAndTermView(LoginRequiredMixin, View):
-    """Current SEssion and Term"""
+    """Current Session and Term"""
 
     form_class = CurrentSessionForm
     template_name = "corecode/current_session.html"
+    success_message = "Current Session/term updated successfully."
 
     def get(self, request, *args, **kwargs):
-        current_session = None
-        current_term = None
-        if request.user.is_authenticated:
-            try:
-                current_session = AcademicSession.objects.get(user=request.user, current=True)
-            except AcademicSession.DoesNotExist:
-                pass
-            try:
-                current_term = AcademicTerm.objects.get(user=request.user, current=True)
-            except AcademicTerm.DoesNotExist:
-                pass
+        current_session = AcademicSession.objects.filter(user=request.user, current=True).first()
+        current_term = AcademicTerm.objects.filter(user=request.user, current=True).first()
+
         form = self.form_class(
             user=request.user,
             initial={
@@ -414,16 +408,24 @@ class CurrentSessionAndTermView(LoginRequiredMixin, View):
         )
         return render(request, self.template_name, {"form": form})
 
+
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)
         if form.is_valid():
             session = form.cleaned_data["current_session"]
             term = form.cleaned_data["current_term"]
-            AcademicSession.objects.filter(name=session).update(current=True)
-            AcademicSession.objects.exclude(name=session).update(current=False)
-            AcademicTerm.objects.filter(name=term).update(current=True)
+
+            # Update current session
+            AcademicSession.objects.filter(user=request.user, current=True).update(current=False)
+            AcademicSession.objects.filter(user=request.user, name=session).update(current=True)
+
+            # Update current term
+            AcademicTerm.objects.filter(user=request.user, current=True).update(current=False)
+            AcademicTerm.objects.filter(user=request.user, name=term).update(current=True)
+
 
         return render(request, self.template_name, {"form": form})
+
 
 class SubjectListView(LoginRequiredMixin, SuccessMessageMixin, ListView):
     model = Subject

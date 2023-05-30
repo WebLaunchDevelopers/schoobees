@@ -124,11 +124,11 @@ class StudentClassForm(ModelForm):
 class CurrentSessionForm(forms.Form):
     current_session = forms.ModelChoiceField(
         empty_label='Select One Session',
-        queryset=AcademicSession.objects.none(),
+        queryset=AcademicSession.objects.all(),
         help_text='Click <a href="/session/create/?next=current-session/">here</a> to add new session'
     )
     current_term = forms.ModelChoiceField(
-        queryset=AcademicTerm.objects.none(),
+        queryset=AcademicTerm.objects.all(),
         empty_label='Select One Term',
         help_text='Click <a href="/term/create/?next=current-session/">here</a> to add new term'
     )
