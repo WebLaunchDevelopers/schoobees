@@ -95,7 +95,7 @@ class Calendar(models.Model):
 
 class Driver(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
-    id = models.CharField(max_length=9, unique=True, primary_key=True, default=''.join(random.choices(string.ascii_uppercase + string.digits, k=9)), editable=False)
+    id = models.CharField(max_length=9, unique=True, primary_key=True, editable=False)
     is_driveradmin = models.BooleanField(default=False)
     name = models.CharField(max_length=255)
     phone_number = models.CharField(max_length=20)
@@ -109,6 +109,15 @@ class Driver(models.Model):
     vehicle_number = models.CharField(max_length=20)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def save(self, *args, **kwargs):
+        # Generate a random 5-10 digit number for the id field
+        while not self.id:
+            random_id = ''.join(random.choices(string.ascii_uppercase + string.digits, k=9))
+            if not Driver.objects.filter(id=random_id).exists():
+                self.id = random_id
+
+        super().save(*args, **kwargs)
 
 class Route(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)

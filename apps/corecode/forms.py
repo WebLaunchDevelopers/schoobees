@@ -170,6 +170,11 @@ class CalendarForm(forms.ModelForm):
 
 class DriverForm(forms.ModelForm):
     address = forms.CharField(widget=forms.Textarea(attrs={'rows': 2}))
+
     class Meta:
         model = Driver
-        fields = ('name', 'phone_number', 'alternate_number', 'email', 'address', 'aadhaar_number', 'license_number', 'vehicle_name', 'vehicle_model', 'vehicle_number')
+        fields = ('name', 'phone_number', 'alternate_number', 'email', 'address', 'aadhaar_number', 'license_number', 'vehicle_name', 'vehicle_model', 'vehicle_number', 'is_driveradmin')
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['is_driveradmin'].label = "Transport Manager"

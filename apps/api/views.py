@@ -491,6 +491,26 @@ class RouteAPIView(APIView):
                 {'error': 'Route name is required', 'status': status.HTTP_400_BAD_REQUEST},
                 status=status.HTTP_400_BAD_REQUEST
             )
+        driver_id = request.data['driverid']
+        if not driver_id:
+            return Response(
+                {'error': 'Driver id is required', 'status': status.HTTP_400_BAD_REQUEST},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            driverRecord = Driver.objects.get(id=driver_id)
+        except Driver.DoesNotExist:
+            return Response(
+                {'error': 'Driver not found', 'status': status.HTTP_404_NOT_FOUND},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        if driverRecord.is_driveradmin == False:
+            return Response(
+                {'error': 'This driver is not a driver admin', 'status': status.HTTP_403_FORBIDDEN},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
         route = Route(user=schoolUser, name=routename)
         route.save()
 
@@ -501,7 +521,6 @@ class RouteAPIView(APIView):
             status=status.HTTP_201_CREATED
         )
 
-        
 class RouteNodesAPIView(APIView):
     params = ["registerid", "modid", "token", "route_id"]
 
@@ -609,6 +628,26 @@ class RouteNodesAPIView(APIView):
             return Response(
                 {'error': 'Route id is required', 'status': status.HTTP_400_BAD_REQUEST},
                 status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        driver_id = request.data['driverid']
+        if not driver_id:
+            return Response(
+                {'error': 'Driver id is required', 'status': status.HTTP_400_BAD_REQUEST},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        try:
+            driverRecord = Driver.objects.get(id=driver_id)
+        except Driver.DoesNotExist:
+            return Response(
+                {'error': 'Driver not found', 'status': status.HTTP_404_NOT_FOUND},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        if driverRecord.is_driveradmin == False:
+            return Response(
+                {'error': 'This driver is not a driver admin', 'status': status.HTTP_403_FORBIDDEN},
+                status=status.HTTP_403_FORBIDDEN
             )
         
         try: 
