@@ -41,7 +41,7 @@ class DriverAdmin(admin.ModelAdmin):
     readonly_fields = ('created_at', 'updated_at')
 
 class RouteAdmin(admin.ModelAdmin):
-    list_display = ('name', 'user')
+    list_display = ('id','name', 'user')
     list_filter = ('user',)
     search_fields = ('name', 'user__username')
 

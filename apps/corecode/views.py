@@ -187,10 +187,15 @@ class SessionCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         context = super().get_context_data(**kwargs)
         context["title"] = "Add new session"
         return context
+    
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+    
     def form_valid(self, form):
         form.instance.user = self.request.user
         return super().form_valid(form)
-
 
 class SessionUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = AcademicSession
@@ -227,7 +232,6 @@ class SessionDeleteView(LoginRequiredMixin, DeleteView):
         messages.success(self.request, self.success_message.format(obj.name))
         return super(SessionDeleteView, self).delete(request, *args, **kwargs)
 
-
 class TermListView(LoginRequiredMixin, SuccessMessageMixin, ListView):
     model = AcademicTerm
     template_name = "corecode/term_list.html"
@@ -248,9 +252,15 @@ class TermCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     template_name = "corecode/mgt_form.html"
     success_url = reverse_lazy("terms")
     success_message = "New term successfully added"
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
     def form_valid(self, form):
-            form.instance.user = self.request.user
-            return super().form_valid(form)
+        form.instance.user = self.request.user
+        return super().form_valid(form)
 
 class TermUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = AcademicTerm
@@ -271,7 +281,6 @@ class TermUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
                 messages.warning(self.request, "You must set a term to current.")
                 return redirect("term")
         return super().form_valid(form)
-
 
 class TermDeleteView(LoginRequiredMixin, DeleteView):
     model = AcademicTerm
@@ -330,7 +339,6 @@ class ClassUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
             form.add_error('name', 'Class with this name already exists')
             return self.form_invalid(form)
 
-
 class ClassDeleteView(LoginRequiredMixin, DeleteView):
     model = StudentClass
     success_url = reverse_lazy("classes")
@@ -341,15 +349,6 @@ class ClassDeleteView(LoginRequiredMixin, DeleteView):
         obj = self.get_object()
         messages.success(self.request, self.success_message.format(obj.name))
         return super(ClassDeleteView, self).delete(request, *args, **kwargs)
-
-class SubjectListView(LoginRequiredMixin, SuccessMessageMixin, ListView):
-    model = Subject
-    template_name = "corecode/subject_list.html"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["form"] = SubjectForm()
-        return context
 
 class SubjectListView(LoginRequiredMixin, SuccessMessageMixin, ListView):
     model = Subject
@@ -387,7 +386,9 @@ class SubjectUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     success_url = reverse_lazy("subjects")
     success_message = "Subject successfully updated."
     template_name = "corecode/mgt_form.html"
-
+    def form_valid(self, form):
+        form.instance.user = self.request.user
+        return super().form_valid(form)
 
 class SubjectDeleteView(LoginRequiredMixin, DeleteView):
     model = Subject

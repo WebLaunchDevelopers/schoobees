@@ -110,6 +110,61 @@ class DriverAPIView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+class DriverListAPIView(APIView):
+    def get(self, request):
+        # Concatenate the words and encode as UTF-8
+        text = "DriverAppToWebFromWebLaunch".encode("utf-8")
+        # Generate a SHA-256 hash from the text
+        hash_object = sha256(text)
+        # Convert the hash to a hexadecimal string
+        token = hash_object.hexdigest()
+        print(token)
+
+        # Check if registerid is present in query params
+        register_id = request.query_params.get('registerid')
+        if not register_id:
+            return Response(
+                {'error': 'Missing required parameter(registerid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+
+        # Check if token is present in query params
+        paramstoken = request.query_params.get('token')
+        if not paramstoken:
+            return Response(
+                {'error': 'Missing required parameter(token)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+
+        # Check if modid is present in query params
+        modid = request.query_params.get('modid')
+        if not modid:
+            return Response(
+                {'error': 'Missing required parameter(modid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+
+        if token == paramstoken and modid in MODLIST:
+            try:
+                userdata = CustomUser.objects.get(register_id=register_id)
+            except CustomUser.DoesNotExist:
+                return Response(
+                    {'error': 'School not found', 'status': status.HTTP_404_NOT_FOUND},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
+            driverlist = Driver.objects.filter(user=userdata).exclude(is_driveradmin=True)
+            driverserializer = DriverSerializer(driverlist, many=True)
+            return Response(
+                {'status': status.HTTP_200_OK, 'driverlist': driverserializer.data},
+                status=status.HTTP_200_OK
+            )
+        else:
+            return Response(
+                {'error': 'Invalid parameter value', 'status': status.HTTP_400_BAD_REQUEST},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
 class StudentAPIView(APIView):
     def get(self, request):
         # Concatenate the words and encode as UTF-8
@@ -510,8 +565,14 @@ class RouteAPIView(APIView):
                 {'error': 'This driver is not a driver admin', 'status': status.HTTP_403_FORBIDDEN},
                 status=status.HTTP_403_FORBIDDEN
             )
+        assigneddriver = request.data['assigneddriver']
+        if not assigneddriver:
+            return Response(
+                {'error': 'Assigned driver is required', 'status': status.HTTP_400_BAD_REQUEST},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
-        route = Route(user=schoolUser, name=routename)
+        route = Route(user=schoolUser, name=routename, assigned_driver=assigneddriver)
         route.save()
 
         route_serializer = RouteSerializer(route, many=False)

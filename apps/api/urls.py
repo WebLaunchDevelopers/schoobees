@@ -2,6 +2,7 @@ from django.urls import path
 from .views import (
     ApiOverviewAPIView,
     DriverAPIView,
+    DriverListAPIView,
     StudentAPIView,
     FeedbackAPIView,
     InvoiceAPIView,
@@ -15,6 +16,7 @@ from .views import (
 urlpatterns = [
     path('', ApiOverviewAPIView.as_view(), name="api-overview"),
     path('driver/', DriverAPIView.as_view(), name="driver"),
+    path('driverlist/', DriverListAPIView.as_view(), name="driverlist"),
     path('route/', RouteAPIView.as_view(), name="route"),
     path('routenodes/', RouteNodesAPIView.as_view(), name="routenodes"),
     path('student/', StudentAPIView.as_view(), name="student"),

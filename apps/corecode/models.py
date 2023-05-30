@@ -122,10 +122,12 @@ class Driver(models.Model):
 class Route(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
+    assigned_driver = models.CharField(max_length=20, null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return self.name
-
 
 class RouteNodes(models.Model):
     route = models.ForeignKey(Route, on_delete=models.CASCADE)
