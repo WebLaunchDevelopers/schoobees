@@ -10,7 +10,7 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.shortcuts import render, redirect
 from django.utils.safestring import mark_safe
 from apps.finance.models import Invoice
-
+from django.db.models import Count
 from .models import Student, StudentBulkUpload, Feedback, Notification, AcademicSession,AcademicTerm
 
 from apps.result.models import Result
@@ -218,6 +218,9 @@ class DownloadCSVViewdownloadcsv(LoginRequiredMixin, View):
         )
 
         return response
+
+from django.views.generic import ListView
+from .models import Feedback
 
 class FeedbackListView(LoginRequiredMixin, ListView):
     model = Feedback
