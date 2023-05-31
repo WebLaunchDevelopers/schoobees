@@ -83,6 +83,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "apps.corecode.context_processors.site_defaults",
+                'apps.students.context_processors.feedback_count',
             ],
         },
     },

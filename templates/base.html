@@ -3,7 +3,7 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -28,7 +28,17 @@
     href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700"
     rel="stylesheet">
 </head>
-
+<style>
+.badge {
+  position: absolute;
+  top: -1px;
+  right: 1px;
+  padding: 5px 10px;
+  border-radius: 50%;
+  background: red;
+  color: white;
+}
+</style>
 <body
   class="hold-transition sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
   <div class="wrapper">
@@ -63,9 +73,11 @@
         </li>
        <li class="nav-item">
         <a class="nav-link" href="{% url 'feedback-list' %}" id="feedbackIcon" role="button" title="Feedbacks">
-           <div class="feedback-count">
+           <div class="feedback-count ">
             <i class="fas fa-comment"></i>
-            <span class="count">{{ feedback_count }}</span>
+            {% if feedback_count %}
+                <span class="count badge">{{ feedback_count }}</span>
+            {% endif %}
            </div>
         </a>
       </li>
