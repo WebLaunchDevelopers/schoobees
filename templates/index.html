@@ -13,18 +13,38 @@
 <script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.js' defer></script>
 <!--  -->
 <style>
-  #calendar {
+#calendar {
     width: 400px;
     position: relative;
     min-width: 0;
     word-wrap: break-word;
-    background-color: #fff;
     background-clip: border-box;
     border: 1px solid rgba(0,0,0,.125);
     border-radius: 0.25rem;
-    box-shadow: 0 0 1px rgba(0,0,0,.125), 0 1px 3px rgba(0,0,0,.2);
     margin-bottom: 1rem;
+    background-color: #f8f9fa;
+    border-color: #e2e8f0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   }
+
+  /* Change the background color of event cells */
+  .fc-day-event {
+    background-color: #f1f8ff;
+    color: #333;
+  }
+
+  /* Change the background color of holiday cells */
+  .fc-day-holiday {
+    background-color: #e6f1fc;
+    color: #333;
+  }
+
+  /* Change the background color of today's cell */
+  .fc-day-today {
+    background-color: #e0f8f7;
+    color: #333;
+  }
+
   .fc-toolbar.fc-header-toolbar {
     margin-bottom: 0 !important;
   }
@@ -36,44 +56,30 @@
     padding-left: 0.5rem;
     text-transform: capitalize;
   }
+  .dashboard-card {
+    background-color: #f8f9fa;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.25rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .dashboard-card .card-title {
+    font-size: 18px;
+    color: #333;
+  }
+
+  .dashboard-card .card-text {
+    font-size: 24px;
+    font-weight: bold;
+    color: #555;
+  }
+
 </style>
-	<!-- Modal -->
-	<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-	  <div class="modal-dialog">
-		<div class="modal-content">
-      <form action="{% url 'class-create' %}" method="POST">
-        <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLabel">Atleast one class</h5>
-          <!-- <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button> -->
-        </div>
-        <div class="modal-body">
-            {% csrf_token %}
-
-            {% for field in form %}
-                <div class="form-group">
-                  {{field.label_tag}}
-                  {{ field|add_class:"form-control" }}
-                  {{field.help_text}}
-                  {{field.errors}}
-                </div>
-            {% endfor %}
-        </div>
-
-        <div class="modal-footer">
-          <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> -->
-          <button type="submit" class="btn btn-primary">Save</button>
-        </div>
-      </form>
-    </div>
-	  </div>
-	</div>
 
   <div class="container-fluid mt-5">
     <div class="row">
       <div class="col-md-3">
-        <div class="card">
+        <div class="card dashboard-card">
           <div class="card-body">
             <h5 class="card-title">
               <i class="fa fa-users fa-lg mr-2"></i>
@@ -84,7 +90,7 @@
         </div>
       </div>
       <div class="col-md-3">
-        <div class="card">
+        <div class="card dashboard-card">
           <div class="card-body">
             <h5 class="card-title">
               <i class="fa fa-user fa-lg mr-2"></i>
@@ -95,7 +101,7 @@
         </div>
       </div>
       <div class="col-md-3">
-        <div class="card">
+        <div class="card dashboard-card">
           <div class="card-body">
             <h5 class="card-title">
               <i class="fa fa-building fa-lg mr-2"></i>
@@ -106,7 +112,7 @@
         </div>
       </div>
       <div class="col-md-3">
-        <div class="card">
+        <div class="card dashboard-card">
           <div class="card-body">
             <h5 class="card-title">
               <i class="fa fa-money-bill-alt fa-lg mr-2"></i>
@@ -120,7 +126,7 @@
   </div>
   <div class="float-right">
     <div id='calendar'></div>
-    <div class="card">
+    <div class="card dashboard-card">
       <div class="card-body">
         <h5 class="card-title">
           <i class="fa fa-birthday-cake fa-lg mr-2"></i>
@@ -154,12 +160,10 @@
             // element.css('color', 'white');
             // element.css('font-weight', 'bold');
           if (event.type == 'event') {
-            // element.css('background-color', 'purple');
-            startCell.css('background-color', 'purple');
-          } else if (event.type == 'holiday') {
-            // element.css('background-color', '#478ac6');
-            startCell.css('background-color', '#478ac6');
-          }
+          startCell.css('background-color', '#f1f8ff');
+        } else if (event.type == 'holiday') {
+          startCell.css('background-color', '#e6f1fc');
+        }
           element.css('display', 'none');
           element.empty()
           element.remove();
@@ -168,8 +172,8 @@
           var today = moment();
           var momentDate = moment(date); // create a moment object from the date parameter
           if (momentDate.isSame(today, 'day')) {
-            cell.css('background-color', '#3ca1a0');
-          }
+          cell.css('background-color', '#e0f8f7');
+        }
         },
         dayClick: function(date, jsEvent, view) {
           var events = $('#calendar').fullCalendar('clientEvents', function(event) {

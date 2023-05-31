@@ -19,13 +19,13 @@ def create_bulk_student(sender, created, instance, *args, **kwargs):
         for row in reading:
             if "registration_number" in row and row["registration_number"]:
                 reg = row["registration_number"]
-                surname = row["surname"] if "surname" in row and row["surname"] else ""
+                last_name = row["last_name"] if "last_name" in row and row["last_name"] else ""
                 firstname = (
                     row["firstname"] if "firstname" in row and row["firstname"] else ""
                 )
-                other_names = (
-                    row["other_names"]
-                    if "other_names" in row and row["other_names"]
+                guardian_name = (
+                    row["guardian_name"]
+                    if "guardian_name" in row and row["guardian_name"]
                     else ""
                 )
                 gender = (
@@ -52,9 +52,9 @@ def create_bulk_student(sender, created, instance, *args, **kwargs):
                     students.append(
                         Student(
                             registration_number=reg,
-                            surname=surname,
+                            last_name=last_name,
                             firstname=firstname,
-                            other_name=other_names,
+                            guardian_name=guardian_name,
                             gender=gender,
                             current_class=theclass,
                             parent_mobile_number=phone,
