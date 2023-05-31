@@ -11,8 +11,8 @@ class StaffInline(admin.StackedInline):
     model = Staff
 
 class CustomUserAdmin(BaseUserAdmin):
-    list_display = ('register_id', 'username', 'email', 'is_active', 'is_faculty', 'is_superuser')
-    list_filter = ('userprofile__school_name', 'userprofile__country', 'is_active', 'is_faculty', 'is_superuser')
+    list_display = ('register_id', 'username', 'email', 'is_active', 'is_faculty', 'is_superuser', 'approved')
+    list_filter = ('userprofile__school_name', 'userprofile__country', 'is_active', 'is_faculty', 'is_superuser', 'approved')
     fieldsets = (
             (None, {'fields': ('username', 'password', 'register_id')}),
             (_('Personal info'), {'fields': ('email',)}),

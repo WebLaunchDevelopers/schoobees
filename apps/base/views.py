@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.utils import timezone
 from django.views import View
 from .forms import CustomUserCreationForm, LoginForm, UserProfileForm, ChangePasswordForm
-from .utils import send_activation_email, send_password_reset_email
+from .utils import send_password_reset_email
 from .models import CustomUser as User
 from django.contrib.auth.views import PasswordResetConfirmView
 from django.views.generic import TemplateView, FormView
@@ -31,7 +31,6 @@ class RegisterView(View):
             profile = profile_form.save(commit=False)
             profile.user = user
             profile.save()
-            # send_activation_email(user, request)
             messages.success(request, 'Your account has been created. Please wait for the approval of your account.')
             if request.user.is_authenticated:
                 logout(request)
@@ -40,19 +39,19 @@ class RegisterView(View):
             messages.error(request, 'Invalid details.')
         return render(request, 'registration/register_new.html', {'user_form': user_form, 'profile_form': profile_form})
 
-class ActivateView(View):
-    def get(self, request, uidb64, token):
-        try:
-            uid = force_str(urlsafe_base64_decode(uidb64))
-            user = User.objects.get(pk=uid, activation_account=token)
-        except (TypeError, ValueError, OverflowError, User.DoesNotExist):
-            messages.error(request, 'Invalid activation link.')
-            return redirect('login')
+# class ActivateView(View):
+#     def get(self, request, uidb64, token):
+#         try:
+#             uid = force_str(urlsafe_base64_decode(uidb64))
+#             user = User.objects.get(pk=uid, activation_account=token)
+#         except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+#             messages.error(request, 'Invalid activation link.')
+#             return redirect('login')
 
-        user.approved = True
-        user.save()
-        messages.success(request, 'Your account has been activated. Please log in.')
-        return redirect('login')
+#         user.approved = True
+#         user.save()
+#         messages.success(request, 'Your account has been activated. Please log in.')
+#         return redirect('login')
 
 class LoginView(View):
     def get(self, request):

@@ -21,7 +21,7 @@ from .serializers import (
 
 from apps.students.models import Student, Feedback, Notification
 from apps.base.models import CustomUser
-from apps.corecode.models import Driver, Route, Calendar, RouteNodes
+from apps.corecode.models import Driver, Route, Calendar, RouteNode
 from apps.finance.models import Invoice, InvoiceItem, Receipt
 from apps.result.models import Result
 from rest_framework import status
@@ -540,13 +540,14 @@ class RouteAPIView(APIView):
                 {'error': 'School not found', 'status': status.HTTP_404_NOT_FOUND},
                 status=status.HTTP_404_NOT_FOUND
             )
-        routename = request.data['routename']
+        
+        routename = request.data.get('routename')
         if not routename:
             return Response(
                 {'error': 'Route name is required', 'status': status.HTTP_400_BAD_REQUEST},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        driver_id = request.data['driverid']
+        driver_id = request.data.get('driverid')
         if not driver_id:
             return Response(
                 {'error': 'Driver id is required', 'status': status.HTTP_400_BAD_REQUEST},
@@ -565,7 +566,7 @@ class RouteAPIView(APIView):
                 {'error': 'This driver is not a driver admin', 'status': status.HTTP_403_FORBIDDEN},
                 status=status.HTTP_403_FORBIDDEN
             )
-        assigneddriver = request.data['assigneddriver']
+        assigneddriver = request.data.get('assigneddriver')
         if not assigneddriver:
             return Response(
                 {'error': 'Assigned driver is required', 'status': status.HTTP_400_BAD_REQUEST},
@@ -651,7 +652,7 @@ class RouteNodesAPIView(APIView):
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        routenodes = RouteNodes.objects.filter(route=parentRoute)
+        routenodes = RouteNode.objects.filter(route=parentRoute)
         route_nodes_serializer = RouteNodesSerializer(routenodes, many=True)
 
         return Response(
@@ -691,7 +692,7 @@ class RouteNodesAPIView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
         
-        driver_id = request.data['driverid']
+        driver_id = request.data.get('driverid')
         if not driver_id:
             return Response(
                 {'error': 'Driver id is required', 'status': status.HTTP_400_BAD_REQUEST},
@@ -735,7 +736,7 @@ class RouteNodesAPIView(APIView):
             is_start_stop = node.get('is_start_stop', False)
             is_destination_stop = node.get('is_destination_stop', False)
 
-            route_node = RouteNodes(
+            route_node = RouteNode(
                 route=parentRoute,
                 area=stop_name,
                 latitude=latitude,
@@ -745,13 +746,13 @@ class RouteNodesAPIView(APIView):
             )
             route_nodes.append(route_node)
 
-        # Create all the RouteNodes objects in a single database query
-        RouteNodes.objects.bulk_create(route_nodes)
+        # Create all the RouteNode objects in a single database query
+        RouteNode.objects.bulk_create(route_nodes)
 
-        # Retrieve all the created RouteNodes objects for the given route
-        created_route_nodes = RouteNodes.objects.filter(route=parentRoute)
+        # Retrieve all the created RouteNode objects for the given route
+        created_route_nodes = RouteNode.objects.filter(route=parentRoute)
 
-        # Serialize the created RouteNodes objects
+        # Serialize the created RouteNode objects
         route_nodes_serializer = RouteNodesSerializer(created_route_nodes, many=True)
 
         return Response(

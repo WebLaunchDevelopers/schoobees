@@ -129,7 +129,7 @@ class Route(models.Model):
     def __str__(self):
         return self.name
 
-class RouteNodes(models.Model):
+class RouteNode(models.Model):
     route = models.ForeignKey(Route, on_delete=models.CASCADE)
     area = models.CharField(max_length=100)
     latitude = models.CharField(max_length=10)

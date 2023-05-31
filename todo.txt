@@ -84,3 +84,5 @@ upload student/staff issue
 
 check box uncheck in session is not accepting submit
 
+even though details not there in student form gettind submitted
+

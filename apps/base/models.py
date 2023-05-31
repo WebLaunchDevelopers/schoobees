@@ -41,5 +41,4 @@ class UserProfile(models.Model):
     # school_type = models.CharField(max_length=10, choices=SCHOOL_CHOICES, blank=True, null=True)
     chairman = models.CharField(max_length=50, blank=True, null=True)
     principal = models.CharField(max_length=50, blank=True, null=True)
-    activation_account = models.CharField(max_length=40, blank=True, null=True)
     # Additional fields that are specific to certain user types go here

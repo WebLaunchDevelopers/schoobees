@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from apps.students.models import Student, Feedback, Notification
 from apps.base.models import CustomUser, UserProfile
-from apps.corecode.models import Driver, Route, Calendar, RouteNodes
+from apps.corecode.models import Driver, Route, Calendar, RouteNode
 from apps.finance.models import Invoice, InvoiceItem, Receipt
 from apps.result.models import Result
 
@@ -45,7 +45,7 @@ class RouteSerializer(serializers.ModelSerializer):
 
 class RouteNodesSerializer(serializers.ModelSerializer):
     class Meta:
-        model = RouteNodes
+        model = RouteNode
         fields = '__all__'
 
 class FeedbackSerializer(serializers.ModelSerializer):
