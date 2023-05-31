@@ -56,13 +56,10 @@ class StudentBulkUpload(models.Model):
     def get_queryset(self):
         queryset = super().get_queryset()
 
-        current_session = AcademicTerm.objects.filter(user=self.request.user, start_date__lte=timezone.now(),
-                                                      end_date__gte=timezone.now()).first()
-        current_term = AcademicTerm.objects.filter(user=self.request.user, start_date__lte=timezone.now(),
-                                                   end_date__gte=timezone.now()).order_by('-start_date').first()
+        current_session = AcademicTerm.objects.filter(user=self.request.user, current=True).first()
+        current_term = AcademicTerm.objects.filter(user=self.request.user, current=True).first()
 
-        return queryset.filter(user=self.request.user, date_uploaded__gte=current_term.start_date,
-                               date_uploaded__lte=current_term.end_date)
+        return queryset.filter(user=self.request.user, sessiom=current_session, term =current_term)
 
 class Feedback(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)

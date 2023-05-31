@@ -1,3 +1,5 @@
+{% load fontawesome_5 %}
+
 {% load static %}
 
 <!DOCTYPE html>
@@ -9,6 +11,7 @@
 
   <title>{{ school_name | default:"SchooBees | MySchool" }}</title>
   <link rel="shortcut icon" href="{% static 'dist/img/logos/logo_y.png' %}" type="image/x-icon">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha384-vMFd+I7DQv8KPBkdOgX+j7n+r3iVo1j4MYzbw1EzI0RTO1Dk1ETWE1Thvm3lLb7x" crossorigin="anonymous">
 
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="{% static 'plugins/fontawesome-free/css/all.min.css' %}">
@@ -58,11 +61,14 @@
             <i class="fas fa-book-reader"></i>
           </a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{% url 'feedback-list' %}" id="feedbackIcon" role="button" title="Feedbacks">
-            <i class="fas fa-envelope"></i>
-          </a>
-        </li>
+       <li class="nav-item">
+        <a class="nav-link" href="{% url 'feedback-list' %}" id="feedbackIcon" role="button" title="Feedbacks">
+           <div class="feedback-count">
+            <i class="fas fa-comment"></i>
+            <span class="count">{{ feedback_count }}</span>
+           </div>
+        </a>
+      </li>
         <li class="nav-item dropdown">
           <a class="nav-link" data-toggle="dropdown" href="#" title="Menu">
             <i class="far fa-user"></i>
