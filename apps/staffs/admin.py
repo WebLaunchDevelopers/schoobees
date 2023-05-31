@@ -2,10 +2,11 @@ from django.contrib import admin
 from .models import Staff
 
 class StaffAdmin(admin.ModelAdmin):
-    # list_display = ('id', 'name', 'roll_number', 'department')
-    # list_display_links = ('id', 'name')
-    # list_filter = ('department',)
-    # search_fields = ('name', 'roll_number')
+    list_display = ('first_name', 'last_name', 'email', 'current_status')
+    search_fields = ('first_name', 'last_name', 'email')
+    list_filter = ('current_status',)
+    readonly_fields = ('temp_password',)
+    
     class Meta:
         model = Staff
 

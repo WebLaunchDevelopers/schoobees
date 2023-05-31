@@ -77,8 +77,13 @@ class StaffUpdateView(SuccessMessageMixin, UpdateView):
         old_email = old_staff.email
         new_email = form.cleaned_data['email']
         if old_email != new_email:
+                    # Check if the username (email) already exists
+            if CustomUser.objects.filter(username=new_email).exists():
+                messages.error(self.request, 'This email already exists. Please check if the staff details were not removed by their previous employer.')
+                return self.form_invalid(form)
             # Update email in related CustomUser object
-            related_user = CustomUser.objects.get(email=old_email)
+            related_user = CustomUser.objects.get(username=old_email)
+            related_user.username = new_email
             related_user.email = new_email
             related_user.save()
 
