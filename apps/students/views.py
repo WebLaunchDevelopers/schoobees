@@ -154,7 +154,6 @@ class StudentDeleteView(LoginRequiredMixin, DeleteView):
     model = Student
     success_url = reverse_lazy("student-list")
 
-
 class StudentBulkUploadView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = StudentBulkUpload
     template_name = "students/students_upload.html"
@@ -162,15 +161,15 @@ class StudentBulkUploadView(LoginRequiredMixin, SuccessMessageMixin, CreateView)
     success_url = "/student/list"
     success_message = "Successfully uploaded students"
     expected_fields = [
-                "registration_number",
-                "first_name",
-                "last_name",
-                "guardian_name"
-                "gender",
-                "parent_number",
-                "address",
-                "current_class",
-                "comments"
+        "registration_number",
+        "first_name",
+        "last_name",
+        "guardian_name",
+        "gender",
+        "parent_number",
+        "address",
+        "current_class",
+        "comments"
     ]
 
     def form_valid(self, form):
@@ -185,7 +184,6 @@ class StudentBulkUploadView(LoginRequiredMixin, SuccessMessageMixin, CreateView)
             if not all(field in csv_fields for field in self.expected_fields):
                 raise ValidationError("The uploaded CSV file is missing some fields.")
             # Performing further processing and saving
-
         except csv.Error:
             form.add_error(None, "Invalid CSV file format.")
             return self.form_invalid(form)
@@ -195,7 +193,6 @@ class StudentBulkUploadView(LoginRequiredMixin, SuccessMessageMixin, CreateView)
     def form_invalid(self, form):
         messages.error(self.request, "Invalid CSV file")
         return super().form_invalid(form)
-
 
 class DownloadCSVViewdownloadcsv(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
