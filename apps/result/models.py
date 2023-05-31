@@ -39,9 +39,6 @@ class Result(models.Model):
     class Meta:
         ordering = ["subject"]
 
-    # def __str__(self):
-    #     return f"{self.student} {self.session} {self.term} {self.subject}"
-
     def percentage(self):
         return (self.exam_score*100)/100
     

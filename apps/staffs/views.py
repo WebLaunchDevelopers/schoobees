@@ -12,8 +12,6 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .models import Staff,StaffBulkUpload
 
-from django.contrib.auth.mixins import LoginRequiredMixin
-
 
 class StaffListView(LoginRequiredMixin, ListView):
     model = Staff
@@ -26,7 +24,7 @@ class StaffDetailView(DetailView):
     model = Staff
     template_name = "staffs/staff_detail.html"
 
-class StaffCreateView(SuccessMessageMixin, CreateView):
+class StaffCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Staff
     fields = ['current_status','first_name','last_name','gender','date_of_birth','email','mobile_number','address','comments']
     success_message = "New staff successfully added"
@@ -42,6 +40,11 @@ class StaffCreateView(SuccessMessageMixin, CreateView):
     def form_valid(self, form):
         # Create the User object with a random password
         email = form.cleaned_data['email']
+        # Check if the username (email) already exists
+        if CustomUser.objects.filter(username=email).exists():
+            messages.error(self.request, 'This email already exists. Please check if the staff details were not removed by their previous employer.')
+            return self.form_invalid(form)
+        
         password = CustomUser.objects.make_random_password()
         CustomUser.objects.create_user(username=email, email=email, password=password, is_faculty=True, approved=True)
 

@@ -119,7 +119,7 @@ class GetResultsView(LoginRequiredMixin, View):
                     if result:
                         count += 1
                         total_score += result.exam_score
-                percent = (total_score / (count * 100)) * 100
+                percent = round(((total_score / (count * 100)) * 100), 1)
                 students.append({"student": student, "total_score": total_score, "percent": percent})
 
             if subjects or students:
