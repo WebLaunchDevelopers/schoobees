@@ -24,8 +24,7 @@ from django.contrib import messages
 from django import forms
 
 from django.views.generic import FormView
-
-
+from io import StringIO
 
 class StudentListView(LoginRequiredMixin, ListView):
     model = Student
@@ -166,7 +165,7 @@ class StudentBulkUploadView(LoginRequiredMixin, SuccessMessageMixin, CreateView)
         "last_name",
         "guardian_name",
         "gender",
-        "parent_number",
+        "parent_mobile_number",
         "address",
         "current_class",
         "comments"
@@ -178,7 +177,8 @@ class StudentBulkUploadView(LoginRequiredMixin, SuccessMessageMixin, CreateView)
         csv_file = form.cleaned_data.get("csv_file")
         try:
             # Reading the CSV file
-            reader = csv.DictReader(csv_file)
+            opened = StringIO(csv_file.read().decode())
+            reader = csv.DictReader(opened, delimiter=",")
             # Checking if the CSV file contains all the expected fields
             csv_fields = reader.fieldnames
             if not all(field in csv_fields for field in self.expected_fields):
@@ -207,17 +207,14 @@ class DownloadCSVViewdownloadcsv(LoginRequiredMixin, View):
                 "last_name",
                 "guardian_name",
                 "gender",
-                "parent_number",
+                "parent_mobile_number",
                 "address",
                 "current_class",
-                'comments'
+                "comments"
             ]
         )
 
         return response
-
-from django.views.generic import ListView
-from .models import Feedback
 
 class FeedbackListView(LoginRequiredMixin, ListView):
     model = Feedback

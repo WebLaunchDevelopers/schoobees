@@ -53,14 +53,6 @@ class StudentBulkUpload(models.Model):
     date_uploaded = models.DateTimeField(auto_now=True)
     csv_file = models.FileField(upload_to="students/bulkupload/")
 
-    def get_queryset(self):
-        queryset = super().get_queryset()
-
-        current_session = AcademicTerm.objects.filter(user=self.request.user, current=True).first()
-        current_term = AcademicTerm.objects.filter(user=self.request.user, current=True).first()
-
-        return queryset.filter(user=self.request.user, sessiom=current_session, term =current_term)
-
 class Feedback(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)

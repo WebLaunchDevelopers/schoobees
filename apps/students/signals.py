@@ -5,7 +5,7 @@ from io import StringIO
 from django.db.models.signals import post_delete, post_save
 from django.dispatch import receiver
 
-from apps.corecode.models import StudentClass
+from apps.corecode.models import StudentClass, AcademicSession, AcademicTerm
 
 from .models import Student, StudentBulkUpload
 
@@ -19,8 +19,8 @@ def create_bulk_student(sender, created, instance, *args, **kwargs):
             if "registration_number" in row and row["registration_number"]:
                 reg = row["registration_number"]
                 last_name = row["last_name"] if "last_name" in row and row["last_name"] else ""
-                firstname = (
-                    row["firstname"] if "firstname" in row and row["firstname"] else ""
+                first_name = (
+                    row["first_name"] if "first_name" in row and row["first_name"] else ""
                 )
                 guardian_name = (
                     row["guardian_name"]
@@ -31,8 +31,8 @@ def create_bulk_student(sender, created, instance, *args, **kwargs):
                     (row["gender"]).lower() if "gender" in row and row["gender"] else ""
                 )
                 phone = (
-                    row["parent_number"]
-                    if "parent_number" in row and row["parent_number"]
+                    row["parent_mobile_number"]
+                    if "parent_mobile_number" in row and row["parent_mobile_number"]
                     else ""
                 )
                 address = row["address"] if "address" in row and row["address"] else ""
@@ -42,23 +42,27 @@ def create_bulk_student(sender, created, instance, *args, **kwargs):
                     else ""
                 )
                 if current_class:
-                    theclass, kind = StudentClass.objects.get_or_create(
-                        name=current_class
-                    )
+                    theclass, kind = StudentClass.objects.get_or_create(user=instance.user, name=current_class)
+
+                current_session = AcademicSession.objects.filter(user=instance.user, current=True).first()
+                current_term = AcademicTerm.objects.filter(user=instance.user, current=True).first()
 
                 check = Student.objects.filter(registration_number=reg).exists()
                 if not check:
                     students.append(
                         Student(
+                            user=instance.user,
                             registration_number=reg,
                             last_name=last_name,
-                            firstname=firstname,
+                            first_name=first_name,
                             guardian_name=guardian_name,
                             gender=gender,
                             current_class=theclass,
                             parent_mobile_number=phone,
                             address=address,
                             current_status="active",
+                            session=current_session,
+                            term=current_term
                         )
                     )
 
