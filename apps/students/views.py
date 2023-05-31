@@ -93,12 +93,17 @@ class StudentCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         return form
 
     def form_valid(self, form):
-        form.instance.user = self.request.user  # Assigning the logged-in user to the student's user field
+        form.instance.user = self.request.user  # Assign the logged-in user to the student's user field
         current_session = AcademicSession.objects.filter(user=self.request.user, current=True).first()
         current_term = AcademicTerm.objects.filter(user=self.request.user, current=True).first()
 
-        form.instance.session = current_session  # Assigning the current session to the student's session field
-        form.instance.term = current_term  # Assigning the current term to the student's term field
+        if current_session is None or current_term is None:
+            messages.error(self.request,
+                           "Sessions or terms are empty. Please create sessions and terms before creating a student.")
+            return self.form_invalid(form)
+
+        form.instance.session = current_session  # Assign the current session to the student's session field
+        form.instance.term = current_term  # Assign the current term to the student's term field
 
         return super().form_valid(form)
 
