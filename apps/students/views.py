@@ -8,7 +8,7 @@ from django.urls import reverse_lazy
 from django.views.generic import DetailView, ListView, View
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.shortcuts import render, redirect
-
+from django.utils.safestring import mark_safe
 from apps.finance.models import Invoice
 
 from .models import Student, StudentBulkUpload, Feedback, Notification, AcademicSession,AcademicTerm
@@ -89,7 +89,13 @@ class StudentCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         form.fields["date_of_admission"].widget = widgets.DateInput(attrs={"type": "date"})
         form.fields["address"].widget = widgets.Textarea(attrs={"rows": 2})
         form.fields["comments"].widget = widgets.Textarea(attrs={"rows": 2})
+        # Setting the queryset for the current_class field
         form.fields["current_class"].queryset = StudentClass.objects.filter(user=self.request.user)
+
+        # Adding a link to create a class in the help text
+        form.fields["current_class"].help_text = mark_safe(
+            '<a href="{}">Click here to add class</a>'.format(reverse_lazy('class-create')))
+        form.fields["current_class"].empty_label = "Select One Class"
         return form
 
     def form_valid(self, form):
