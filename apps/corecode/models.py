@@ -132,8 +132,8 @@ class Route(models.Model):
 class RouteNode(models.Model):
     route = models.ForeignKey(Route, on_delete=models.CASCADE)
     area = models.CharField(max_length=100)
-    latitude = models.CharField(max_length=10)
-    longitude = models.CharField(max_length=10)
+    latitude = models.CharField(max_length=200)
+    longitude = models.CharField(max_length=200)
     is_start_stop = models.BooleanField(default=False)
     is_destination_stop = models.BooleanField(default=False)
 
