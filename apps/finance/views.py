@@ -123,7 +123,6 @@ class ReceiptCreateView(LoginRequiredMixin, CreateView):
         context["invoice"] = invoice
         return context
 
-
 class ReceiptUpdateView(LoginRequiredMixin, UpdateView):
     model = Receipt
     fields = ["amount_paid", "date_paid", "comment"]
@@ -133,8 +132,3 @@ class ReceiptUpdateView(LoginRequiredMixin, UpdateView):
 class ReceiptDeleteView(LoginRequiredMixin, DeleteView):
     model = Receipt
     success_url = reverse_lazy("invoice-list")
-
-
-@login_required
-def bulk_invoice(request):
-    return render(request, "finance/bulk_invoice.html")

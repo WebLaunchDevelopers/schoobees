@@ -449,8 +449,6 @@ class CurrentSessionAndTermView(LoginRequiredMixin, View):
 
         return render(request, self.template_name, {"form": form})
 
-
-
 class CalendarCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Calendar
     template_name = "corecode/mgtspecial_form.html"
