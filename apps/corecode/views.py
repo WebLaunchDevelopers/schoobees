@@ -13,7 +13,7 @@ from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 import os
 from django.utils.html import strip_tags
-
+from apps.students.models import Feedback
 from .forms import (
     AcademicSessionForm,
     AcademicTermForm,
@@ -43,6 +43,15 @@ from apps.staffs.models import Staff
 from apps.students.models import Student
 from apps.corecode.models import Driver
 
+class BaseView(TemplateView):
+    template_name = 'base.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        feedback_count = Feedback.objects.filter(user=self.request.user).count()
+        context['feedback_count'] = feedback_count
+        return context
+
 class IndexView(LoginRequiredMixin, ListView):
     template_name = "index.html"
     model = StudentClass
@@ -59,9 +68,9 @@ class IndexView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["form"] = StudentClassForm()
-        student_count = Student.objects.all().count()        
-        staff_count = Staff.objects.all().count()    
-        non_staff_count = Driver.objects.all().count()
+        student_count = Student.objects.filter(user=self.request.user).count()
+        staff_count = Staff.objects.filter(user=self.request.user).count()
+        non_staff_count = Driver.objects.filter(user=self.request.user).count()
         # Check if the user has any objects associated with them
         if not context["object_list"]:
             context["bool"] = True
@@ -73,7 +82,7 @@ class IndexView(LoginRequiredMixin, ListView):
         
         from datetime import datetime
         today = datetime.today()
-        staffBdays=Staff.objects.filter(date_of_birth__month=today.month, date_of_birth__day=today.day)
+        staffBdays=Staff.objects.filter(user=self.request.user, date_of_birth__month=today.month, date_of_birth__day=today.day)
         context["staffBdays"]=staffBdays
         
         events = Calendar.objects.filter(user=self.request.user)
