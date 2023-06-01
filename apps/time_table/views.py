@@ -7,11 +7,14 @@ from apps.corecode.models import AcademicSession, AcademicTerm, Subject, Student
 
 class TimetableCreateView(View):
     def get(self, request):
-        form = TimetableForm()
+        current_session = AcademicSession.objects.filter(current=True).first()
+        current_term = AcademicTerm.objects.filter(current=True).first()
+        user = request.user
+        form = TimetableForm(user=user)
         return render(request, 'timetable/create_time_table.html', {'form': form})
 
     def post(self, request):
-        form = TimetableForm(request.POST)
+        form = TimetableForm(request.POST, user=request.user)
         extra_forms = []
 
         if form.is_valid():
@@ -37,7 +40,7 @@ class TimetableCreateView(View):
             form_ids = request.POST.getlist('form_ids[]')
             for form_id in form_ids:
                 prefix = f'form-{form_id}'
-                extra_form = TimetableForm(request.POST, prefix=prefix)
+                extra_form = TimetableForm(request.POST, user=request.user, prefix=prefix)
                 if extra_form.is_valid():
                     extra_timetable = Timetable(
                         class_of=extra_form.cleaned_data['class_of'],
@@ -63,18 +66,26 @@ class ViewTimeTableView(View):
         subject_id = request.GET.get('subject')
         date = request.GET.get('date')
 
-        timetables = Timetable.objects.all()
+        current_session = AcademicSession.objects.filter(current=True).first()
+        current_term = AcademicTerm.objects.filter(current=True).first()
+        user = request.user
+
+        timetables = Timetable.objects.filter(
+            session=current_session,
+            term=current_term,
+            user=user
+        )
 
         if class_id:
-            timetables = timetables.filter(class_of_id=class_id)
+            timetables = timetables.filter(class_of_id=class_id, user=user)
 
         if subject_id:
-            timetables = timetables.filter(subject_id=subject_id)
+            timetables = timetables.filter(subject_id=subject_id, user=user)
 
         if date:
             timetables = timetables.filter(date=date)
 
-        student_classes = StudentClass.objects.all()
-        subjects = Subject.objects.all()
+        student_classes = StudentClass.objects.filter(user=user)
+        subjects = Subject.objects.filter(user=user)
 
         return render(request, 'timetable/view_time_table.html', {'timetables': timetables, 'student_classes': student_classes, 'subjects': subjects})
