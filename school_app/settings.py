@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     "apps.result",
     "apps.base",
     "apps.api",
-    "apps.attendence",
+    "apps.attendance",
     "crispy_forms",
     'fontawesome_5',
 ]

@@ -12,6 +12,7 @@ import qrcode
 from django.conf import settings
 from django.core.files.storage import FileSystemStorage
 import os
+from django.urls import reverse
 from django.utils.html import strip_tags
 from apps.students.models import Feedback
 from .forms import (
@@ -126,7 +127,7 @@ class SiteConfigView(LoginRequiredMixin, View):
         else:
             messages.error(request, 'There was an error in the form. Please correct it and try again.')
             return render(request, 'corecode/siteconfig.html', {'custom_user_form': custom_user_form, 'user_profile_form': user_profile_form})
-  
+
 class FacultyProfileView(LoginRequiredMixin, View):
     """Profile View"""
 
@@ -146,27 +147,44 @@ class FacultyProfileView(LoginRequiredMixin, View):
 
     def post(self, request):
         if not request.user.is_faculty:
-           return redirect('configs')
+            return redirect('configs')
         user = request.user
         try:
             staff = Staff.objects.get(email=request.user.username)
         except Staff.DoesNotExist:
             messages.error(request, 'Unable to fetch details. Please try again.')
             return redirect('home')
+
         custom_user_form = CustomUserForm(request.POST, instance=user)
         staff_profile_form = StaffProfileForm(request.POST, request.FILES, instance=staff)
+
         if custom_user_form.is_valid() and staff_profile_form.is_valid():
             custom_user_form.save()
-            staff_profile_form.save()
+
+            # Update the staff object with the form data
+            staff.first_name = staff_profile_form.cleaned_data['first_name']
+            staff.last_name = staff_profile_form.cleaned_data['last_name']
+            staff.gender = staff_profile_form.cleaned_data['gender']
+            staff.date_of_birth = staff_profile_form.cleaned_data['date_of_birth']
+            staff.mobile_number = staff_profile_form.cleaned_data['mobile_number']
+            staff.address = staff_profile_form.cleaned_data['address']
+
+            # Check if a new passport image is provided
+            passport_image = request.FILES.get('passport')
+            if passport_image:
+                # Validate the image file (optional)
+                if passport_image.content_type not in ['image/jpeg', 'image/png']:
+                    messages.error(request, 'Please upload a valid JPEG or PNG image.')
+                    return redirect('faculty-profile')
+
+                # Save the image file to the 'staff/passports/' directory
+                staff.passport = passport_image
+
+            # Save the staff object
+            staff.save()
+
             messages.success(request, 'Configurations successfully updated.')
-            return redirect('faculty-profile')
-        elif custom_user_form.errors:
-            email_error = strip_tags(custom_user_form.errors.get('email', ''))
-            if email_error == 'Email already exists':
-                messages.error(request, email_error)
-            else:
-                messages.error(request, 'There was an error in the form. Please correct it and try again.')
-            return redirect('faculty-profile')
+            return redirect(reverse('faculty-profile'))
         else:
             messages.error(request, 'There was an error in the form. Please correct it and try again.')
             return render(request, 'corecode/facultyprofile.html', {'custom_user_form': custom_user_form, 'staff_profile_form': staff_profile_form})

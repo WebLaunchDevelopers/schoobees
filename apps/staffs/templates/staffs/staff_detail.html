@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-
+{% load static %}
 {% block content-header %}
 <div class="card-header">
   <div class="card-tools">
@@ -15,8 +15,22 @@
 {% endblock content-header %}
 
 {% block content %}
-<div class="row">
+<div class="row mb-4">
   <div class="col-sm-4">
+      <form action="" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {% include 'corecode/form_snippet.html' %}
+          <input id="passport-input" type="file" name="passport" style="display: none;">
+        {% if object.passport %}
+          <img id="passport-image" src="{{ object.passport.url }}" class="float-left rounded-circle mr-3" style="width: 120px; height: 120px;">
+        {% else %}
+          {% if object.gender == "female" %}
+            <img id="passport-image-gender1" src="{% static 'dist/img/avatar3.png' %}" class="float-left rounded-circle mr-3" style="width: 120px; height: 120px;">
+          {% else %}
+            <img id="passport-image-gender2" src="{% static 'dist/img/avatar5.png' %}" class="float-left rounded-circle mr-3" style="width: 120px; height: 120px;">
+          {% endif %}
+        {% endif %}
+      </form>
     <div>
       <h3>{{ object }}</h3>
       <h5>{{ object.get_gender_display }}</h5>

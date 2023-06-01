@@ -28,7 +28,7 @@ class StaffDetailView(DetailView):
 
 class StaffCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Staff
-    fields = ['current_status','first_name','last_name','gender','date_of_birth','email','mobile_number','address','comments']
+    fields = ['current_status','first_name','last_name','gender','date_of_birth','email','mobile_number','address','comments','passport']
     success_message = "New staff successfully added"
 
     def get_form(self):
@@ -60,7 +60,7 @@ class StaffCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 
 class StaffUpdateView(SuccessMessageMixin, UpdateView):
     model = Staff
-    fields = ['current_status','first_name','last_name','gender','date_of_birth','email','mobile_number','address','comments']
+    fields = ['current_status','first_name','last_name','gender','date_of_birth','email','mobile_number','address','comments', 'passport']
     success_message = "Record successfully updated."
 
     def get_form(self):

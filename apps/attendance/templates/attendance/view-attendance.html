@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<form method="get" action="">
+  <label for="class">Class:</label>
+  <select id="class" name="class">
+    {% for class in classes %}
+    <option value="{{ class.id }}" {% if class.id == selected_class %}selected{% endif %}>{{ class.name }}</option>
+    {% endfor %}
+  </select>
+
+  <label for="date">Date:</label>
+  <input type="date" id="date" name="date" {% if selected_date %}value="{{ selected_date }}"{% endif %}>
+
+  <button class="btn btn-primary" style="text-align:center;" type="submit">View Attendance</button>
+</form>
+
+{% if has_records %}
+  {% for class, data in attendances_state.items %}
+    <h1>Class {{ class }}</h1>
+
+    <div class="table-responsive">
+      <table id="studenttable" class="table table-bordered table-hover" data-page-length='100'>
+        <thead class="thead-light">
+          <tr>
+            <th>S/N</th>
+            <th>Registration Number</th>
+            <th>Student Name</th>
+            {% for subject in data.subjects %}
+              <th>{{ subject.name }}</th>
+            {% endfor %}
+          </tr>
+        </thead>
+        <tbody>
+          {% for student_data in data.students %}
+            <tr class='clickable-row' data-href="{% url 'student-detail' student_data.student.pk %}">
+              <td>{{ forloop.counter }}</td>
+              <td>{{ student_data.student.registration_number }}</td>
+              <td>{{ student_data.student.last_name }} {{ student_data.student.first_name }}</td>
+
+              {% for subject in data.subjects %}
+                <td>
+                  {% with attendance=student_data.attendance_status.subject %}
+                    {% if attendance %}
+                      {{ attendance.attendance_status }}
+                    {% else %}
+                      <span class="no-records">No records found</span>
+                    {% endif %}
+                  {% endwith %}
+                </td>
+              {% endfor %}
+
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% endfor %}
+{% else %}
+  <div class="no-records-container">
+    <p class="no-records">No records found</p>
+  </div>
+{% endif %}
+
+<style>
+  .no-records-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px; /* Adjust the height as needed */
+  }
+
+  .no-records {
+    font-size: 18px;
+    color: #999;
+  }
+</style>
+{% endblock content %}
