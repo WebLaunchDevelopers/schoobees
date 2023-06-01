@@ -111,6 +111,5 @@ class GetAttendanceView(LoginRequiredMixin, View):
             attendances_state[attendance.current_class]['students'].append(attendance)
         
         has_records = len(attendances) > 0
-        print(attendances_state)
         
         return render(request, "attendance/view-attendance.html", {'attendances_state': attendances_state, 'subjects': subjects, 'students': students, 'has_records': has_records})

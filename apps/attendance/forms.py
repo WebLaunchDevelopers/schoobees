@@ -11,11 +11,14 @@ from apps.corecode.models import (
 from .models import Attendance
 
 ATTENDANCE_CHOICES = [
-        ('', 'Select'),
-        ("present", "Present"),
-        ("absent", "Absent"),
-        ("late", "Late"),
-    ]
+    ('', 'Select'),
+    ('Present', 'Present'),
+    ('Absent', 'Absent'),
+    ('Late', 'Late'),
+    ('Excused', 'Excused'),
+    ('Unexcused', 'Unexcused'),
+]
+
 class UpdateAttendance(forms.Form):
     subjects = forms.ModelChoiceField(empty_label='Select Subject',queryset=Subject.objects.all())
     class_name = forms.ModelChoiceField(empty_label='Select Class',queryset=StudentClass.objects.all())
@@ -30,5 +33,5 @@ class UpdateAttendance(forms.Form):
 
 EditAttendance = modelformset_factory(
     Attendance, fields=("id", "attendance_status"), extra=0, can_delete=True,
-    widgets={"attendance_status": forms.Select(choices=ATTENDANCE_CHOICES)}
+    widgets={"attendance_status": forms.Select(choices=ATTENDANCE_CHOICES, attrs={'required': 'required'})}
 )
