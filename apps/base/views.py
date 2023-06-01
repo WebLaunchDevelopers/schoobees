@@ -57,7 +57,7 @@ class LoginView(View):
     def get(self, request):
         if request.user.is_authenticated:
             if request.user.is_superuser:
-                  return redirect('/admin/login')
+                return redirect('/admin/login')
             return redirect('home')
 
         form = LoginForm()
@@ -67,9 +67,9 @@ class LoginView(View):
     def post(self, request):
         if request.user.is_authenticated:
             if request.user.is_superuser:
-                  return redirect('/admin/login')
+                return redirect('/admin/login')
             return redirect('home')
-        
+
         form = LoginForm(data=request.POST)
         next = request.POST.get('next')
         if form.is_valid():
@@ -87,7 +87,6 @@ class LoginView(View):
             # handle form errors
             messages.error(request, 'Invalid email or password.')
         return render(request, 'registration/login.html', {'form': form, 'next': next})
-
 class LogoutView(View):
     def get(self, request):
         logout(request)

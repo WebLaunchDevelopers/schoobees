@@ -29,6 +29,7 @@ class Staff(models.Model):
 
     address = models.TextField()
     comments = models.TextField(blank=True)
+    passport = models.ImageField(blank=True, upload_to="staff/passports/")
 
     class Meta:
         ordering = ["first_name", "last_name"]

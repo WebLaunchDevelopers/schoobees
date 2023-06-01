@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% load widget_tweaks %}
 
 {% block title %}
@@ -6,58 +7,98 @@
 {% endblock title %}
 
 {% block content %}
-  <form method="POST">
-    {% csrf_token %}
 
-    <div class="form-group">
-      <label>Register ID:</label>
-      <span class="form-control-static">{{ custom_user_form.register_id.value }}</span>
-    </div>   
-
-    <input type="hidden" name="register_id" value="{{ custom_user_form.instance.register_id }}">
-
-    <div class="form-group d-flex">
-      <div class="flex-grow-1 mr-2">
-        <label for="{{ staff_profile_form.first_name.id_for_label }}">First Name:</label>
-        {{ staff_profile_form.first_name|add_class:"form-control"|attr:"placeholder: Enter your chairman name" }}
-      </div>
-
-      <div class="flex-grow-1">
-        <label for="{{ staff_profile_form.last_name.id_for_label }}">Last Name:</label>
-        {{ staff_profile_form.last_name|add_class:"form-control"|attr:"placeholder: Enter your principal name" }}
+<form action="" method="POST" enctype="multipart/form-data">
+  {% csrf_token %}
+  <div class="col-sm-12">
+    <div class="col-sm-4">
+      {% include 'corecode/form_snippet.html' %}
+      <div id="passport-container">
+        {% if staff_profile_form.passport %}
+          <img id="passport-image" src="{{ staff_profile_form.passport.url }}" class="float-left rounded-circle mr-3" style="width: 120px; height: 120px;">
+          <input id="passport-input" type="file" name="passport" style="display: none;">
+        {% else %}
+          {% if object.gender == "female" %}
+            <img id="passport-image-gender1" src="{% static 'dist/img/avatar3.png' %}" class="float-left rounded-circle mr-3" style="width: 120px; height: 120px;">
+          {% else %}
+            <img id="passport-image-gender2" src="{% static 'dist/img/avatar5.png' %}" class="float-left rounded-circle mr-3" style="width: 120px; height: 120px;">
+          {% endif %}
+        {% endif %}
       </div>
     </div>
+    <br>
+    <div class="col-sm-8">
+      <div>
+        <div class="form-group">
+          <label>Register ID:</label>
+          <span class="form-control-static">{{ custom_user_form.register_id.value }}</span>
+        </div>
 
-    <div class="form-group d-flex">
-      <div class="flex-grow-1 mr-2">
-        <label for="{{ custom_user_form.email.id_for_label }}">Email:</label>
-        {{ custom_user_form.email|add_class:"form-control"|attr:"placeholder: Enter your email"|attr:"type: email" }}
-      </div>
-  
-      <div class="flex-grow-1 mr-2">
-        <label for="{{ staff_profile_form.mobile_number.id_for_label }}">Mobile Number:</label>
-        {{ staff_profile_form.mobile_number|add_class:"form-control"|attr:"placeholder: Enter your mobile number" }}
-      </div>
+        <input type="hidden" name="register_id" value="{{ custom_user_form.instance.register_id }}">
 
-      <div class="flex-grow-1">
-        <label for="{{ staff_profile_form.gender.id_for_label }}">Gender:</label>
-        {{ staff_profile_form.gender|add_class:"form-control"|attr:"placeholder: Select gender" }}
+        <div class="form-group d-flex">
+          <div class="flex-grow-1 mr-2">
+            <label for="{{ staff_profile_form.first_name.id_for_label }}">First Name:</label>
+            {{ staff_profile_form.first_name|add_class:"form-control"|attr:"placeholder: Enter your chairman name" }}
+          </div>
+
+          <div class="flex-grow-1">
+            <label for="{{ staff_profile_form.last_name.id_for_label }}">Last Name:</label>
+            {{ staff_profile_form.last_name|add_class:"form-control"|attr:"placeholder: Enter your principal name" }}
+          </div>
+        </div>
+
+        <div class="form-group d-flex">
+          <div class="flex-grow-1 mr-2">
+            <label for="{{ custom_user_form.email.id_for_label }}">Email:</label>
+            {{ custom_user_form.email|add_class:"form-control"|attr:"placeholder: Enter your email"|attr:"type: email" }}
+          </div>
+
+          <div class="flex-grow-1 mr-2">
+            <label for="{{ staff_profile_form.mobile_number.id_for_label }}">Mobile Number:</label>
+            {{ staff_profile_form.mobile_number|add_class:"form-control"|attr:"placeholder: Enter your mobile number" }}
+          </div>
+
+          <div class="flex-grow-1">
+            <label for="{{ staff_profile_form.gender.id_for_label }}">Gender:</label>
+            {{ staff_profile_form.gender|add_class:"form-control"|attr:"placeholder: Select gender" }}
+          </div>
+        </div>
+
+        <div class="form-group d-flex">
+          <div class="flex-grow-1 mr-2" style="width: 70%">
+            <label for="{{ staff_profile_form.address.id_for_label }}">Address:</label>
+            {{ staff_profile_form.address|add_class:"form-control"|attr:"placeholder: Select gender" }}
+          </div>
+
+          <div class="flex-grow-1" style="width: 30%">
+            <label for="{{ staff_profile_form.date_of_birth.id_for_label }}">Date of Birth:</label>
+            {{ staff_profile_form.date_of_birth|add_class:"form-control"|attr:"placeholder: Enter your date of birth" }}
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <p><a href="{% url 'change_password' %}"> Click here</a> To Change the Password</p>
       </div>
     </div>
+  </div>
+</form>
 
-    <div class="form-group d-flex">
-      <div class="flex-grow-1 mr-2" style="width: 70%">
-        <label for="{{ staff_profile_form.address.id_for_label }}">Address:</label>
-        {{ staff_profile_form.address|add_class:"form-control"|attr:"placeholder: Select gender" }}
-      </div>
-    
-      <div class="flex-grow-1" style="width: 30%">
-        <label for="{{ staff_profile_form.date_of_birth.id_for_label }}">Date of Birth:</label>
-        {{ staff_profile_form.date_of_birth|add_class:"form-control"|attr:"placeholder: Enter your date of birth" }}
-      </div>
-    </div>    
+<script>
+  $(document).ready(function() {
+    $('#passport-image').click(function() {
+      $('#passport-input').click();
+    });
 
-    <button type="submit" class="btn btn-primary">Submit</button>
-    <p><a href="{% url 'change_password' %}"> Click here</a> To Change the Password</p>
-  </form>
+    $('#passport-input').change(function() {
+      var file = $(this)[0].files[0];
+      var reader = new FileReader();
+      reader.onload = function(e) {
+        $('#passport-image').attr('src', e.target.result);
+      };
+      reader.readAsDataURL(file);
+    });
+  });
+</script>
+
 {% endblock content %}
