@@ -2,11 +2,9 @@ from django.contrib import admin
 from .models import Attendance
 
 class AttendanceAdmin(admin.ModelAdmin):
-    # list_display = ('id', 'name', 'roll_number', 'department')
-    # list_display_links = ('id', 'name')
-    # list_filter = ('department',)
-    # search_fields = ('name', 'roll_number')
-    class Meta:
-        model = Attendance
+    list_display = ['user', 'student', 'current_class', 'subject', 'attendance_status', 'date_of_attendance']
+    list_filter = ['current_class', 'subject', 'attendance_status', 'date_of_attendance']
+    search_fields = ['user__username', 'student__first_name', 'student__last_name']
+    date_hierarchy = 'date_of_attendance'
 
 admin.site.register(Attendance, AttendanceAdmin)

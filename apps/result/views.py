@@ -83,7 +83,6 @@ class EditResultsView(LoginRequiredMixin, View):
             redirect_url += f"?classid={classid}&subjectid={subjectid}&examid={examid}"
             return redirect(redirect_url)
 
-
 class GetResultsView(LoginRequiredMixin, View):
     def get(self, request):
         current_session = AcademicSession.objects.filter(user=self.request.user, current=True).first()

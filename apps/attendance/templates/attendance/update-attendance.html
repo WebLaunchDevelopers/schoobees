@@ -21,17 +21,16 @@
       <div class="col">{{ form.class_name | add_class:"form-control" }}
        <p><a href="{% url 'class-create' %}"> Click here</a> To Create Class</p>
       </div>
-
     </div>
-
+    {% if subjectshow %}
     <div class="form-group row">
       {{ form.subjects.errors }}
       <label class="col-2" for="{{ form.subjects.id_for_label }}">{{ form.subjects.label_tag}}</label>
       <div class="col">{{ form.subjects | add_class:"form-control" }}
        <p><a href="{% url 'subject-create' %}"> Click here</a> To Create Subject</p>
       </div>
-
     </div>
+    {% endif %}
     <div class="form-group row">
       {{ form.date_of_attendance.errors }}
       <label class="col-2" for="{{ form.date_of_attendance.id_for_label }}">{{ form.date_of_attendance.label_tag}}</label>
@@ -41,7 +40,7 @@
     <input type="hidden" name="finish" value="True">
     <input type="hidden" name="students" value="{{ students }}">
 
-    <input type="submit" class="btn btn-success" value="Submit">
+    <input type="submit" class="btn btn-success" value="{{ button }}">
   </form>
 
 {% endblock content %}
