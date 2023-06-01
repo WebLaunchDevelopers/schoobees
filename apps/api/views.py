@@ -28,6 +28,7 @@ from rest_framework import status
 
 from rest_framework.views import APIView
 from hashlib import sha256
+from django.db import transaction
 
 # Create your views here.
 MODLIST = ['App', 'AppXP']
@@ -157,6 +158,94 @@ class DriverListAPIView(APIView):
             driverserializer = DriverSerializer(driverlist, many=True)
             return Response(
                 {'status': status.HTTP_200_OK, 'driverlist': driverserializer.data},
+                status=status.HTTP_200_OK
+            )
+        else:
+            return Response(
+                {'error': 'Invalid parameter value', 'status': status.HTTP_400_BAD_REQUEST},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+class DriverLocationAPIView(APIView):
+    def post(self, request):
+        # Concatenate the words and encode as UTF-8
+        text = "DriverAppToWebFromWebLaunch".encode("utf-8")
+        # Generate a SHA-256 hash from the text
+        hash_object = sha256(text)
+        # Convert the hash to a hexadecimal string
+        token = hash_object.hexdigest()
+        print(token)
+
+        # Check if registerid is present in query params
+        register_id = request.data.get('registerid')
+        if not register_id:
+            return Response(
+                {'error': 'Missing required parameter (registerid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+
+        # Check if driver_id is present in query params
+        driver_id = request.data.get('driverid')
+        if not driver_id:
+            return Response(
+                {'error': 'Missing required parameter (driverid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+
+        # Check if token is present in query params
+        param_token = request.data.get('token')
+        if not param_token:
+            return Response(
+                {'error': 'Missing required parameter (token)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+
+        # Check if modid is present in query params
+        modid = request.data.get('modid')
+        if not modid:
+            return Response(
+                {'error': 'Missing required parameter (modid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+
+        if token == param_token and modid in MODLIST:
+            try:
+                userdata = CustomUser.objects.get(register_id=register_id)
+            except CustomUser.DoesNotExist:
+                return Response(
+                    {'error': 'School not found', 'status': status.HTTP_404_NOT_FOUND},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
+            try:
+                driverdata = Driver.objects.get(user=userdata, id=driver_id)
+            except Driver.DoesNotExist:
+                return Response(
+                    {'error': 'Driver not found', 'status': status.HTTP_404_NOT_FOUND},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
+            latitude = request.data.get('latitude')
+            if not latitude:
+                return Response(
+                    {'error': 'Missing required parameter (latitude)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                    status=status.HTTP_422_UNPROCESSABLE_ENTITY
+                )
+            
+            longitude = request.data.get('longitude')
+            if not longitude:
+                return Response(
+                    {'error': 'Missing required parameter (longitude)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                    status=status.HTTP_422_UNPROCESSABLE_ENTITY
+                )
+
+            with transaction.atomic():
+                driverdata.latitude = latitude
+                driverdata.longitude = longitude
+                driverdata.save()
+
+            return Response(
+                {'status': status.HTTP_200_OK, 'message': 'Driver location updated successfully'},
                 status=status.HTTP_200_OK
             )
         else:
