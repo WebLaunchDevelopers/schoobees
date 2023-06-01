@@ -109,6 +109,8 @@ class Driver(models.Model):
     vehicle_number = models.CharField(max_length=20)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    latitude = models.CharField(max_length=200, null=True, blank=True)
+    longitude = models.CharField(max_length=200, null=True, blank=True)
 
     def save(self, *args, **kwargs):
         # Generate a random 5-10 digit number for the id field
@@ -132,8 +134,8 @@ class Route(models.Model):
 class RouteNode(models.Model):
     route = models.ForeignKey(Route, on_delete=models.CASCADE)
     area = models.CharField(max_length=100)
-    latitude = models.CharField(max_length=10)
-    longitude = models.CharField(max_length=10)
+    latitude = models.CharField(max_length=200)
+    longitude = models.CharField(max_length=200)
     is_start_stop = models.BooleanField(default=False)
     is_destination_stop = models.BooleanField(default=False)
 
