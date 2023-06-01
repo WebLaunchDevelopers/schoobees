@@ -191,7 +191,11 @@ class StudentBulkUploadView(LoginRequiredMixin, SuccessMessageMixin, CreateView)
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        messages.error(self.request, "Invalid CSV file")
+        if form.errors.get("__all__") == ["Invalid CSV file format."]:
+            messages.error(self.request, "Invalid CSV file format.")
+        else:
+            messages.error(self.request, "Something went wrong. Please try again")
+
         return super().form_invalid(form)
 
 class DownloadCSVViewdownloadcsv(LoginRequiredMixin, View):
