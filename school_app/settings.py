@@ -52,6 +52,7 @@ INSTALLED_APPS = [
     "apps.attendance",
     "crispy_forms",
     'fontawesome_5',
+    "apps.time_table"
 ]
 
 AUTH_USER_MODEL = "base.CustomUser"
