@@ -11,7 +11,8 @@ from .views import (
     RouteNodesAPIView,
     CalendarAPIView,
     PerformanceAPIView,
-    NotificationAPIView
+    NotificationAPIView,
+    AttendanceAPIView
 )
 
 urlpatterns = [
@@ -27,4 +28,5 @@ urlpatterns = [
     path('calendar/',  CalendarAPIView.as_view(), name="calendar"), # only get
     path('performance/',  PerformanceAPIView.as_view(), name="performance"), # only get
     path('notification/',  NotificationAPIView.as_view(), name="notification"), # only get
+    path('attendance/',  AttendanceAPIView.as_view(), name="attendance"), # only get
 ]
