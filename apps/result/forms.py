@@ -4,7 +4,7 @@ from django.forms import modelformset_factory
 from apps.corecode.models import AcademicSession, AcademicTerm, Subject, StudentClass
 from django.urls import reverse_lazy
 from django.utils.safestring import mark_safe
-
+from datetime import date
 
 from .models import Result, Exam
 
@@ -52,3 +52,5 @@ class ExamsForm(forms.ModelForm):
                 '<a href="{}">Click here to add session</a>'.format(reverse_lazy('session-create')))
             self.fields['term'].help_text = mark_safe(
                 '<a href="{}">Click here to add term</a>'.format(reverse_lazy('term-create')))
+            
+            self.fields['exam_date'].initial = date.today()  # Set the default value as today's date

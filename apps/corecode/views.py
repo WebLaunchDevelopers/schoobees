@@ -474,6 +474,11 @@ class CalendarCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     success_message = "New event/holiday successfully added."
     form_class = CalendarForm
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Create'
+        return context
+
     def form_valid(self, form):
         obj = form.save(commit=False)
         obj.user = self.request.user
@@ -486,6 +491,11 @@ class CalendarUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     success_url = reverse_lazy("calendar-list")
     success_message = "Event/holiday updated successfully."
     form_class = CalendarForm
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Update'
+        return context
 
     def form_valid(self, form):
         obj = form.save(commit=False)

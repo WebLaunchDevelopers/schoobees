@@ -18,10 +18,11 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.views.generic import ListView, View
 from django.urls import reverse_lazy
 from django.urls import reverse
+from django.utils import timezone
 
 class UpdateAttendanceView(LoginRequiredMixin, View):
     def get(self, request):
-        form = UpdateAttendance(user=request.user)
+        form = UpdateAttendance(user=request.user, initial={'date_of_attendance': timezone.now().date()})
         button = "Update"
         return render(request, "attendance/update-attendance.html", {"form": form, "button": button, "subjectshow": True})
 
@@ -89,7 +90,7 @@ class EditAttendanceView(LoginRequiredMixin, View):
 
 class GetAttendanceView(LoginRequiredMixin, View):
     def get(self, request):
-        form = UpdateAttendance(user=request.user)
+        form = UpdateAttendance(user=request.user, initial={'date_of_attendance': timezone.now().date()})
         button = "View"
         return render(request, "attendance/update-attendance.html", {"form": form, "button": button, "subjectshow": False})
     

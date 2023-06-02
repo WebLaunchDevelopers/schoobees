@@ -90,7 +90,7 @@ class Calendar(models.Model):
     ]
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     title = models.CharField(max_length=200)
-    date = models.DateField()
+    date = models.DateField(default=datetime.now)
     type = models.CharField(max_length=7, choices=TYPE_CHOICES)
 
 class Driver(models.Model):

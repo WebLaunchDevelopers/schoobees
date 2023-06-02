@@ -9,6 +9,7 @@ from apps.corecode.models import (
 from apps.students.models import Student
 
 from django.contrib.auth import get_user_model
+from django.utils import timezone
 
 CustomUser = get_user_model()
 class Attendance(models.Model):
@@ -24,6 +25,6 @@ class Attendance(models.Model):
     current_class = models.ForeignKey(StudentClass, on_delete=models.CASCADE)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
     attendance_status = models.CharField(max_length=100, choices=ATTENDANCE_CHOICES)
-    date_of_attendance = models.DateField(blank=True)
+    date_of_attendance = models.DateField(blank=True, default=timezone.now)
     session = models.ForeignKey(AcademicSession, on_delete=models.CASCADE)
     term = models.ForeignKey(AcademicTerm, on_delete=models.CASCADE)

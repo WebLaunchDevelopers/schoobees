@@ -11,7 +11,7 @@ from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import ValidationError
 
-from .models import Staff,StaffBulkUpload
+from .models import Staff
 from io import StringIO
 
 
@@ -104,65 +104,3 @@ class StaffDeleteView(DeleteView):
 
         messages.success(self.request, "Staff successfully deleted.")
         return super().form_valid(form)
-
-class StaffBulkUploadView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
-    model = StaffBulkUpload
-    template_name = "staffs/staff_upload.html"
-    fields = ["csv_file"]
-    success_url = "/staff/list"
-    success_message = "Successfully uploaded staffs"
-    expected_fields = [
-        'first_name',
-        'last_name',
-        'gender',
-        'date_of_birth',
-        'email',
-        'mobile_number',
-        'address',
-        'comments'
-    ]
-
-    def form_valid(self, form):
-        form.instance.user = self.request.user
-        # Retrieving the uploaded file
-        csv_file = form.cleaned_data.get("csv_file")
-        try:
-            # Reading the CSV file
-            opened = StringIO(csv_file.read().decode())
-            reader = csv.DictReader(opened, delimiter=",")
-            # Checking if the CSV file contains all the expected fields
-            csv_fields = reader.fieldnames
-            if not all(field in csv_fields for field in self.expected_fields):
-                raise ValidationError("The uploaded CSV file is missing some fields.")
-            # Performing further processing and saving
-        except csv.Error:
-            form.add_error(None, "Invalid CSV file format.")
-            return self.form_invalid(form)
-        
-        return super().form_valid(form)
-
-    def form_invalid(self, form):
-        messages.error(self.request, "Invalid CSV file")
-        return super().form_invalid(form)
-
-class DownloadstaffCSVViewdownloadcsv(LoginRequiredMixin, View):
-    def get(self, request, *args, **kwargs):
-        response = HttpResponse(content_type="text/csv")
-        response["Content-Disposition"] = 'attachment; filename="staff_template.csv"'
-
-        writer = csv.writer(response)
-        writer.writerow(
-            [
-                'current_status',
-                'first_name',
-                'last_name',
-                'gender',
-                'date_of_birth',
-                'email',
-                'mobile_number',
-                'address',
-                'comments'
-            ]
-        )
-
-        return response

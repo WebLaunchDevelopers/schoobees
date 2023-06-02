@@ -1,16 +1,15 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+
 from django.views import View
 from .forms import TimetableForm
 from .models import Timetable
 from apps.corecode.models import AcademicSession, AcademicTerm, Subject, StudentClass
-
+from django.utils import timezone
 
 class TimetableCreateView(View):
     def get(self, request):
-        current_session = AcademicSession.objects.filter(current=True).first()
-        current_term = AcademicTerm.objects.filter(current=True).first()
         user = request.user
-        form = TimetableForm(user=user)
+        form = TimetableForm(user=user, initial={'date': timezone.now().date()})
         return render(request, 'timetable/create_time_table.html', {'form': form})
 
     def post(self, request):
@@ -54,11 +53,11 @@ class TimetableCreateView(View):
                     extra_timetable.save()
                 else:
                     extra_forms.append(extra_form)
-
-            return render(request, 'timetable/view_time_table.html')
+                    return render(request, 'timetable/create_time_table.html', {'form': form, 'extra_forms': extra_forms})
+                
+            return redirect('timetable_list')
 
         return render(request, 'timetable/create_time_table.html', {'form': form, 'extra_forms': extra_forms})
-
 
 class ViewTimeTableView(View):
     def get(self, request):
@@ -84,8 +83,12 @@ class ViewTimeTableView(View):
 
         if date:
             timetables = timetables.filter(date=date)
-
+        else:
+            timetables = timetables.filter(date=timezone.now().date())
+        
+        timetables = timetables.order_by('class_of', 'time')
         student_classes = StudentClass.objects.filter(user=user)
         subjects = Subject.objects.filter(user=user)
+        date_today = timezone.now().date().strftime('%Y-%m-%d')
 
-        return render(request, 'timetable/view_time_table.html', {'timetables': timetables, 'student_classes': student_classes, 'subjects': subjects})
+        return render(request, 'timetable/view_time_table.html', {'date_today': date_today, 'timetables': timetables, 'student_classes': student_classes, 'subjects': subjects})

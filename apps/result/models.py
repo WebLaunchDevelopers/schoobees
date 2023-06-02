@@ -12,6 +12,7 @@ from .utils import score_grade
 from django.contrib.auth import get_user_model
 
 from django.core.validators import MaxValueValidator
+from datetime import datetime
 
 CustomUser = get_user_model()
 
@@ -21,7 +22,7 @@ class Exam(models.Model):
     session = models.ForeignKey(AcademicSession, on_delete=models.CASCADE)
     term = models.ForeignKey(AcademicTerm, on_delete=models.CASCADE)
     exam_name = models.CharField(max_length=100, blank=True)
-    exam_date = models.DateField()
+    exam_date = models.DateField(default=datetime.now)
 
     def __str__(self):
         return f"{self.exam_name}"

@@ -2,7 +2,7 @@
 
 {% block content %}
   <h1>View Time Table</h1>
-  <a href="{% url 'timetable:timetable_create' %}" class="btn btn-primary mb-4">Create Timetable</a>
+  <a href="{% url 'timetable_create' %}" class="btn btn-primary mb-4">Create Timetable</a>
 
   <form method="get" class="filter-form row">
     <div class="form-group col-md-4">
@@ -27,9 +27,9 @@
 
     <div class="form-group col-md-4">
       <label for="date-input">Date:</label>
-      <input type="date" id="date-input" name="date" class="form-control">
+      <input type="date" id="date-input" name="date" class="form-control" value="{{ date_today }}">
     </div>
-
+            
     <div class="col-md-12 text-center">
       <button type="submit" class="btn btn-primary">Filter</button>
     </div>
