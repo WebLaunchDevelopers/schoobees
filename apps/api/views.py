@@ -406,10 +406,10 @@ class FeedbackAPIView(APIView):
         if check_result:
             return check_result
 
-        register_id = request.data['registerid']
-        modid = request.data['modid']
-        paramstoken = request.data['token']
-        student_id = request.data['studentid']
+        register_id = request.data.get('registerid')
+        modid = request.data.get('modid')
+        paramstoken = request.data.get('token')
+        student_id = request.data.get('studentid')
 
         token = self.generate_token("StudentAppToWebFromWebLaunch")
 
@@ -461,7 +461,7 @@ class InvoiceAPIView(APIView):
         print(token)
 
         # Check if studentid is present in query params
-        student_id = request.data['studentid']
+        student_id = request.data.get('studentid')
         if not student_id:
             return Response(
                 {'error': 'Missing required parameter(studentid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
@@ -469,7 +469,7 @@ class InvoiceAPIView(APIView):
             )
 
         # Check if registerid is present in query params
-        register_id = request.data['registerid']
+        register_id = request.data.get('registerid')
         if not register_id:
             return Response(
                 {'error': 'Missing required parameter(registerid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
@@ -477,7 +477,7 @@ class InvoiceAPIView(APIView):
             )
 
         # Check if modid is present in query params
-        modid = request.data['modid']
+        modid = request.data.get('modid')
         if not modid:
             return Response(
                 {'error': 'Missing required parameter(modid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
@@ -485,7 +485,7 @@ class InvoiceAPIView(APIView):
             )
 
         # Check if token is present in query params
-        paramstoken = request.data['token']
+        paramstoken = request.data.get('token')
         if not paramstoken:
             return Response(
                 {'error': 'Missing required parameter(token)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
@@ -755,9 +755,9 @@ class RouteNodesAPIView(APIView):
         if check_result:
             return check_result
 
-        register_id = request.data['registerid']
-        modid = request.data['modid']
-        paramstoken = request.data['token']
+        register_id = request.data.get('registerid')
+        modid = request.data.get('modid')
+        paramstoken = request.data.get('token')
 
         token = self.generate_token("DriverAppToWebFromWebLaunch")
 

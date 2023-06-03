@@ -65,3 +65,6 @@ upload student/staff issue
 
 forms submission without data
 
+even though single record not created for attendance still api giving response
+
+performanceapi is specifically giving one exam results(possible give list of exams api then show specific exam results)
