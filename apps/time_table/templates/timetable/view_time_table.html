@@ -9,7 +9,9 @@
       <select id="class-select" name="class_id" class="form-control">
         <option value="">All</option>
         {% for student_class in student_classes %}
-          <option value="{{ student_class.id }}" {% if class_id == student_class.id %}selected{% endif %}>{{ student_class }}</option>
+        <option value="{{ student_class.id }}" {% if request.GET.class_id|stringformat:"s" == student_class.id|stringformat:"s" %}selected{% endif %}>
+          {{ student_class }}
+        </option>
         {% endfor %}
       </select>
     </div>
@@ -19,15 +21,18 @@
       <select id="subject-select" name="subject_id" class="form-control">
         <option value="">All</option>
         {% for subject in subjects %}
-          <option value="{{ subject.id }}" {% if subject_id == subject.id %}selected{% endif %}>{{ subject }}</option>
+          <option value="{{ subject.id }}" {% if request.GET.subject_id|stringformat:"s" == subject.id|stringformat:"s" %}selected{% endif %}>
+            {{ subject }}
+          </option>
         {% endfor %}
       </select>
     </div>
 
     <div class="form-group col-md-4">
       <label for="date-input">Date:</label>
-      <input type="date" id="date-input" name="date" class="form-control" value="{{ date_today }}" />
+      <input type="date" id="date-input" name="date" class="form-control" value="{% if request.GET.date %}{{ request.GET.date }}{% else %}{{ date_today }}{% endif %}" />
     </div>
+    
             
     <div class="col-md-12 text-center">
       <button type="submit" class="btn btn-primary">Filter</button>
