@@ -4,6 +4,7 @@ from apps.base.models import CustomUser, UserProfile
 from apps.corecode.models import Driver, Route, Calendar, RouteNode
 from apps.finance.models import Invoice, InvoiceItem, Receipt
 from apps.result.models import Result
+from apps.time_table.models import Timetable
 
 class StudentSerializer(serializers.ModelSerializer):
     current_class_name = serializers.ReadOnlyField(source='current_class.name')
@@ -103,3 +104,13 @@ class NotificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Notification
         fields = ['title', 'message', 'created_at', 'recipients']
+
+class TimetableSerializer(serializers.ModelSerializer):
+    class_of = serializers.StringRelatedField()
+    subject = serializers.StringRelatedField()
+    session = serializers.StringRelatedField()
+    term = serializers.StringRelatedField()
+
+    class Meta:
+        model = Timetable
+        fields = ['class_of', 'subject', 'session', 'term', 'date', 'start_time', 'end_time']

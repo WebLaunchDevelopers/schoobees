@@ -18,11 +18,12 @@ class TimetableForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
+        self.fields["class_of"].empty_label = "Select One Class"
+        self.fields["subject"].empty_label = "Select One Class"
+        self.fields['class_of'].help_text = mark_safe(
+            '<a href="{}">Click here to add class</a>'.format(reverse_lazy('class-create')))
+        self.fields['subject'].help_text = mark_safe(
+            '<a href="{}">Click here to add subject</a>'.format(reverse_lazy('subject-create')))
         if user:
             self.fields['class_of'].queryset = StudentClass.objects.filter(user=user)
             self.fields['subject'].queryset = Subject.objects.filter(user=user)
-
-            self.fields['class_of'].help_text = mark_safe(
-                '<a href="{}">Click here to add class</a>'.format(reverse_lazy('class-create')))
-            self.fields['subject'].help_text = mark_safe(
-                '<a href="{}">Click here to add subject</a>'.format(reverse_lazy('subject-create')))

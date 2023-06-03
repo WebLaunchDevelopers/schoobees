@@ -69,5 +69,9 @@
         </tbody>
       </table>
     {% endfor %}
+  {% else %}
+  <div class="no-records-container">
+    <p class="no-records">No records found</p>
+  </div>
   {% endif %}
 {% endblock content %}
