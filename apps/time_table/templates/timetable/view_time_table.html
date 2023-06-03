@@ -50,7 +50,8 @@
             <th>Class</th>
             <th>Subject</th>
             <th>Date</th>
-            <th>Time</th>
+            <th>Start Time</th>
+            <th>End Time</th>
           </tr>
         </thead>
         <tbody>
@@ -60,7 +61,8 @@
               <td>{{ timetable.class_of }}</td>
               <td>{{ timetable.subject }}</td>
               <td>{{ timetable.date }}</td>
-              <td>{{ timetable.time }}</td>
+              <td>{{ timetable.start_time }}</td>
+              <td>{{ timetable.end_time }}</td>
             </tr>
           {% endif %}
         {% endfor %}

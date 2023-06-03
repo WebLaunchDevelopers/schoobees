@@ -15,6 +15,7 @@ from django.views import View
 class TimetableCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     template_name = 'timetable/create_time_table.html'
     success_message = "Timetable created successfully!"
+    form_class = TimetableForm
 
     def get(self, request):
         try:
@@ -23,12 +24,16 @@ class TimetableCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         except (AcademicSession.DoesNotExist, AcademicTerm.DoesNotExist):
             messages.error(request, "Academic session or term not found.")
 
-        form = TimetableForm(user=request.user, initial={'date': timezone.now().date()})
-        return render(request, self.template_name, {'form': form})
+        form = self.get_form()
+        form.initial = {
+            'date': timezone.now().date(),
+            'start_time': timezone.localtime(timezone.now()).time().replace(second=0, microsecond=0),
+            'end_time': timezone.localtime(timezone.now()).time().replace(second=0, microsecond=0)
+        }
+        return self.render_to_response({'form': form})
 
     def post(self, request):
-        form = TimetableForm(request.POST, user=request.user)
-        extra_forms = []
+        form = self.get_form()
 
         if form.is_valid():
             try:
@@ -44,35 +49,30 @@ class TimetableCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
                 'term': current_term,
                 'user': request.user
             })
+
+            # Check if a similar timetable record already exists
+            existing_timetable = Timetable.objects.filter(
+                session=current_session,
+                term=current_term,
+                user=request.user,
+                class_of=timetable_data['class_of'],
+                start_time=timetable_data['start_time'],
+                date=timetable_data['date']
+            ).exists()
+
+            if existing_timetable:
+                messages.error(request, "Already there is a schedule with the same time and date.")
+                return self.render_to_response({'form': form})
+
             main_timetable = Timetable(**timetable_data)
 
-            extra_timetables = []
-            form_ids = request.POST.getlist('form_ids[]')
-            for form_id in form_ids:
-                prefix = f'form-{form_id}'
-                extra_form = TimetableForm(request.POST, user=request.user, prefix=prefix)
-                if extra_form.is_valid():
-                    extra_timetable_data = extra_form.cleaned_data
-                    extra_timetable_data.update({
-                        'session': current_session,
-                        'term': current_term,
-                        'user': request.user
-                    })
-                    extra_timetable = Timetable(**extra_timetable_data)
-                    extra_timetables.append(extra_timetable)
-                else:
-                    extra_forms.append(extra_form)
-
             with transaction.atomic():
-                Timetable.objects.bulk_create([main_timetable] + extra_timetables)
-
-            if extra_forms:
-                return render(request, self.template_name, {'form': form, 'extra_forms': extra_forms})
+                main_timetable.save()
 
             messages.success(request, self.success_message)
             return redirect('timetable_list')
 
-        return render(request, self.template_name, {'form': form, 'extra_forms': extra_forms})
+        return self.render_to_response({'form': form})
 
 class ViewTimeTableView(LoginRequiredMixin, View):
     template_name = 'timetable/view_time_table.html'
@@ -95,7 +95,7 @@ class ViewTimeTableView(LoginRequiredMixin, View):
         if date:
             timetables = timetables.filter(date=date)
 
-        timetables = timetables.order_by('class_of', 'time')
+        timetables = timetables.order_by('class_of', 'start_time')
         student_classes = StudentClass.objects.filter(user=request.user)
         subjects = Subject.objects.filter(user=request.user)
         date_today = timezone.now().date().strftime('%Y-%m-%d')

@@ -6,13 +6,17 @@ from django.utils import timezone
 
 CustomUser = get_user_model()
 
+def get_current_time():
+    return timezone.localtime(timezone.now()).time()
+
 class Timetable(models.Model):
     user = models.ForeignKey(CustomUser, on_delete=models.CASCADE)
     session = models.ForeignKey(AcademicSession, on_delete=models.CASCADE)
     term = models.ForeignKey(AcademicTerm, on_delete=models.CASCADE)
     class_of = models.ForeignKey(StudentClass, on_delete=models.CASCADE)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
-    time = models.TimeField()
+    start_time = models.TimeField(default=get_current_time)
+    end_time = models.TimeField(default=get_current_time)
     date = models.DateField(default=timezone.now)
 
     def __str__(self):
