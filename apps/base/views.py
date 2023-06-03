@@ -104,7 +104,7 @@ class PasswordResetView(View):
         except User.DoesNotExist:
             messages.error(request, 'No user with that email address was found.')
             return redirect('password_reset')
-        send_password_reset_email(user)
+        send_password_reset_email(user, request)
         messages.success(request, 'An email has been sent to your email address with instructions for resetting your password.')
         return redirect('login')
     
