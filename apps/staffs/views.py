@@ -14,7 +14,6 @@ from django.core.exceptions import ValidationError
 from .models import Staff
 from io import StringIO
 
-
 class StaffListView(LoginRequiredMixin, ListView):
     model = Staff
 

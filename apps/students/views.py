@@ -38,7 +38,6 @@ class StudentListView(LoginRequiredMixin, ListView):
 
         return queryset.filter(user=self.request.user,session=current_session, term=current_term)
 
-
 class StudentDetailView(LoginRequiredMixin, DetailView):
     model = Student
     template_name = "students/student_detail.html"
@@ -72,7 +71,6 @@ class StudentDetailView(LoginRequiredMixin, DetailView):
         context["percentage"] = percentage
         context["chart"] = chart
         return context
-
 
 class StudentCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Student
