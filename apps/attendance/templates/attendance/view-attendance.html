@@ -6,7 +6,8 @@
       <h1>Class {{ class }}</h1>
 
       <div class="table-responsive">
-        <table id="studenttable" class="table table-bordered table-hover" data-page-length='100'>
+        <table id="dtDynamicVerticalScrollExample" class="table table-striped table-bordered table-sm" cellspacing="0"
+    width="100%">
           <thead class="thead-light">
             <tr>
               <th>S/N</th>
@@ -62,3 +63,17 @@
     }
   </style>
 {% endblock content %}
+{% block morejs %}
+    <script>
+  $('#timetable').DataTable({
+  });
+
+  $(document).ready(function () {
+  $('#dtDynamicVerticalScrollExample').DataTable({
+    "scrollY": "50vh",
+    "scrollCollapse": true,
+  });
+  $('.dataTables_length').addClass('bs-select');
+});
+</script>
+{% endblock morejs %}

@@ -44,7 +44,7 @@
                 {% csrf_token %}
                 <span class="login100-form-title">SchooBees</span>
                 <div class="wrap-input100 validate-input" data-validate="Valid email is required: ex@abc.xyz">
-                  <!-- <input type="email" name="email" id="email" class="input100" placeholder="Username" required> -->
+                      <!-- <input type="email" name="email" id="email" class="input100" placeholder="Username" required> -->
                   <input class="input100" id="id_username" name="username" type="text" placeholder="Username" required>
                     <span class="focus-input100"></span>
                     <span class="symbol-input100">
@@ -70,8 +70,8 @@
                     <span class="txt1">
                         Forgot
                     </span>
-                    <a class="txt2" href="#">
-                        Username / Password?
+                    <a class="txt2" href="{% url 'password_reset' %}">
+                        Password?
                     </a>
                 </div>
 
