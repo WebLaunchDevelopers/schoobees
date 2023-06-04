@@ -87,7 +87,7 @@
           <a href="{% url 'student-list' %}" style="text-decoration: none;">
             <div class="card-body">
               <h5 class="card-title">
-                <i class="fa fa-users fa-lg mr-2"></i>
+                <i class="fas fa-user-graduate fa-lg mr-2"></i>
                 Students
               </h5>
               <p class="card-text">{{ studentcount }}</p>
@@ -100,7 +100,7 @@
           <a href="{% url 'staff-list' %}" style="text-decoration: none;">
             <div class="card-body">
               <h5 class="card-title">
-                <i class="fa fa-user fa-lg mr-2"></i>
+                <i class="fas fa-chalkboard-teacher fa-lg mr-2"></i>
                 Faculties
               </h5>
               <p class="card-text">{{ staffcount }}</p>
@@ -113,7 +113,7 @@
           <a href="{% url 'drivers-view' %}" style="text-decoration: none;">
             <div class="card-body">
               <h5 class="card-title">
-                <i class="fa fa-building fa-lg mr-2"></i>
+                <i class="fas fa-bus fa-lg mr-2"></i>
                 Drivers
               </h5>
               <p class="card-text">{{ drivercount }}</p>
@@ -136,115 +136,160 @@
       </div>
     </div>
   </div>
-
-  <div class="float-left">
-    <div class="container-fluid mt-5">
-      <div class="row">
-        <div class="col-md-6">
-          <div class="card dashboard-card">
-            <div class="card-body">
-              <h5 class="card-title">
-                <i class="fas fa-award fa-lg mr-2"></i>
-                Results
-              </h5>
-              <!-- Add any additional content or links here -->
+  <div class="d-flex">
+    <div class="float-left">
+      <div class="container-fluid mt-5">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="card dashboard-card">
+              <a href="{% url 'sessions' %}">
+                <div class="card-body">
+                  <h5 class="card-title">
+                    <i class="fas fa-copy fa-lg mr-2"></i>
+                    Sessions
+                  </h5>
+                </div>
+              </a>
             </div>
           </div>
-        </div>
-        <div class="col-md-6">
-          <div class="card dashboard-card">
-            <div class="card-body">
-              <h5 class="card-title">
-                <i class="far fa-calendar-check fa-lg mr-2"></i>
-                Attendance
-              </h5>
-              <!-- Add any additional content or links here -->
+          <div class="col-md-6">
+            <div class="card dashboard-card">
+              <a href="{% url 'terms' %}">
+                <div class="card-body">
+                  <h5 class="card-title">
+                    <i class="fas fa-bars fa-lg mr-2"></i>
+                    Terms
+                  </h5>
+                </div>
+              </a>
             </div>
           </div>
-        </div>
-        <div class="col-md-6 mt-4">
-          <div class="card dashboard-card">
-            <div class="card-body">
-              <h5 class="card-title">
-                <i class="fas fa-copy fa-lg mr-2"></i>
-                Management
-              </h5>
-              <!-- Add any additional content or links here -->
+          <div class="col-md-6 mt-4">
+            <div class="card dashboard-card">
+              <a href="{% url 'classes' %}">                
+                <div class="card-body">
+                  <h5 class="card-title">
+                    <i class="fas fa-pen-nib fa-lg mr-2"></i>
+                    Classes
+                  </h5>
+                </div>
+              </a>
             </div>
           </div>
-        </div>
-        <div class="col-md-6 mt-4">
-          <div class="card dashboard-card">
-            <div class="card-body">
-              <h5 class="card-title">
-                <i class="fas fa-cog fa-lg mr-2"></i>
-                Communication
-              </h5>
-              <!-- Add any additional content or links here -->
+          <div class="col-md-6 mt-4">
+            <div class="card dashboard-card">
+              <a href="{% url 'subjects' %}">
+                <div class="card-body">
+                  <h5 class="card-title">
+                    <i class="fas fa-book fa-lg mr-2"></i>
+                    Subjects
+                  </h5>
+                </div>
+              </a>
             </div>
           </div>
-        </div>
-        <div class="col-md-6 mt-4">
-          <div class="card dashboard-card">
-            <div class="card-body">
-              <h5 class="card-title">
-                <i class="fas fa-clipboard fa-lg mr-2"></i>
-                Tasks
-              </h5>
-              <!-- Add any additional content or links here -->
+          <div class="col-md-6 mt-4">
+            <div class="card dashboard-card">
+              <a href="{% url 'timetable_list' %}">
+                <div class="card-body">
+                  <h5 class="card-title">
+                    <i class="fas fa-lg mr-2">&#xf073;</i>
+                    Timetable
+                  </h5>
+                </div>
+              </a>
             </div>
           </div>
-        </div>
-        <div class="col-md-6 mt-4">
-          <div class="card dashboard-card">
-            <div class="card-body">
-              <h5 class="card-title">
-                <i class="far fa-envelope fa-lg mr-2"></i>
-                Messages
-              </h5>
-              <!-- Add any additional content or links here -->
+          <div class="col-md-6 mt-4">
+            <div class="card dashboard-card">
+              <a href="{% url 'view-results' %}">
+                <div class="card-body">
+                  <h5 class="card-title">
+                    <i class="fas fa-award fa-lg mr-2"></i>
+                    Results
+                  </h5>
+                </div>
+              </a>
             </div>
           </div>
-        </div>
-        <div class="col-md-6 mt-4">
-          <div class="card dashboard-card">
-            <div class="card-body">
-              <h5 class="card-title">
-                <i class="fas fa-users fa-lg mr-2"></i>
-                Students
-              </h5>
-              <!-- Add any additional content or links here -->
+          <div class="col-md-6 mt-4">
+            <div class="card dashboard-card">
+              <a href="{% url 'view-attendance' %}">
+                <div class="card-body">
+                  <h5 class="card-title">
+                    <i class="far fa-calendar-check fa-lg mr-2"></i>
+                    Attendance
+                  </h5>
+                </div>
+              </a>
             </div>
           </div>
-        </div>
-        <div class="col-md-6 mt-4">
-          <div class="card dashboard-card">
-            <div class="card-body">
-              <h5 class="card-title">
-                <i class="fas fa-user fa-lg mr-2"></i>
-                Faculties
-              </h5>
-              <!-- Add any additional content or links here -->
+          <div class="col-md-6 mt-4">
+            <div class="card dashboard-card">
+              <a href="{% url 'exams_list' %}">
+                <div class="card-body">
+                  <h5 class="card-title">
+                    <i class="fas fa-clipboard fa-lg mr-2"></i>
+                    Exams
+                  </h5>
+                </div>
+              </a>
+            </div>
+          </div>
+          <div class="col-md-6 mt-4">
+            <div class="card dashboard-card">
+              <a href="{% url 'calendar-list' %}">
+                <div class="card-body">
+                  <h5 class="card-title">
+                    <i class="far fa-calendar-alt fa-lg mr-2"></i>
+                    Calendar
+                  </h5>
+                </div>
+              </a>
+            </div>
+          </div>
+          <div class="col-md-6 mt-4">
+            <div class="card dashboard-card">
+              <a href="{% url 'send-notification' %}">
+                <div class="card-body">
+                  <h5 class="card-title">
+                    <i class="fas fa-broadcast-tower fa-lg mr-2"></i>
+                    Communication
+                  </h5>
+                </div>
+              </a>
+            </div>
+          </div>
+          <div class="col-md-6 mt-4">
+            <div class="card dashboard-card">
+              <a href="{% url 'feedback-list' %}">
+                <div class="card-body">
+                  <h5 class="card-title">
+                    <i class="fas fa-comment fa-lg mr-2"></i>
+                    Feedbacks
+                  </h5>
+                </div>
+              </a>
             </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-  <div class="float-right">
-    <div id='calendar'></div>
-    <div class="card dashboard-card">
-      <div class="card-body">
-        <h5 class="card-title">
-          <i class="fa fa-birthday-cake fa-lg mr-2"></i>
-          Staff Birthdays
-        </h5>
-        {% for Bdays in staffBdays %}
-        
-        <p class="card-text">{{Bdays}}</p>
-        {% endfor %}
-      </div>
-    </div>    
+    <div class="float-right">
+      <div id='calendar'></div>
+      <div class="card dashboard-card">
+        <div class="card-body">
+          <h5 class="card-title">
+            <i class="fa fa-birthday-cake fa-lg mr-2"></i>
+            Staff Birthdays
+          </h5>
+          {% for Bdays in staffBdays %}
+          
+          <p class="card-text">{{Bdays}}</p>
+          {% endfor %}
+        </div>
+      </div>    
+    </div>
   </div>
   <script>
     $(document).ready(function() {
