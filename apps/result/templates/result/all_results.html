@@ -1,15 +1,43 @@
 {% extends 'base.html' %}
+{% block title %}
+ <h2>Results</h2>
+{% endblock title %}
+{% block content %}
+  <form method="get" class="filter-form row">
+    <div class="form-group col-md-4">
+      <label for="class-select">Class:</label>
+      <select id="class-select" name="class_id" class="form-control">
+        <option value="">All</option>
+        {% for student_class in student_classes %}
+          <option value="{{ student_class.id }}" {% if request.GET.class_id|stringformat:"s" == student_class.id|stringformat:"s" %}selected{% endif %}>
+            {{ student_class }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
 
-{% block fullcard %}
+    <div class="form-group col-md-4">
+      <label for="exam-select">Exam:</label>
+      <select id="exam-select" name="exam_id" class="form-control">
+        <option value="">All</option>
+        {% for exam in exams %}
+          <option value="{{ exam.id }}" {% if request.GET.exam_id|stringformat:"s" == exam.id|stringformat:"s" %}selected{% endif %}>
+            {{ exam }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
 
-{% for clas, result in resultss.items %}
-  {% if result.students and result.subjects %}
-    <h1>Class {{ clas }}</h1>
 
-    <div class="table-responsive">
-      <table id="dtDynamicVerticalScrollExample" class="table table-striped table-bordered table-sm" cellspacing="0"
-    width="100%">
-        <thead class="thead-light">
+    <div class="form-group col-md-4" style="text-align: right;">
+      <button type="submit" class="btn btn-primary ">Filter</button>
+    </div>
+  </form>
+<br>
+  {% if resultss %}
+    {% for clas, result in resultss.items %}
+      <table class="table">
+        <thead>
           <tr>
             <th>S/N</th>
             <th>Registration Number</th>
@@ -17,65 +45,42 @@
             {% for subject in result.subjects %}
               <th>{{ subject.name }}</th>
             {% endfor %}
-            <th>Total</th>
             <th>Percentage</th>
           </tr>
         </thead>
         <tbody>
           {% for student_data in result.students %}
-            <tr class='clickable-row' data-href="{% url 'student-detail' student_data.student.pk %}">
-              <td>{{ forloop.counter }}</td>
-              <td>{{ student_data.student.registration_number }}</td>
-              <td>{{ student_data.student.last_name }} {{ student_data.student.first_name }}</td>
-              {% for subject in result.subjects %}
-                <td>
-                  {% for res in results %}
-                    {% if res.student == student_data.student and res.subject == subject %}
-                       {{ res.exam_score }}
-                    {% endif %}
-                  {% empty %}
-                    <span class="no-records">No records found</span>
-                  {% endfor %}
-                </td>
-              {% endfor %}
-              <td>{{ student_data.total_score }}</td>  <!-- Add the total score column -->
-              <td>{{ student_data.percent }}%</td>
-            </tr>
+              <tr class='clickable-row' data-href="{% url 'student-detail' student_data.student.pk %}">
+                  <td>{{ forloop.counter }}</td>
+                  <td>{{ student_data.student.registration_number }}</td>
+                  <td>{{ student_data.student.last_name }} {{ student_data.student.first_name }}</td>
+                  <td>{{ student_data.total_score }}</td>
+                  <td>{{ student_data.percent }}%</td>
+              </tr>
           {% endfor %}
+
         </tbody>
       </table>
+    {% endfor %}
+  {% else %}
+    <div class="no-records-container">
+      <p class="no-records">No records found</p>
     </div>
   {% endif %}
-{% empty %}
-  <div class="no-records-container">
-    <p class="no-records">No records found</p>
-  </div>
-{% endfor %}
+{% endblock content %}
+
 <style>
   .no-records-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 200px; /* Adjust the height as needed */
-}
+    text-align: center;
+    margin-top: 20px;
+  }
 
-.no-records {
-  font-size: 18px;
-  color: #999;
-}
+  .no-records {
+    font-style: italic;
+    color: gray;
+  }
+
+  .clickable-row {
+    cursor: pointer;
+  }
 </style>
-{% endblock fullcard %}
-{% block morejs %}
-    <script>
-  $('#timetable').DataTable({
-  });
-
-  $(document).ready(function () {
-  $('#dtDynamicVerticalScrollExample').DataTable({
-    "scrollY": "50vh",
-    "scrollCollapse": true,
-  });
-  $('.dataTables_length').addClass('bs-select');
-});
-</script>
-{% endblock morejs %}

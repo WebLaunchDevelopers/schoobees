@@ -83,25 +83,32 @@ class EditResultsView(LoginRequiredMixin, View):
             redirect_url += f"?classid={classid}&subjectid={subjectid}&examid={examid}"
             return redirect(redirect_url)
 
+
 class GetResultsView(LoginRequiredMixin, View):
     def get(self, request):
+        class_id = request.GET.get("class_id")
+        exam_id = request.GET.get("exam_id")
+
         current_session = AcademicSession.objects.filter(user=self.request.user, current=True).first()
         current_term = AcademicTerm.objects.filter(user=self.request.user, current=True).first()
 
         results = Result.objects.filter(user=request.user, session=current_session, term=current_term)
+
+        if class_id:
+            results = results.filter(current_class_id=class_id)
+
+        if exam_id:
+            results = results.filter(exam_id=exam_id)
+
         classes = StudentClass.objects.filter(user=request.user)
+        exams = Exam.objects.filter(user=request.user, session=current_session, term=current_term)
         resultss = {}
         has_records = False
 
         for eachclass in classes:
             subjects, students = [], []
-            unique_subjects = Result.objects.filter(user=request.user, current_class=eachclass,
-                                                    session=current_session,
-                                                    term=current_term).values("subject").distinct()
-            unique_students = Result.objects.filter(user=request.user, current_class=eachclass,
-                                                    session=current_session,
-                                                    term=current_term).values("student").distinct()
-            unique_student_ids = list(set(item["student"] for item in unique_students))
+            unique_subjects = results.filter(current_class=eachclass).values("subject").distinct()
+            unique_student_ids = results.filter(current_class=eachclass).values_list("student_id", flat=True).distinct()
 
             for subject in unique_subjects:
                 subjects.append(Subject.objects.get(pk=subject["subject"]))
@@ -112,9 +119,7 @@ class GetResultsView(LoginRequiredMixin, View):
                 count = 0
 
                 for subject in subjects:
-                    result = Result.objects.filter(user=request.user, current_class=eachclass, student=student,
-                                                   subject=subject, session=current_session,
-                                                   term=current_term).first()
+                    result = results.filter(current_class=eachclass, student=student, subject=subject).first()
                     if result:
                         count += 1
                         total_score += result.exam_score
@@ -123,11 +128,10 @@ class GetResultsView(LoginRequiredMixin, View):
 
             if subjects or students:
                 has_records = True
-                resultss[eachclass] = {"subjects": subjects, "students": students}
+                resultss[eachclass] = {"exam": None, "subjects": subjects, "students": students}
 
         return render(request, "result/all_results.html",
-                      {"results": results, "resultss": resultss, "has_records": has_records})
-
+                      {"results": results, "student_classes": classes, "exams": exams, "resultss": resultss, "has_records": has_records})
 
 class ExamsListView(LoginRequiredMixin, ListView):
     model = Exam

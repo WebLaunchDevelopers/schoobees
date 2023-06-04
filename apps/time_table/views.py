@@ -50,6 +50,9 @@ class TimetableCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
                 'user': request.user
             })
 
+            start_time = timetable_data['start_time']
+            end_time = timetable_data['end_time']
+
             # Check if a similar timetable record already exists
             existing_timetable = Timetable.objects.filter(
                 session=current_session,
@@ -57,7 +60,9 @@ class TimetableCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
                 user=request.user,
                 class_of=timetable_data['class_of'],
                 start_time=timetable_data['start_time'],
-                date=timetable_data['date']
+                date=timetable_data['date'],
+                start_time__lte=end_time,
+                end_time__gte=start_time
             ).exists()
 
             if existing_timetable:
