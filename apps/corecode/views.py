@@ -15,6 +15,7 @@ import os
 from django.urls import reverse
 from django.utils.html import strip_tags
 from apps.students.models import Feedback
+from apps.finance.models import Invoice
 from .forms import (
     AcademicSessionForm,
     AcademicTermForm,
@@ -43,6 +44,7 @@ import json
 from apps.staffs.models import Staff
 from apps.students.models import Student
 from apps.corecode.models import Driver
+from datetime import datetime
 
 class BaseView(TemplateView):
     template_name = 'base.html'
@@ -71,17 +73,21 @@ class IndexView(LoginRequiredMixin, ListView):
         context["form"] = StudentClassForm()
         student_count = Student.objects.filter(user=self.request.user).count()
         staff_count = Staff.objects.filter(user=self.request.user).count()
-        non_staff_count = Driver.objects.filter(user=self.request.user).count()
+        driver_count = Driver.objects.filter(user=self.request.user).count()
+        # Calculate the total balance amount for the user
+        invoices = Invoice.objects.filter(user=self.request.user, status="unpaid")
+        total_balance = sum(invoice.balance() for invoice in invoices)
+
         # Check if the user has any objects associated with them
         if not context["object_list"]:
             context["bool"] = True
         else:
             context["bool"] = False
-        context["students"]=student_count
-        context["staff"]=staff_count
-        context["nonstaff"]=non_staff_count
+        context["studentcount"]=student_count
+        context["staffcount"]=staff_count
+        context["drivercount"]=driver_count
+        context["total_balance"] = total_balance
         
-        from datetime import datetime
         today = datetime.today()
         staffBdays=Staff.objects.filter(user=self.request.user, date_of_birth__month=today.month, date_of_birth__day=today.day)
         context["staffBdays"]=staffBdays

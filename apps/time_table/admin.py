@@ -3,7 +3,7 @@ from .models import Timetable
 
 @admin.register(Timetable)
 class TimetableAdmin(admin.ModelAdmin):
-    list_display = ('class_of', 'subject', 'date', 'time')
+    list_display = ('class_of', 'subject', 'date', 'start_time', 'end_time')
     list_filter = ('class_of', 'subject', 'date')
     search_fields = ('class_of__name', 'subject__name', 'date')
 

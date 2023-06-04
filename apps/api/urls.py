@@ -12,7 +12,8 @@ from .views import (
     CalendarAPIView,
     PerformanceAPIView,
     NotificationAPIView,
-    AttendanceAPIView
+    AttendanceAPIView,
+    TimetableAPIView
 )
 
 urlpatterns = [
@@ -29,4 +30,5 @@ urlpatterns = [
     path('performance/',  PerformanceAPIView.as_view(), name="performance"), # only get
     path('notification/',  NotificationAPIView.as_view(), name="notification"), # only get
     path('attendance/',  AttendanceAPIView.as_view(), name="attendance"), # only get
+    path('timetable/', TimetableAPIView.as_view(), name="timetable"), # only get
 ]

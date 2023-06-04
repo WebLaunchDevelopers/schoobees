@@ -3,74 +3,10 @@
 {% block content %}
   <h1>Create Timetable</h1>
 
-  <form method="post" id="main-form">
+  <form method="post">
     {% csrf_token %}
     {{ form.as_p }}
 
-    <div id="extra-forms" class="row">
-      {% for form_id in form_ids %}
-        <div class="col-md-6 extra-form">
-          <h3>Extra Form</h3>
-          <div id="form-{{ form_id }}" class="extra-form-container"></div>
-          <button type="button" class="btn btn-danger remove-form">-</button>
-        </div>
-      {% endfor %}
-    </div>
-
-    <button type="button" id="add-form" class="btn btn-primary">+</button>
     <button type="submit" class="btn btn-success">Create</button>
   </form>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      var addFormButton = document.getElementById('add-form');
-      var extraFormsDiv = document.getElementById('extra-forms');
-      var formIndex = {{ form_ids|length }};
-
-      addFormButton.addEventListener('click', function() {
-        var formHtml = `
-          <div class="col-md-6 extra-form">
-            <h3>Extra Form</h3>
-            <div id="form-${formIndex}" class="extra-form-container"></div>
-            <button type="button" class="btn btn-danger remove-form">-</button>
-          </div>
-        `;
-        extraFormsDiv.insertAdjacentHTML('beforeend', formHtml);
-        var formContainer = document.getElementById(`form-${formIndex}`);
-        var formHtml = `
-          {% csrf_token %}
-          {{ form.as_p }}
-          <input type="hidden" name="form_ids[]" value="${formIndex}">
-        `;
-        formContainer.innerHTML = formHtml;
-        formIndex++;
-      });
-
-      var mainForm = document.getElementById('main-form');
-      mainForm.addEventListener('submit', function(event) {
-        var extraForms = document.querySelectorAll('.extra-form');
-        extraForms.forEach(function(form) {
-          var formContainer = form.querySelector('.extra-form-container');
-          var hiddenInput = document.createElement('input');
-          hiddenInput.type = 'hidden';
-          hiddenInput.name = 'form_ids[]';
-          hiddenInput.value = formContainer.id.split('-')[1];
-          mainForm.appendChild(hiddenInput);
-          var formFields = formContainer.querySelectorAll('input, select');
-          formFields.forEach(function(field) {
-            var prefix = `form-${hiddenInput.value}`;
-            field.name = `${prefix}-${field.name}`;
-            field.id = `${prefix}-${field.id}`;
-          });
-        });
-      });
-
-      extraFormsDiv.addEventListener('click', function(event) {
-        if (event.target.classList.contains('remove-form')) {
-          var form = event.target.closest('.extra-form');
-          form.remove();
-        }
-      });
-    });
-  </script>
 {% endblock content %}

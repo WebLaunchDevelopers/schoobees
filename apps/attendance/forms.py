@@ -9,9 +9,9 @@ from apps.corecode.models import (
     Subject,
 )
 from .models import Attendance
+from django.forms import BaseModelFormSet, Select
 
 ATTENDANCE_CHOICES = [
-    ('', 'Select'),
     ('Present', 'Present'),
     ('Absent', 'Absent'),
     ('Late', 'Late'),
@@ -20,8 +20,8 @@ ATTENDANCE_CHOICES = [
 ]
 
 class UpdateAttendance(forms.Form):
-    subjects = forms.ModelChoiceField(empty_label='Select Subject',queryset=Subject.objects.all())
-    class_name = forms.ModelChoiceField(empty_label='Select Class',queryset=StudentClass.objects.all())
+    subjects = forms.ModelChoiceField(empty_label='Select Subject', queryset=Subject.objects.all())
+    class_name = forms.ModelChoiceField(empty_label='Select Class', queryset=StudentClass.objects.all())
     date_of_attendance = forms.DateField(widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}))
 
     def __init__(self, *args, user=None, **kwargs):
@@ -29,9 +29,23 @@ class UpdateAttendance(forms.Form):
         if user:
             self.fields['class_name'].queryset = StudentClass.objects.filter(user=user)
             self.fields['subjects'].queryset = Subject.objects.filter(user=user)
+            self.fields['attendance_status'].choices = ATTENDANCE_CHOICES
 
+class BaseAttendanceFormSet(BaseModelFormSet):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        for form in self.forms:
+            form.fields['attendance_status'].empty_label = None  # Remove the empty label
+            form.fields['attendance_status'].widget = Select(
+                choices=ATTENDANCE_CHOICES,
+                attrs={'required': 'required'},
+            )
+            form.fields['attendance_status'].initial = 'Present'  # Set the default value
 
 EditAttendance = modelformset_factory(
-    Attendance, fields=("id", "attendance_status"), extra=0, can_delete=True,
-    widgets={"attendance_status": forms.Select(choices=ATTENDANCE_CHOICES, attrs={'required': 'required'})}
+    Attendance,
+    formset=BaseAttendanceFormSet,
+    fields=("id", "attendance_status"),
+    extra=0,
+    can_delete=True,
 )

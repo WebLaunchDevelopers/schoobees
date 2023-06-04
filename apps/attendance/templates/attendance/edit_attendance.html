@@ -2,7 +2,7 @@
 {% load widget_tweaks %}
 
 {% block title %}
-Update Attendence
+Update Attendance
 {% endblock title %}
 
 {% block content %}
@@ -17,7 +17,7 @@ Update Attendence
         <th>Name</th>
         <th>Class</th>
         <th>Subject</th>
-        <th>Attendence</th>
+        <th>Attendance</th>
         <th>Delete</th>
       </tr>
     </thead>
@@ -28,7 +28,7 @@ Update Attendence
           <td>{{ form.instance.student }}</td>
           <td>{{ form.instance.current_class }}</td>
           <td>{{ form.instance.subject }}</td>
-          <td style="width: 10%;">{{ form.attendance_status | add_class:"form-control form-control-sm" }}</td>
+          <td style="width: 10%;">{{ form.attendance_status|add_class:"form-control form-control-sm" }}</td>
           <td>{{ form.DELETE }}</td>
           <td style="display: none;">{{ form.id }}</td>
         </tr>
@@ -48,7 +48,7 @@ Update Attendence
     </div>
   {% endif %}
   {% if records %}
-   <input type="submit" class="btn btn-success" value="Save">
+    <input type="submit" class="btn btn-success" value="Save">
   {% endif %}
 </form>
 

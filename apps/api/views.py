@@ -16,7 +16,8 @@ from .serializers import (
     RouteNodesSerializer,
     CalendarSerializer,
     PerformanceSerializer,
-    NotificationSerializer
+    NotificationSerializer,
+    TimetableSerializer
 )
 
 from apps.students.models import Student, Feedback, Notification
@@ -25,11 +26,13 @@ from apps.corecode.models import Driver, Route, Calendar, RouteNode
 from apps.finance.models import Invoice, InvoiceItem, Receipt
 from apps.result.models import Result
 from apps.attendance.models import Attendance
+from apps.time_table.models import Timetable
 from rest_framework import status
 
 from rest_framework.views import APIView
 from hashlib import sha256
 from django.db import transaction
+from datetime import datetime
 
 # Create your views here.
 MODLIST = ['App', 'AppXP']
@@ -1160,6 +1163,94 @@ class AttendanceAPIView(APIView):
                     'name': studentinstance.first_name + ' ' + studentinstance.last_name,
                     'class': studentinstance.current_class.name,
                     'month_wise_percentages': month_wise_percentages,
+                },
+                status=status.HTTP_200_OK
+            )
+        else:
+            return Response(
+                {'error': 'Invalid parameter value', 'status': status.HTTP_400_BAD_REQUEST},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+class TimetableAPIView(APIView):
+    def get(self, request):
+        # Concatenate the words and encode as UTF-8
+        text = "StudentAppToWebFromWebLaunch".encode("utf-8")
+        # Generate a SHA-256 hash from the text
+        hash_object = sha256(text)
+        # Convert the hash to a hexadecimal string
+        token = hash_object.hexdigest()
+        print(token)
+
+        # Check if registerid is present in query params
+        register_id = request.query_params.get('registerid')
+        if not register_id:
+            return Response(
+                {'error': 'Missing required parameter(registerid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+        
+        #  Check if studentid is present in query params
+        student_id = request.query_params.get('studentid')
+        if not student_id:
+            return Response(
+                {'error': 'Missing required parameter(studentid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+        
+        # Check if date is present in query params
+        date = request.query_params.get('date')
+        if not date:
+            return Response(
+                {'error': 'Missing required parameter(date)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+        
+        # Check if modid is present in query params
+        modid = request.query_params.get('modid')
+        if not modid:
+            return Response(
+                {'error': 'Missing required parameter(modid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+        
+        # Check if token is present in query params
+        paramstoken = request.query_params.get('token')
+        if not paramstoken:
+            return Response(
+                {'error': 'Missing required parameter(token)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+        
+        if token == paramstoken and modid in MODLIST:
+            try:
+                schoolUser = CustomUser.objects.get(register_id=register_id)
+            except CustomUser.DoesNotExist:
+                return Response(
+                    {'error': 'School not found', 'status': status.HTTP_404_NOT_FOUND},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+            try:
+                studentinstance = Student.objects.get(user=schoolUser, registration_number=student_id)
+            except Student.DoesNotExist:
+                return Response(
+                    {'error': 'Student not found', 'status': status.HTTP_404_NOT_FOUND},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+            try:
+                date_object = datetime.strptime(date, '%Y-%m-%d')
+            except:
+                return Response(
+                    {'error': 'Invalid date format', 'status': status.HTTP_400_BAD_REQUEST},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
+            timetable = Timetable.objects.filter(user=schoolUser, date=date_object, class_of=studentinstance.current_class, session=studentinstance.session, term=studentinstance.term)
+            timetableserializer = TimetableSerializer(timetable, many=True)
+            return Response(
+                {
+                    'status': status.HTTP_200_OK,
+                    'timetable': timetableserializer.data,
                 },
                 status=status.HTTP_200_OK
             )
