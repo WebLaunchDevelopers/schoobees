@@ -28,6 +28,7 @@ class UpdateAttendanceView(LoginRequiredMixin, View):
 
     def post(self, request):
         form = UpdateAttendance(request.POST, user=request.user)
+        button = "Update"
         if form.is_valid():
             class_name = form.cleaned_data["class_name"]
             subject = form.cleaned_data["subjects"]
@@ -57,7 +58,9 @@ class UpdateAttendanceView(LoginRequiredMixin, View):
             redirect_url = reverse("edit-attendance")
             redirect_url += f"?classid={class_name.id}&subjectid={subject.id}&date={date_of_attendance}"
             return redirect(redirect_url)
-        return render(request, "attendance/update-attendance.html", {"form": form})
+        else:
+            print(form.errors)
+        return render(request, "attendance/update-attendance.html", {"form": form, "button": button, "subjectshow": True})
 
 class EditAttendanceView(LoginRequiredMixin, View):
     def get(self, request):

@@ -1,15 +1,9 @@
 from django import forms
-from django.forms import modelformset_factory
+from django.forms import BaseModelFormSet, Select, modelformset_factory
 from apps.base.models import CustomUser
 from apps.corecode.models import AcademicSession, AcademicTerm, Subject
-from apps.corecode.models import (
-    AcademicSession,
-    AcademicTerm,
-    StudentClass,
-    Subject,
-)
+from apps.corecode.models import AcademicSession, AcademicTerm, StudentClass, Subject
 from .models import Attendance
-from django.forms import BaseModelFormSet, Select
 
 ATTENDANCE_CHOICES = [
     ('Present', 'Present'),
@@ -29,18 +23,17 @@ class UpdateAttendance(forms.Form):
         if user:
             self.fields['class_name'].queryset = StudentClass.objects.filter(user=user)
             self.fields['subjects'].queryset = Subject.objects.filter(user=user)
-            self.fields['attendance_status'].choices = ATTENDANCE_CHOICES
 
 class BaseAttendanceFormSet(BaseModelFormSet):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         for form in self.forms:
-            form.fields['attendance_status'].empty_label = None  # Remove the empty label
+            form.fields['attendance_status'].empty_label = None
             form.fields['attendance_status'].widget = Select(
                 choices=ATTENDANCE_CHOICES,
                 attrs={'required': 'required'},
             )
-            form.fields['attendance_status'].initial = 'Present'  # Set the default value
+            form.fields['attendance_status'].initial = 'Present'
 
 EditAttendance = modelformset_factory(
     Attendance,
