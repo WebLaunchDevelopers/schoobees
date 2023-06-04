@@ -15,6 +15,7 @@ class Timetable(models.Model):
     term = models.ForeignKey(AcademicTerm, on_delete=models.CASCADE)
     class_of = models.ForeignKey(StudentClass, on_delete=models.CASCADE)
     subject = models.ForeignKey(Subject, on_delete=models.CASCADE)
+    topic = models.CharField(max_length=200, null=True, blank=True)
     start_time = models.TimeField(default=get_current_time)
     end_time = models.TimeField(default=get_current_time)
     date = models.DateField(default=timezone.now)

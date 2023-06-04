@@ -1,9 +1,9 @@
 from rest_framework import serializers
 from apps.students.models import Student, Feedback, Notification
 from apps.base.models import CustomUser, UserProfile
-from apps.corecode.models import Driver, Route, Calendar, RouteNode
+from apps.corecode.models import Driver, Route, Calendar, RouteNode, Subject
 from apps.finance.models import Invoice, InvoiceItem, Receipt
-from apps.result.models import Result
+from apps.result.models import Result, Exam
 from apps.time_table.models import Timetable
 
 class StudentSerializer(serializers.ModelSerializer):
@@ -18,7 +18,7 @@ class StudentSerializer(serializers.ModelSerializer):
 class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['register_id', 'is_faculty', 'approved', 'email']
+        fields = ['register_id', 'email']
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
@@ -28,7 +28,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 class DriverSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Driver
-		fields = ['id', 'name', 'phone_number', 'alternate_number', 'email', 'address', 'aadhaar_number', 'license_number', 'vehicle_name', 'vehicle_model', 'vehicle_number']
+		fields = ['id', 'name', 'phone_number', 'alternate_number', 'email', 'address', 'aadhaar_number', 'license_number', 'vehicle_name', 'vehicle_model', 'vehicle_number', 'latitude', 'longitude']
 
 class RouteSerializer(serializers.ModelSerializer):
     created_at = serializers.SerializerMethodField()
@@ -93,7 +93,7 @@ class PerformanceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Result
-        fields = ['id', 'exam_score', 'exam_name', 'subject_name', 'current_class_name', 'percentage', 'grade']
+        fields = ['exam_score', 'exam_name', 'subject_name', 'current_class_name', 'percentage', 'grade']
 
 class NotificationSerializer(serializers.ModelSerializer):
     created_at = serializers.SerializerMethodField()
@@ -113,4 +113,17 @@ class TimetableSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Timetable
-        fields = ['class_of', 'subject', 'session', 'term', 'date', 'start_time', 'end_time']
+        fields = ['class_of', 'subject', 'topic', 'session', 'term', 'date', 'start_time', 'end_time']
+
+class ExamSerializer(serializers.ModelSerializer):
+    session = serializers.StringRelatedField()
+    term = serializers.StringRelatedField()
+
+    class Meta:
+        model = Exam
+        fields = ['id', 'exam_name', 'session', 'term', 'exam_date']
+
+class SubjectSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Subject
+        fields = ['id', 'name']

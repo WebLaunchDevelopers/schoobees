@@ -77,3 +77,5 @@ staff releated login works
 testing the website
 
 attendence default present remove --- empty label
+
+check time_table properly (even though another class start_time matches with one another class start_time showing error msg)

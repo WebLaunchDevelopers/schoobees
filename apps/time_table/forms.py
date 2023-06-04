@@ -7,13 +7,14 @@ from django.urls import reverse_lazy
 class TimetableForm(forms.ModelForm):
     class_of = forms.ModelChoiceField(queryset=StudentClass.objects.all(), widget=forms.Select(attrs={'class': 'custom-select'}))
     subject = forms.ModelChoiceField(queryset=Subject.objects.all(), widget=forms.Select(attrs={'class': 'custom-select'}))
+    topic = forms.CharField(label='Topic (optional)', widget=forms.TextInput(attrs={'class': 'form-control'}), required=False)
     start_time = forms.TimeField(widget=forms.TimeInput(attrs={'class': 'form-control', 'type': 'time'}))
     end_time = forms.TimeField(widget=forms.TimeInput(attrs={'class': 'form-control', 'type': 'time'}))
     date = forms.DateField(widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}))
 
     class Meta:
         model = Timetable
-        fields = ['class_of', 'subject', 'start_time', 'end_time', 'date']
+        fields = ['class_of', 'subject', 'topic', 'start_time', 'end_time', 'date']
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)

@@ -17,14 +17,16 @@ from .serializers import (
     CalendarSerializer,
     PerformanceSerializer,
     NotificationSerializer,
-    TimetableSerializer
+    TimetableSerializer,
+    ExamSerializer,
+    SubjectSerializer
 )
 
 from apps.students.models import Student, Feedback, Notification
 from apps.base.models import CustomUser
-from apps.corecode.models import Driver, Route, Calendar, RouteNode
+from apps.corecode.models import Driver, Route, Calendar, RouteNode, Subject
 from apps.finance.models import Invoice, InvoiceItem, Receipt
-from apps.result.models import Result
+from apps.result.models import Result, Exam
 from apps.attendance.models import Attendance
 from apps.time_table.models import Timetable
 from rest_framework import status
@@ -925,11 +927,28 @@ class PerformanceAPIView(APIView):
                 {'error': 'Missing required parameter(registerid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
                 status=status.HTTP_422_UNPROCESSABLE_ENTITY
             )
-        
+
+        # Check if studentid is present in query param        
         student_id  = request.query_params.get('studentid')
         if not student_id:
             return Response(
                 {'error': 'Missing required parameter(studentid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+        
+        # Check if examid is present in query param
+        exam_id = request.query_params.get('examid')
+        if not exam_id:
+            return Response(
+                {'error': 'Missing required parameter(examid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+
+        # Check if subjectid is present in query param
+        subject_id = request.query_params.get('subjectid')
+        if not subject_id:
+            return Response(
+                {'error': 'Missing required parameter(subjectid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
                 status=status.HTTP_422_UNPROCESSABLE_ENTITY
             )
 
@@ -966,7 +985,10 @@ class PerformanceAPIView(APIView):
                 )
             
             # Get all the results for the school and student
-            results = Result.objects.filter(user=schoolUser, student=studentinstance)
+            if subject_id == 'all':
+                results = Result.objects.filter(user=schoolUser, student=studentinstance, exam=exam_id)
+            else:
+                results = Result.objects.filter(user=schoolUser, student=studentinstance, exam=exam_id, subject=subject_id)
             
             # Calculate the total score and count the number of records
             total_score = 0
@@ -976,18 +998,18 @@ class PerformanceAPIView(APIView):
             
             # Calculate the percentage
             if record_count > 0:
-                percentage = (total_score / (record_count * 100)) * 100
+                percentage = round((total_score / (record_count * 100)) * 100)
             else:
                 percentage = 0
             
             # Serialize the results
-            performanceserializer = PerformanceSerializer(results, many=True)
+            # performanceserializer = PerformanceSerializer(results, many=True)
             return Response(
                 {
                     'status': status.HTTP_200_OK,
-                    'results': performanceserializer.data,
-                    'max_score_per_subject': 100,
-                    'total_score': total_score,
+                    # 'results': performanceserializer.data,
+                    'scored': total_score,
+                    'max_score': 100*record_count,
                     'total_subjects': record_count,
                     'final_percentage': percentage
                 },
@@ -1057,18 +1079,26 @@ class NotificationAPIView(APIView):
                     status=status.HTTP_404_NOT_FOUND
                 )
             
-            student_notifications  = Notification.objects.filter(sender=schoolUser, recipients = 'student', student=studentinstance)
+            student_notifications = Notification.objects.filter(sender=schoolUser, recipients='student', student=studentinstance)
             studentnotificationserializer = NotificationSerializer(student_notifications, many=True)
-            class_notifications  = Notification.objects.filter(sender=schoolUser, recipients = 'class', class_for=studentinstance.current_class)
+
+            class_notifications = Notification.objects.filter(sender=schoolUser, recipients='class', class_for=studentinstance.current_class)
             classnotificationserializer = NotificationSerializer(class_notifications, many=True)
-            school_notifications  = Notification.objects.filter(sender=schoolUser, recipients = 'school', student=None, class_for=None)
+
+            school_notifications = Notification.objects.filter(sender=schoolUser, recipients='school', student=None, class_for=None)
             schoolnotificationserializer = NotificationSerializer(school_notifications, many=True)
+
+            combined_notifications = []
+            combined_notifications.extend(studentnotificationserializer.data)
+            combined_notifications.extend(classnotificationserializer.data)
+            combined_notifications.extend(schoolnotificationserializer.data)
+
+            combined_notifications = sorted(combined_notifications, key=lambda x: x['created_at'], reverse=True)
+
             return Response(
                 {
                     'status': status.HTTP_200_OK,
-                    'student_notifications': studentnotificationserializer.data,
-                    'class_notifications': classnotificationserializer.data,
-                    'school_notifications': schoolnotificationserializer.data,
+                    'student_notifications': combined_notifications,
                 },
                 status=status.HTTP_200_OK
             )
@@ -1111,6 +1141,14 @@ class AttendanceAPIView(APIView):
                 {'error': 'Missing required parameter(modid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
                 status=status.HTTP_422_UNPROCESSABLE_ENTITY
             )
+        
+        # Check if month is present in query params
+        month = request.query_params.get('month')
+        if not month:
+            return Response(
+                {'error': 'Missing required parameter(month)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
 
         # Check if token is present in query params
         paramstoken = request.query_params.get('token')
@@ -1140,21 +1178,17 @@ class AttendanceAPIView(APIView):
             attendance = Attendance.objects.filter(user=schoolUser, student=studentinstance, current_class=studentinstance.current_class)
 
             # Calculate month-wise attendance percentages
-            month_wise_percentages = {}
-            for month in range(1, 13):
-                monthly_attendance = attendance.filter(date_of_attendance__month=month)
-                total_records = monthly_attendance.count()
-                percentages = {}
+            monthly_attendance = attendance.filter(date_of_attendance__month=month)
+            total_records = monthly_attendance.count()
+            percentages = {}
 
-                for choice in Attendance.ATTENDANCE_CHOICES:
-                    count = monthly_attendance.filter(attendance_status=choice[0]).count()
-                    if total_records > 0:
-                        percentage = round((count / total_records) * 100)
-                    else:
-                        percentage = 0
-                    percentages[choice[0]] = percentage
-
-                month_wise_percentages[month] = percentages
+            for choice in Attendance.ATTENDANCE_CHOICES:
+                count = monthly_attendance.filter(attendance_status=choice[0]).count()
+                if total_records > 0:
+                    percentage = round((count / total_records) * 100)
+                else:
+                    percentage = 0
+                percentages[choice[0]] = percentage
 
             return Response(
                 {
@@ -1162,7 +1196,7 @@ class AttendanceAPIView(APIView):
                     'reg_id': studentinstance.registration_number,
                     'name': studentinstance.first_name + ' ' + studentinstance.last_name,
                     'class': studentinstance.current_class.name,
-                    'month_wise_percentages': month_wise_percentages,
+                    'percentages': percentages,
                 },
                 status=status.HTTP_200_OK
             )
@@ -1251,6 +1285,120 @@ class TimetableAPIView(APIView):
                 {
                     'status': status.HTTP_200_OK,
                     'timetable': timetableserializer.data,
+                },
+                status=status.HTTP_200_OK
+            )
+        else:
+            return Response(
+                {'error': 'Invalid parameter value', 'status': status.HTTP_400_BAD_REQUEST},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+class ExamsListAPIView(APIView):
+    def get(self, request):
+        # Concatenate the words and encode as UTF-8
+        text = "StudentAppToWebFromWebLaunch".encode("utf-8")
+        # Generate a SHA-256 hash from the text
+        hash_object = sha256(text)
+        # Convert the hash to a hexadecimal string
+        token = hash_object.hexdigest()
+        print(token)
+
+        # Check if registerid is present in query params
+        register_id = request.query_params.get('registerid')
+        if not register_id:
+            return Response(
+                {'error': 'Missing required parameter(registerid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+        
+        # Check if modid is present in query params
+        modid = request.query_params.get('modid')
+        if not modid:
+            return Response(
+                {'error': 'Missing required parameter(modid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+        
+        # Check if token is present in query params
+        paramstoken = request.query_params.get('token')
+        if not paramstoken:
+            return Response(
+                {'error': 'Missing required parameter(token)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+        
+        if token == paramstoken and modid in MODLIST:
+            try:
+                schoolUser = CustomUser.objects.get(register_id=register_id)
+            except CustomUser.DoesNotExist:
+                return Response(
+                    {'error': 'School not found', 'status': status.HTTP_404_NOT_FOUND},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+            exams = Exam.objects.filter(user=schoolUser)
+            examsserializer = ExamSerializer(exams, many=True)
+            return Response(
+                {
+                    'status': status.HTTP_200_OK,
+                    'examslist': examsserializer.data,
+                },
+                status=status.HTTP_200_OK
+            )
+        else:
+            return Response(
+                {'error': 'Invalid parameter value', 'status': status.HTTP_400_BAD_REQUEST},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+class SubjectsListAPIView(APIView):
+    def get(self, request):
+        # Concatenate the words and encode as UTF-8
+        text = "StudentAppToWebFromWebLaunch".encode("utf-8")
+        # Generate a SHA-256 hash from the text
+        hash_object = sha256(text)
+        # Convert the hash to a hexadecimal string
+        token = hash_object.hexdigest()
+        print(token)
+
+        # Check if registerid is present in query params
+        register_id = request.query_params.get('registerid')
+        if not register_id:
+            return Response(
+                {'error': 'Missing required parameter(registerid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+        
+        # Check if modid is present in query params
+        modid = request.query_params.get('modid')
+        if not modid:
+            return Response(
+                {'error': 'Missing required parameter(modid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+        
+        # Check if token is present in query params
+        paramstoken = request.query_params.get('token')
+        if not paramstoken:
+            return Response(
+                {'error': 'Missing required parameter(token)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+        
+        if token == paramstoken and modid in MODLIST:
+            try:
+                schoolUser = CustomUser.objects.get(register_id=register_id)
+            except CustomUser.DoesNotExist:
+                return Response(
+                    {'error': 'School not found', 'status': status.HTTP_404_NOT_FOUND},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+            exams = Subject.objects.filter(user=schoolUser)
+            examsserializer = SubjectSerializer(exams, many=True)
+            return Response(
+                {
+                    'status': status.HTTP_200_OK,
+                    'subjectslist': examsserializer.data,
                 },
                 status=status.HTTP_200_OK
             )
