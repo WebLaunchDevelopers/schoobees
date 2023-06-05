@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-
+from django.urls import reverse_lazy
 from .forms import TimetableForm
 from .models import Timetable
 from apps.corecode.models import AcademicSession, AcademicTerm, Subject, StudentClass
@@ -112,3 +112,29 @@ class ViewTimeTableView(LoginRequiredMixin, View):
         }
 
         return render(request, self.template_name, context)
+
+
+class TimetableEditView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+    model = Timetable
+    template_name = 'timetable/create_time_table.html'
+    form_class = TimetableForm
+    success_message = "Timetable updated successfully!"
+    success_message_delete = "Timetable deleted successfully!"
+    success_url = reverse_lazy('timetable_list')  # Replace 'timetable_list' with the URL name of the timetable list view
+
+    def delete(self, request, *args, **kwargs):
+        messages.success(request, self.success_message_delete)
+        return super().delete(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        messages.success(self.request, self.success_message)
+        return super().form_valid(form)
+
+
+class TimetableDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
+    model = Timetable
+    template_name = 'timetable/confirm_delete.html'
+    success_message = "Timetable deleted successfully!"
+
+    def get_success_url(self):
+        return reverse_lazy('timetable_list')
