@@ -88,6 +88,7 @@ class GetResultsView(LoginRequiredMixin, View):
     def get(self, request):
         class_id = request.GET.get("class_id")
         exam_id = request.GET.get("exam_id")
+        subject_id = request.GET.get("subject_id")
 
         current_session = AcademicSession.objects.filter(user=self.request.user, current=True).first()
         current_term = AcademicTerm.objects.filter(user=self.request.user, current=True).first()
@@ -100,8 +101,12 @@ class GetResultsView(LoginRequiredMixin, View):
         if exam_id:
             results = results.filter(exam_id=exam_id)
 
+        if subject_id:
+            results = results.filter(subject_id=subject_id)
+
         classes = StudentClass.objects.filter(user=request.user)
         exams = Exam.objects.filter(user=request.user, session=current_session, term=current_term)
+        filter_subject = Subject.objects.filter(user=request.user)
         resultss = {}
         has_records = False
 
@@ -131,7 +136,7 @@ class GetResultsView(LoginRequiredMixin, View):
                 resultss[eachclass] = {"exam": None, "subjects": subjects, "students": students}
 
         return render(request, "result/all_results.html",
-                      {"results": results, "student_classes": classes, "exams": exams, "resultss": resultss, "has_records": has_records})
+                      {"results": results, "student_classes": classes, "exams": exams, "filter_subject": filter_subject, "resultss": resultss, "has_records": has_records})
 
 class ExamsListView(LoginRequiredMixin, ListView):
     model = Exam
