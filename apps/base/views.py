@@ -15,7 +15,6 @@ from django.utils.http import urlsafe_base64_decode
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
-
 class RegisterView(View):
     def get(self, request):
         user_form = CustomUserCreationForm()
@@ -123,7 +122,7 @@ class ChangePasswordView(View):
             new_password1 = form.cleaned_data.get('new_password1')
             new_password2 = form.cleaned_data.get('new_password2')
             if new_password1 != new_password2:
-                messages.error(request, 'New passwords do not match')  # Corrected line
+                messages.error(request, "The two password fields didn't match.")  # Corrected line
                 return render(request, self.template_name, {'form': form})
             user = form.save()
             update_session_auth_hash(request, user)
