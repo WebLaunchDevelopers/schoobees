@@ -42,6 +42,7 @@
             <th>S/N</th>
             <th>Registration Number</th>
             <th>Student Name</th>
+            <th>Class</th>
             {% for subject in result.subjects %}
               <th>{{ subject.name }}</th>
             {% endfor %}
@@ -55,6 +56,7 @@
                   <td>{{ forloop.counter }}</td>
                   <td>{{ student_data.student.registration_number }}</td>
                   <td>{{ student_data.student.last_name }} {{ student_data.student.first_name }}</td>
+                  <td>{{ student_data.student.current_class }}</td>
                 {% for subject in result.subjects %}
                 <td>
                   {% for res in results %}
@@ -73,6 +75,7 @@
 
         </tbody>
       </table>
+      <br>
     {% endfor %}
   {% else %}
     <div class="no-records-container">
