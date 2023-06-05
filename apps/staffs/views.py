@@ -36,6 +36,7 @@ class StaffCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         form.fields["date_of_birth"].widget = widgets.DateInput(attrs={"type": "date"})
         form.fields["address"].widget = widgets.Textarea(attrs={"rows": 1})
         form.fields["comments"].widget = widgets.Textarea(attrs={"rows": 1})
+        form.fields["mobile_number"].widget.attrs["maxlength"] = 10
         return form
 
     def form_valid(self, form):
