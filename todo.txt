@@ -58,10 +58,6 @@ Avinash - todo for assigning
 forms submission without data
 
 
-
-
-all password related changes
-
 student delete error attendence
 
 results filter - completed
