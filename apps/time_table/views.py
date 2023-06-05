@@ -130,7 +130,6 @@ class TimetableEditView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
         messages.success(self.request, self.success_message)
         return super().form_valid(form)
 
-
 class TimetableDeleteView(LoginRequiredMixin, SuccessMessageMixin, DeleteView):
     model = Timetable
     template_name = 'timetable/confirm_delete.html'
