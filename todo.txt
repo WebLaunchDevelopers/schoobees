@@ -53,13 +53,12 @@ Avinash - todo for assigning
 2. write hosting steps - Done
 3. 'admin1', 'admin2' exclude from admin panel - Done
 
-timetableapi
+
 
 forms submission without data
 
-even though single record not created for attendance still api giving response
 
-performanceapi is specifically giving one exam results(possible give list of exams api then show specific exam results)
+
 
 all password related changes
 
@@ -68,7 +67,6 @@ student delete error attendence
 results filter
 
 timetable - no records found
-            start time and end time
             duplicate data of user session term class date start time
 data lekeage
 
@@ -76,6 +74,5 @@ staff releated login works
 
 testing the website
 
-attendence default present remove --- empty label
 
 check time_table properly (even though another class start_time matches with one another class start_time showing error msg)
