@@ -190,6 +190,8 @@ class CalendarForm(forms.ModelForm):
 
 class DriverForm(forms.ModelForm):
     address = forms.CharField(widget=forms.Textarea(attrs={'rows': 2}))
+    phone_number = forms.CharField(max_length=10, widget=forms.TextInput(attrs={'maxlength': '10'}))
+    alternate_number = forms.CharField(max_length=10, widget=forms.TextInput(attrs={'maxlength': '10'}))
 
     class Meta:
         model = Driver

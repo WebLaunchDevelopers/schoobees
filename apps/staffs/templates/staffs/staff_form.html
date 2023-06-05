@@ -28,3 +28,17 @@
 
 
 {% endblock content %}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+  $(document).ready(function() {
+    $("#id_mobile_number").on("input", function() {
+        var maxLength = 10;
+        if ($(this).val().length > maxLength) {
+            $(this).val($(this).val().slice(0, maxLength));
+        }
+    });
+});
+
+</script>
