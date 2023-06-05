@@ -83,7 +83,6 @@ class EditResultsView(LoginRequiredMixin, View):
             redirect_url += f"?classid={classid}&subjectid={subjectid}&examid={examid}"
             return redirect(redirect_url)
 
-
 class GetResultsView(LoginRequiredMixin, View):
     def get(self, request):
         class_id = request.GET.get("class_id")
