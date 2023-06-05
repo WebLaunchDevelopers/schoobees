@@ -983,11 +983,27 @@ class PerformanceAPIView(APIView):
                     {'error': 'Student not found', 'status': status.HTTP_404_NOT_FOUND},
                     status=status.HTTP_404_NOT_FOUND
                 )
+            try:
+                examinstance = Exam.objects.get(user=schoolUser, id=exam_id)
+            except Exam.DoesNotExist:
+                return Response(
+                    {'error': 'Exam not found', 'status': status.HTTP_404_NOT_FOUND},
+                    status=status.HTTP_404_NOT_FOUND
+                )
             
             # Get all the results for the school and student
             if subject_id == 'all':
                 results = Result.objects.filter(user=schoolUser, student=studentinstance, exam=exam_id)
+                subjectname = 'All'
             else:
+                try:
+                    subjectinstance = Subject.objects.get(user=schoolUser, id=subject_id)
+                    subjectname = subjectinstance.name
+                except Subject.DoesNotExist:
+                    return Response(
+                        {'error': 'Subject not found', 'status': status.HTTP_404_NOT_FOUND},
+                        status=status.HTTP_404_NOT_FOUND
+                    )
                 results = Result.objects.filter(user=schoolUser, student=studentinstance, exam=exam_id, subject=subject_id)
             
             # Calculate the total score and count the number of records
@@ -1007,7 +1023,8 @@ class PerformanceAPIView(APIView):
             return Response(
                 {
                     'status': status.HTTP_200_OK,
-                    # 'results': performanceserializer.data,
+                    'exam_name': examinstance.exam_name,
+                    'subject_name': subjectname,
                     'scored': total_score,
                     'max_score': 100*record_count,
                     'total_subjects': record_count,
