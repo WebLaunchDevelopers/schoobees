@@ -31,8 +31,8 @@
       <label for="exam-select">Subject:</label>
       <select id="subject-select" name="subject_id" class="form-control">
         <option value="">All</option>
-        {% for  subject in filter_subject %}
-          <option value="{{ subject.id }}" {% if request.GET.subject_id|stringformat:"s" == exam.id|stringformat:"s" %}selected{% endif %}>
+        {% for subject in filter_subject %}
+          <option value="{{ subject.id }}" {% if request.GET.subject_id|stringformat:"s" == subject.id|stringformat:"s" %}selected{% endif %}>
             {{ subject }}
           </option>
         {% endfor %}
