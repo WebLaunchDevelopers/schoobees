@@ -93,18 +93,20 @@ class GetResultsView(LoginRequiredMixin, View):
         current_term = AcademicTerm.objects.filter(user=self.request.user, current=True).first()
 
         results = Result.objects.filter(user=request.user, session=current_session, term=current_term)
+        exams = Exam.objects.filter(user=request.user, session=current_session, term=current_term)
 
         if class_id:
             results = results.filter(current_class_id=class_id)
 
         if exam_id:
             results = results.filter(exam_id=exam_id)
+        else:
+            results = results.filter(exam_id=exams.first().id)
 
         if subject_id:
             results = results.filter(subject_id=subject_id)
 
         classes = StudentClass.objects.filter(user=request.user)
-        exams = Exam.objects.filter(user=request.user, session=current_session, term=current_term)
         filter_subject = Subject.objects.filter(user=request.user)
         resultss = {}
         has_records = False
@@ -124,18 +126,39 @@ class GetResultsView(LoginRequiredMixin, View):
 
                 for subject in subjects:
                     result = results.filter(current_class=eachclass, student=student, subject=subject).first()
+                    gradepoint = result.grade()
                     if result:
                         count += 1
                         total_score += result.exam_score
+
                 percent = round(((total_score / (count * 100)) * 100), 1)
+                if subject_id:
+                    total_score = gradepoint
                 students.append({"student": student, "total_score": total_score, "percent": percent})
 
             if subjects or students:
                 has_records = True
-                resultss[eachclass] = {"exam": None, "subjects": subjects, "students": students}
+                class_students = []
+                for student_data in students:
+                    if student_data["student"] not in [s["student"] for s in class_students]:
+                        class_students.append(student_data)
+                    else:
+                        continue
 
-        return render(request, "result/all_results.html",
-                      {"results": results, "student_classes": classes, "exams": exams, "filter_subject": filter_subject, "resultss": resultss, "has_records": has_records})
+                resultss[eachclass] = {"exam": None, "students": class_students, "subjects": subjects}
+
+        return render(
+            request,
+            "result/all_results.html",
+            {
+                "results": results,
+                "student_classes": classes,
+                "exams": exams,
+                "filter_subject": filter_subject,
+                "resultss": resultss,
+                "has_records": has_records,
+            },
+        )
 
 class ExamsListView(LoginRequiredMixin, ListView):
     model = Exam

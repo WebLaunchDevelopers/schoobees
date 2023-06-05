@@ -208,7 +208,6 @@ class SessionListView(LoginRequiredMixin, SuccessMessageMixin, ListView):
         context["form"] = AcademicSessionForm()
         return context
 
-
 class SessionCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = AcademicSession
     form_class = AcademicSessionForm
@@ -228,6 +227,7 @@ class SessionCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     
     def form_valid(self, form):
         form.instance.user = self.request.user
+        form.instance.current = self.request.POST.get("current") == "checked"
         return super().form_valid(form)
 
 class SessionUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
@@ -239,6 +239,7 @@ class SessionUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
 
     def form_valid(self, form):
         obj = self.object
+        form.instance.current = self.request.POST.get("current") == "checked"
         if obj.current == False:
             terms = (
                 AcademicSession.objects.filter(current=True)
@@ -247,9 +248,8 @@ class SessionUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
             )
             if not terms:
                 messages.warning(self.request, "You must set a session to current.")
-                return redirect("session-list")
+                return redirect("sessions")
         return super().form_valid(form)
-
 
 class SessionDeleteView(LoginRequiredMixin, DeleteView):
     model = AcademicSession
@@ -293,6 +293,7 @@ class TermCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 
     def form_valid(self, form):
         form.instance.user = self.request.user
+        form.instance.current = self.request.POST.get("current") == "checked"
         return super().form_valid(form)
 
 class TermUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
@@ -304,15 +305,16 @@ class TermUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
 
     def form_valid(self, form):
         obj = self.object
+        form.instance.current = self.request.POST.get("current") == "checked"
         if obj.current == False:
             terms = (
-                AcademicTerm.objects.filter(current=True)
+                AcademicTerm.objects.filter(user=self.request.user, current=True)
                 .exclude(name=obj.name)
                 .exists()
             )
             if not terms:
                 messages.warning(self.request, "You must set a term to current.")
-                return redirect("term")
+                return redirect("terms")
         return super().form_valid(form)
 
 class TermDeleteView(LoginRequiredMixin, DeleteView):

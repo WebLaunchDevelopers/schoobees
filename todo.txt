@@ -60,9 +60,7 @@ forms submission without data
 
 student delete error attendence
 
-results filter Subject
-
-check boc for current
+check box for current - half done
 
 validations of forms
 

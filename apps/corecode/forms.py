@@ -94,7 +94,6 @@ class AcademicSessionForm(ModelForm):
 
     def clean_name(self):
         name = self.cleaned_data["name"]
-        print(self.user)
         if self.user and AcademicSession.objects.filter(user=self.user, name=name).exists():
             raise forms.ValidationError("Academic session with this Name already exists.")
         return name
