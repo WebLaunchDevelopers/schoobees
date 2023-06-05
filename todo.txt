@@ -64,10 +64,12 @@ all password related changes
 
 student delete error attendence
 
-results filter
+results filter - completed
 
 timetable - no records found
             duplicate data of user session term class date start time
+            start time and end time
+            duplicate data of user session term class date start time  - completed
 data lekeage
 
 staff releated login works
@@ -75,4 +77,4 @@ staff releated login works
 testing the website
 
 
-check time_table properly (even though another class start_time matches with one another class start_time showing error msg)
+check time_table properly (even though another class start_time matches with one another class start_time showing error msg) - completed
