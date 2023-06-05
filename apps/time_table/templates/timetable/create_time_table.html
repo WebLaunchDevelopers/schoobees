@@ -1,12 +1,21 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h1>Create Timetable</h1>
+  {% if editing %}
+    <h2>Edit Timetable</h2>
+  {% else %}
+    <h2>Create Timetable</h2>
+  {% endif %}
 
-  <form method="post">
+  <form method="post" class="create-timetable-form">
     {% csrf_token %}
     {{ form.as_p }}
-
-    <button type="submit" class="btn btn-success">Create</button>
+    {% if not form.instance.pk %}
+    <button type="submit" class="btn btn-primary">Create</button>
+    <a href="{% url 'timetable_list' %}" class="btn btn-secondary">Cancel</a>
+    {% endif %}
+    {% if form.instance.pk %}
+    <button type="submit" class="btn btn-primary">Save</button>
+    {% endif %}
   </form>
 {% endblock content %}
