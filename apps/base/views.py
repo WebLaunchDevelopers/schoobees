@@ -123,11 +123,11 @@ class ChangePasswordView(View):
             new_password1 = form.cleaned_data.get('new_password1')
             new_password2 = form.cleaned_data.get('new_password2')
             if new_password1 != new_password2:
-                messages.error('new_password2', 'New passwords do not match')
-                # messages.error(request, 'New passwords do not match')
+                messages.error(request, 'New passwords do not match')  # Corrected line
                 return render(request, self.template_name, {'form': form})
             user = form.save()
-            update_session_auth_hash(request, user)  # Important!
+            update_session_auth_hash(request, user)
             messages.success(request, 'You have successfully changed your password.')
-            return redirect(self.success_url)
+            logout(request)
+            return redirect('login')
         return render(request, self.template_name, {'form': form})
