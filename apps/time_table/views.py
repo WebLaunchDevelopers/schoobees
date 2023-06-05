@@ -122,9 +122,6 @@ class TimetableEditView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     success_message_delete = "Timetable deleted successfully!"
     success_url = reverse_lazy('timetable_list')  # Replace 'timetable_list' with the URL name of the timetable list view
 
-    def delete(self, request, *args, **kwargs):
-        messages.success(request, self.success_message_delete)
-        return super().delete(request, *args, **kwargs)
 
     def form_valid(self, form):
         messages.success(self.request, self.success_message)
