@@ -35,7 +35,7 @@ class RegisterView(View):
                 logout(request)
             return redirect('login')
         else:
-            messages.error(request, 'Invalid details.')
+            messages.error(request, user_form.errors)
         return render(request, 'registration/register_new.html', {'user_form': user_form, 'profile_form': profile_form})
 
 class LoginView(View):
