@@ -12,7 +12,7 @@ from django.utils.safestring import mark_safe
 from apps.finance.models import Invoice
 from django.db.models import Count
 from .models import Student, StudentBulkUpload, Feedback, Notification, AcademicSession,AcademicTerm
-
+from apps.staffs.models import Staff
 from apps.result.models import Result
 from apps.corecode.models import StudentClass
 from apps.base.models import CustomUser
@@ -32,20 +32,31 @@ class StudentListView(LoginRequiredMixin, ListView):
     context_object_name = "students"
     
     def get_queryset(self):
+        finaluser = self.request.user
+        if finaluser.is_faculty:
+            staffrecord = Staff.objects.get(email=finaluser.username)
+            finaluser = staffrecord.user
         queryset = super().get_queryset()
-        current_session = AcademicSession.objects.filter(user=self.request.user, current=True).first()
-        current_term = AcademicTerm.objects.filter(user=self.request.user, current=True,).first()
+        current_session = AcademicSession.objects.filter(user=finaluser, current=True).first()
+        current_term = AcademicTerm.objects.filter(user=finaluser, current=True,).first()
 
-        return queryset.filter(user=self.request.user,session=current_session, term=current_term)
+        return queryset.filter(user=finaluser,session=current_session, term=current_term)
 
 class StudentDetailView(LoginRequiredMixin, DetailView):
     model = Student
     template_name = "students/student_detail.html"
 
     def get_context_data(self, **kwargs):
+        finaluser = self.request.user
         context = super(StudentDetailView, self).get_context_data(**kwargs)
-        context["payments"] = Invoice.objects.filter(student=self.object)
-        results = Result.objects.filter(user=self.request.user, student=self.object)
+        if finaluser.is_faculty:
+            staffrecord = Staff.objects.get(email=finaluser.username)
+            finaluser = staffrecord.user
+            payments = None
+        else:
+            payments = Invoice.objects.filter(student=self.object)
+        context["payments"] = payments
+        results = Result.objects.filter(user=finaluser, student=self.object)
         subjects, subject, marks = dict(), list(), list()
         score, total = 0, 0
         for result in results:
@@ -57,7 +68,7 @@ class StudentDetailView(LoginRequiredMixin, DetailView):
             marks.append(score)
 
         if len(results) > 0:
-            percentage = (total / (len(results) * 100)) * 100
+            percentage = round((total / (len(results) * 100)) * 100)
         else:
             percentage = 0
 
@@ -80,6 +91,11 @@ class StudentCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     success_url = reverse_lazy("student-list")  # Redirect URL after successful form submission
 
     def get_form(self, form_class=None):
+        finaluser = self.request.user
+        if finaluser.is_faculty:
+            staffrecord = Staff.objects.get(email=finaluser.username)
+            finaluser = staffrecord.user
+
         """Add date picker in forms"""
         form = super().get_form(form_class)
         form.fields["date_of_birth"].widget = widgets.DateInput(attrs={"type": "date"})
@@ -87,7 +103,7 @@ class StudentCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         form.fields["address"].widget = widgets.Textarea(attrs={"rows": 2})
         form.fields["comments"].widget = widgets.Textarea(attrs={"rows": 2})
         # Setting the queryset for the current_class field
-        form.fields["current_class"].queryset = StudentClass.objects.filter(user=self.request.user)
+        form.fields["current_class"].queryset = StudentClass.objects.filter(user=finaluser)
 
         # Adding a link to create a class in the help text
         form.fields["current_class"].help_text = mark_safe(
@@ -96,9 +112,14 @@ class StudentCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         return form
 
     def form_valid(self, form):
-        form.instance.user = self.request.user  # Assign the logged-in user to the student's user field
-        current_session = AcademicSession.objects.filter(user=self.request.user, current=True).first()
-        current_term = AcademicTerm.objects.filter(user=self.request.user, current=True).first()
+        finaluser = self.request.user
+        if finaluser.is_faculty:
+            staffrecord = Staff.objects.get(email=finaluser.username)
+            finaluser = staffrecord.user
+
+        form.instance.user = finaluser  # Assign the logged-in user to the student's user field
+        current_session = AcademicSession.objects.filter(user=finaluser, current=True).first()
+        current_term = AcademicTerm.objects.filter(user=finaluser, current=True).first()
 
         if current_session is None or current_term is None:
             messages.error(self.request,
@@ -109,7 +130,6 @@ class StudentCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         form.instance.term = current_term  # Assign the current term to the student's term field
 
         return super().form_valid(form)
-
 
 class StudentUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = Student
@@ -130,8 +150,12 @@ class StudentUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     
 
     def get_queryset(self):
+        finaluser = self.request.user
+        if finaluser.is_faculty:
+            staffrecord = Staff.objects.get(email=finaluser.username)
+            finaluser = staffrecord.user
         queryset = super().get_queryset()
-        return queryset.filter(user=self.request.user)
+        return queryset.filter(user=finaluser)
 
     def get_object(self, queryset=None):
         """Retrieve the object to be updated."""
@@ -249,7 +273,12 @@ class SendNotificationView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         form = self.get_form()
         if form.is_valid():
             notification = form.save(commit=False)
-            notification.sender = request.user
+            finaluser = request.user
+            if finaluser.is_faculty:
+                staffinstance = Staff.objects.get(email=finaluser.username)
+                finaluser = staffinstance.user            
+            notification.sender = finaluser
+            notification.person_mail = request.user.email
             notification.save()
             
             messages.success(self.request, self.success_message)
@@ -259,6 +288,10 @@ class SendNotificationView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 
     def get_form(self, form_class=None):
         form = super().get_form(form_class)
-        form.fields['student'].queryset = Student.objects.filter(user=self.request.user)
-        form.fields['class_for'].queryset = StudentClass.objects.filter(user=self.request.user)
+        finaluser = self.request.user
+        if finaluser.is_faculty:
+            staffinstance = Staff.objects.get(email=finaluser.username)
+            finaluser = staffinstance.user
+        form.fields['student'].queryset = Student.objects.filter(user=finaluser)
+        form.fields['class_for'].queryset = StudentClass.objects.filter(user=finaluser)
         return form

@@ -19,15 +19,24 @@ from django.views.generic import ListView, View
 from django.urls import reverse_lazy
 from django.urls import reverse
 from django.utils import timezone
+from apps.staffs.models import Staff
 
 class UpdateAttendanceView(LoginRequiredMixin, View):
     def get(self, request):
-        form = UpdateAttendance(user=request.user, initial={'date_of_attendance': timezone.now().date()})
+        finaluser = request.user
+        if finaluser.is_faculty:
+            staffrecord = Staff.objects.get(email=finaluser.username)
+            finaluser = staffrecord.user
+        form = UpdateAttendance(user=finaluser, initial={'date_of_attendance': timezone.now().date()})
         button = "Update"
         return render(request, "attendance/update-attendance.html", {"form": form, "button": button, "subjectshow": True})
 
     def post(self, request):
-        form = UpdateAttendance(request.POST, user=request.user)
+        finaluser = request.user
+        if finaluser.is_faculty:
+            staffrecord = Staff.objects.get(email=finaluser.username)
+            finaluser = staffrecord.user
+        form = UpdateAttendance(request.POST, user=finaluser)
         button = "Update"
         if form.is_valid():
             class_name = form.cleaned_data["class_name"]
@@ -35,15 +44,15 @@ class UpdateAttendanceView(LoginRequiredMixin, View):
             date_of_attendance = form.cleaned_data["date_of_attendance"]
             attendance_status = []
 
-            current_session = AcademicSession.objects.filter(user=self.request.user, current=True).first()
-            current_term = AcademicTerm.objects.filter(user=self.request.user, current=True).first()
+            current_session = AcademicSession.objects.filter(user=finaluser, current=True).first()
+            current_term = AcademicTerm.objects.filter(user=finaluser, current=True).first()
 
-            for student in Student.objects.filter(user=request.user, current_class=class_name):
-                check = Attendance.objects.filter(user=request.user, current_class=class_name, subject=subject,
+            for student in Student.objects.filter(user=finaluser, current_class=class_name):
+                check = Attendance.objects.filter(user=finaluser, current_class=class_name, subject=subject,
                                                   student=student, date_of_attendance=date_of_attendance, session=current_session,term=current_term).first()
                 if not check:
                     attendance = Attendance(
-                        user=request.user,
+                        user=finaluser,
                         current_class=class_name,
                         subject=subject,
                         student=student,
@@ -93,16 +102,24 @@ class EditAttendanceView(LoginRequiredMixin, View):
 
 class GetAttendanceView(LoginRequiredMixin, View):
     def get(self, request):
-        form = UpdateAttendance(user=request.user, initial={'date_of_attendance': timezone.now().date()})
+        finaluser = request.user
+        if finaluser.is_faculty:
+            staffrecord = Staff.objects.get(email=finaluser.username)
+            finaluser = staffrecord.user
+        form = UpdateAttendance(user=finaluser, initial={'date_of_attendance': timezone.now().date()})
         button = "View"
         return render(request, "attendance/update-attendance.html", {"form": form, "button": button, "subjectshow": False})
     
     def post(self, request):
+        finaluser = request.user
+        if finaluser.is_faculty:
+            staffrecord = Staff.objects.get(email=finaluser.username)
+            finaluser = staffrecord.user
         class_name = request.POST.get("class_name")
         date_of_attendance = request.POST.get("date_of_attendance")
-        current_session = AcademicSession.objects.filter(user=request.user, current=True).first()
-        current_term = AcademicTerm.objects.filter(user=request.user, current=True).first()
-        attendances = Attendance.objects.filter(user=request.user, session=current_session, term=current_term, current_class=class_name, date_of_attendance=date_of_attendance)
+        current_session = AcademicSession.objects.filter(user=finaluser, current=True).first()
+        current_term = AcademicTerm.objects.filter(user=finaluser, current=True).first()
+        attendances = Attendance.objects.filter(user=finaluser, session=current_session, term=current_term, current_class=class_name, date_of_attendance=date_of_attendance)
         subjects = Subject.objects.filter(id__in=attendances.values_list('subject', flat=True)).order_by('name')
         students = Student.objects.filter(id__in=attendances.values_list('student', flat=True)).order_by('last_name', 'first_name')
         

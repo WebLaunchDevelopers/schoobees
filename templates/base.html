@@ -74,17 +74,18 @@
             <i style="font-size:18px" class="fa">&#xf073;</i>
           </a>
         </li>
-
-       <li class="nav-item">
-        <a class="nav-link" href="{% url 'feedback-list' %}" id="feedbackIcon" role="button" title="Feedbacks">
-           <div class="feedback-count ">
-            <i class="fas fa-comment"></i>
-            {% if feedback_count %}
-                <span class="count badge">{{ feedback_count }}</span>
-            {% endif %}
-           </div>
-        </a>
-      </li>
+        {% if not user.is_faculty %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'feedback-list' %}" id="feedbackIcon" role="button" title="Feedbacks">
+              <div class="feedback-count ">
+                <i class="fas fa-comment"></i>
+                {% if feedback_count %}
+                    <span class="count badge">{{ feedback_count }}</span>
+                {% endif %}
+              </div>
+            </a>
+          </li>
+        {% endif %}
         <li class="nav-item dropdown">
           <a class="nav-link" data-toggle="dropdown" href="#" title="Menu">
             <i class="far fa-user"></i>
@@ -98,11 +99,11 @@
               <a href="{% url 'configs' %}" class="dropdown-item">
                 <i class="fas fa-user mr-2"></i> Profile
               </a>
+              <div class="dropdown-divider"></div>
+              <a href="{% url 'drivers-view' %}" class="dropdown-item">
+                <i class="fas fa-bus mr-2"></i> Drivers
+              </a>
             {% endif %}
-            <div class="dropdown-divider"></div>
-            <a href="{% url 'drivers-view' %}" class="dropdown-item">
-              <i class="fas fa-bus mr-2"></i> Drivers
-            </a>
             <div class="dropdown-divider"></div>
             <a href="{% url 'logout' %}" class="dropdown-item">
               <i class="fas fa-sign-out-alt"></i> Sign out

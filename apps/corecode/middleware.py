@@ -1,4 +1,5 @@
 from .models import AcademicSession, AcademicTerm
+from apps.staffs.models import Staff
 
 class SiteWideConfigs:
     def __init__(self, get_response):
@@ -9,12 +10,16 @@ class SiteWideConfigs:
         current_term = None
 
         if request.user.is_authenticated:
+            finaluser = request.user
+            if finaluser.is_faculty:
+                staffrecord = Staff.objects.get(email=finaluser.username)
+                finaluser = staffrecord.user            
             try:
-                current_session = AcademicSession.objects.get(user=request.user, current=True)
+                current_session = AcademicSession.objects.get(user=finaluser, current=True)
             except AcademicSession.DoesNotExist:
                 pass
             try:
-                current_term = AcademicTerm.objects.get(user=request.user, current=True)
+                current_term = AcademicTerm.objects.get(user=finaluser, current=True)
             except AcademicTerm.DoesNotExist:
                 pass
 
