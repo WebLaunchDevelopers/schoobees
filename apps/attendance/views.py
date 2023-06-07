@@ -73,12 +73,16 @@ class UpdateAttendanceView(LoginRequiredMixin, View):
 
 class EditAttendanceView(LoginRequiredMixin, View):
     def get(self, request):
+        finaluser = request.user
+        if finaluser.is_faculty:
+            staffrecord = Staff.objects.get(email=finaluser.username)
+            finaluser = staffrecord.user
         classid = request.GET.get("classid")
         subjectid = request.GET.get("subjectid")
         date = request.GET.get("date")
-        current_session = AcademicSession.objects.filter(user=request.user, current=True).first()
-        current_term = AcademicTerm.objects.filter(user=request.user, current=True).first()
-        attendence = Attendance.objects.filter(user=request.user, current_class=classid, subject=subjectid, date_of_attendance=date, session=current_session, term=current_term)
+        current_session = AcademicSession.objects.filter(user=finaluser, current=True).first()
+        current_term = AcademicTerm.objects.filter(user=finaluser, current=True).first()
+        attendence = Attendance.objects.filter(user=finaluser, current_class=classid, subject=subjectid, date_of_attendance=date, session=current_session, term=current_term)
         formset = EditAttendance(queryset=attendence)
         records = False
         if attendence.exists():
