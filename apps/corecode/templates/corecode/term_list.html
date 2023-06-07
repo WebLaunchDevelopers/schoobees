@@ -8,10 +8,12 @@ Academic Term
 
 
 {% block breadcrumb %}
+  {% if not user.is_faculty %}
   <a class="btn btn-primary" href="#" data-toggle="modal" data-target="#modal1">
     <i class="fa fa-plus"></i>
     Add new term
   </a>
+  {% endif %}
 {% endblock breadcrumb %}
   
 
@@ -29,10 +31,14 @@ Academic Term
                   Current <i class="fa fa-check"></i>
                 {% endif %}
               </td>
-              <td><a href="{% url 'term-update' object.pk %}"><i
+              {% if not user.is_faculty %}
+              <td>
+                <a href="{% url 'term-update' object.pk %}"><i
                     class="fa fa-edit"></i></a> <a
                   href="{% url 'term-delete' object.pk %}"><i
-                    class="fa fa-trash-alt"></i></a></td>
+                    class="fa fa-trash-alt"></i></a>
+                </td>
+                {% endif %}
             </tr>
             {% endfor %}
           </tbody>

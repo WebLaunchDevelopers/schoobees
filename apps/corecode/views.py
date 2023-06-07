@@ -509,22 +509,20 @@ class CurrentSessionAndTermView(LoginRequiredMixin, View):
     success_message = "Current Session/term updated successfully."
 
     def get(self, request, *args, **kwargs):
-        finaluser = request.user
-        if finaluser.is_faculty:
-            staffinstance = Staff.objects.get(email=finaluser.username)
-            finaluser = staffinstance.user
-        current_session = AcademicSession.objects.filter(user=finaluser, current=True).first()
-        current_term = AcademicTerm.objects.filter(user=finaluser, current=True).first()
+        if self.request.user.is_faculty:
+            message = "You don't have access to this page."
+            return HttpResponse(message)
+        current_session = AcademicSession.objects.filter(user=request.user, current=True).first()
+        current_term = AcademicTerm.objects.filter(user=request.user, current=True).first()
 
         form = self.form_class(
-            user=finaluser,
+            user=request.user,
             initial={
                 "current_session": current_session,
                 "current_term": current_term,
             }
         )
         return render(request, self.template_name, {"form": form})
-
 
     def post(self, request, *args, **kwargs):
         form = self.form_class(request.POST)

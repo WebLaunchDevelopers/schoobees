@@ -54,10 +54,18 @@
           <a href="{% url 'home' %} " class="nav-link"><i class="fa fa-home"></i></a>
         </li>
         <li class="nav-item d-none d-sm-inline-block">
+          {% if not user.is_faculty %}
           <a href="{% url 'current-session' %}" class="nav-link">Session: {{ current_session }}</a>
+          {% else %}
+          <a class="nav-link">Session: {{ current_session }}</a>
+          {% endif %}
         </li>
         <li class="nav-item d-none d-sm-inline-block">
+          {% if not user.is_faculty %}
           <a href="{% url 'current-session' %}" class="nav-link">Term: {{ current_term }}</a>
+          {% else %}
+          <a class="nav-link">Term: {{ current_term }}</a>
+          {% endif %}
         </li>
       </ul>
 
