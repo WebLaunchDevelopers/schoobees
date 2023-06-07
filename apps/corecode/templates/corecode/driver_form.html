@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+
+{% block title %}
+
+  {% if object %}
+    Update Driver {{ object.id }}
+  {% else %}
+    Add new driver
+  {% endif %}
+
+{% endblock title %}
+
+
+{% block content %}
+
+<form action="" method="POST" enctype="multipart/form-data">
+  {% csrf_token %}
+
+  {% include 'corecode/form_snippet.html' %}
+
+  {% if object %}
+    <input type="submit" class="btn btn-primary" value="Update Record">
+  {% else %}
+    <input type="submit" class="btn btn-primary" value="Add new driver">
+  {% endif %}
+</form>
+
+
+{% endblock content %}
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+  $(document).ready(function() {
+    $("#id_phone_number").on("input", function() {
+        var maxLength = 10;
+        if ($(this).val().length > maxLength) {
+            $(this).val($(this).val().slice(0, maxLength));
+        }
+    });
+});
+$(document).ready(function() {
+    $("#id_alternate_number").on("input", function() {
+        var maxLength = 10;
+        if ($(this).val().length > maxLength) {
+            $(this).val($(this).val().slice(0, maxLength));
+        }
+    });
+});
+
+</script>

@@ -1,7 +1,379 @@
 {% extends 'base.html' %}
-
+{% load widget_tweaks %}
+{% load humanize %}
 
 {% block content %}
-  <p>Dashboard contents and design coming soon.</p>
-  <p> Use the sidebar menu for now!</p>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet"> 
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.6.0/font/bootstrap-icons.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.min.js" integrity="sha384-Atwg2Pkwv9vp0ygtn1JAojH0nYbwNJLPhwyoVbhoPwBhjQPR5VtM2+xf0Uwh9KtT" crossorigin="anonymous"></script></head>
+<!--  -->
+<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js' defer></script>
+<link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.css' />
+<script src='https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.4.0/fullcalendar.min.js' defer></script>
+<!--  -->
+<style>
+#calendar {
+    width: 400px;
+    position: relative;
+    min-width: 0;
+    word-wrap: break-word;
+    background-clip: border-box;
+    border: 1px solid rgba(0,0,0,.125);
+    border-radius: 0.25rem;
+    margin-bottom: 1rem;
+    background-color: #f8f9fa;
+    border-color: #e2e8f0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  /* Change the background color of event cells */
+  .fc-day-event {
+    background-color: #f1f8ff;
+    color: #333;
+  }
+
+  /* Change the background color of holiday cells */
+  .fc-day-holiday {
+    background-color: #e6f1fc;
+    color: #333;
+  }
+
+  /* Change the background color of today's cell */
+  .fc-day-today {
+    background-color: #e0f8f7;
+    color: #333;
+  }
+
+  .fc-toolbar.fc-header-toolbar {
+    margin-bottom: 0 !important;
+  }
+  .fc-center {
+    margin-top: 1em;
+  }
+  .popover-ul {
+    list-style: numbers;
+    padding-left: 0.5rem;
+    text-transform: capitalize;
+  }
+  .dashboard-card {
+    background-color: #f8f9fa;
+    border: 1px solid #e2e8f0;
+    border-radius: 0.25rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .dashboard-card .card-title {
+    font-size: 18px;
+    color: #333;
+  }
+
+  .dashboard-card .card-text {
+    font-size: 24px;
+    font-weight: bold;
+    color: #555;
+  }
+  .navbar-expand .navbar-nav .nav-link {
+    padding-right: 1rem;
+    padding-left: 1rem;
+  }
+</style>
+
+  <div class="container-fluid mt-5">
+    <div class="row">
+      <div class="col-md-3">
+        <div class="card dashboard-card">
+          <a href="{% url 'student-list' %}" style="text-decoration: none;">
+            <div class="card-body">
+              <h5 class="card-title">
+                <i class="fas fa-user-graduate fa-lg mr-2"></i>
+                Students
+              </h5>
+              <p class="card-text">{{ studentcount }}</p>
+            </div>
+          </a>
+        </div>
+      </div>
+      {% if not user.is_faculty %}
+      <div class="col-md-3">
+        <div class="card dashboard-card">
+          <a href="{% url 'staff-list' %}" style="text-decoration: none;">
+            <div class="card-body">
+              <h5 class="card-title">
+                <i class="fas fa-chalkboard-teacher fa-lg mr-2"></i>
+                Faculties
+              </h5>
+              <p class="card-text">{{ staffcount }}</p>
+            </div>
+          </a>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card dashboard-card">
+          <a href="{% url 'drivers-view' %}" style="text-decoration: none;">
+            <div class="card-body">
+              <h5 class="card-title">
+                <i class="fas fa-bus fa-lg mr-2"></i>
+                Drivers
+              </h5>
+              <p class="card-text">{{ drivercount }}</p>
+            </div>
+          </a>
+        </div>
+      </div>
+      <div class="col-md-3">
+        <div class="card dashboard-card">
+          <a href="{% url 'invoice-list' %}" style="text-decoration: none;">
+            <div class="card-body">
+              <h5 class="card-title">
+                <i class="fa fa-money-bill-alt fa-lg mr-2"></i>
+                Pending Fee's
+              </h5>
+              <p class="card-text">{{ total_balance | intcomma }}</p>
+            </div>
+          </a>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+  <div class="d-flex">
+    <div class="float-left">
+      <div class="container-fluid mt-5">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="card dashboard-card">
+              <a href="{% url 'sessions' %}">
+                <div class="card-body">
+                  <h5 class="card-title">
+                    <i class="fas fa-copy fa-lg mr-2"></i>
+                    Sessions
+                  </h5>
+                </div>
+              </a>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card dashboard-card">
+              <a href="{% url 'terms' %}">
+                <div class="card-body">
+                  <h5 class="card-title">
+                    <i class="fas fa-bars fa-lg mr-2"></i>
+                    Terms
+                  </h5>
+                </div>
+              </a>
+            </div>
+          </div>
+          <div class="col-md-6 mt-4">
+            <div class="card dashboard-card">
+              <a href="{% url 'classes' %}">                
+                <div class="card-body">
+                  <h5 class="card-title">
+                    <i class="fas fa-pen-nib fa-lg mr-2"></i>
+                    Classes
+                  </h5>
+                </div>
+              </a>
+            </div>
+          </div>
+          <div class="col-md-6 mt-4">
+            <div class="card dashboard-card">
+              <a href="{% url 'subjects' %}">
+                <div class="card-body">
+                  <h5 class="card-title">
+                    <i class="fas fa-book fa-lg mr-2"></i>
+                    Subjects
+                  </h5>
+                </div>
+              </a>
+            </div>
+          </div>
+          <div class="col-md-6 mt-4">
+            <div class="card dashboard-card">
+              <a href="{% url 'timetable_list' %}">
+                <div class="card-body">
+                  <h5 class="card-title">
+                    <i class="fas fa-lg mr-2">&#xf073;</i>
+                    Timetable
+                  </h5>
+                </div>
+              </a>
+            </div>
+          </div>
+          <div class="col-md-6 mt-4">
+            <div class="card dashboard-card">
+              <a href="{% url 'view-results' %}">
+                <div class="card-body">
+                  <h5 class="card-title">
+                    <i class="fas fa-award fa-lg mr-2"></i>
+                    Results
+                  </h5>
+                </div>
+              </a>
+            </div>
+          </div>
+          <div class="col-md-6 mt-4">
+            <div class="card dashboard-card">
+              <a href="{% url 'view-attendance' %}">
+                <div class="card-body">
+                  <h5 class="card-title">
+                    <i class="far fa-calendar-check fa-lg mr-2"></i>
+                    Attendance
+                  </h5>
+                </div>
+              </a>
+            </div>
+          </div>
+          <div class="col-md-6 mt-4">
+            <div class="card dashboard-card">
+              <a href="{% url 'exams_list' %}">
+                <div class="card-body">
+                  <h5 class="card-title">
+                    <i class="fas fa-clipboard fa-lg mr-2"></i>
+                    Exams
+                  </h5>
+                </div>
+              </a>
+            </div>
+          </div>
+          <div class="col-md-6 mt-4">
+            <div class="card dashboard-card">
+              <a href="{% url 'calendar-list' %}">
+                <div class="card-body">
+                  <h5 class="card-title">
+                    <i class="far fa-calendar-alt fa-lg mr-2"></i>
+                    Calendar
+                  </h5>
+                </div>
+              </a>
+            </div>
+          </div>
+          <div class="col-md-6 mt-4">
+            <div class="card dashboard-card">
+              <a href="{% url 'send-notification' %}">
+                <div class="card-body">
+                  <h5 class="card-title">
+                    <i class="fas fa-broadcast-tower fa-lg mr-2"></i>
+                    Communication
+                  </h5>
+                </div>
+              </a>
+            </div>
+          </div>
+          {% if not user.is_faculty %}
+          <div class="col-md-6 mt-4">
+            <div class="card dashboard-card">
+              <a href="{% url 'feedback-list' %}">
+                <div class="card-body">
+                  <h5 class="card-title">
+                    <i class="fas fa-comment fa-lg mr-2"></i>
+                    Feedbacks
+                  </h5>
+                </div>
+              </a>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <div class="float-right">
+      <div id='calendar'></div>
+      <div class="card dashboard-card">
+        {% if not user.is_faculty %}
+        <div class="card-body">
+          <h5 class="card-title">
+            <i class="fa fa-birthday-cake fa-lg mr-2"></i>
+            Staff Birthdays
+          </h5>
+          {% for Bdays in staffBdays %}
+          
+          <p class="card-text">{{Bdays}}</p>
+          {% endfor %}
+        </div>
+         {% endif %}
+      </div>    
+    </div>
+
+  </div>
+  <script>
+    $(document).ready(function() {
+      var event_list = JSON.parse('{{ event_list|safe }}');
+
+      $('#calendar').fullCalendar({
+        events: event_list,
+        defaultView: 'month',
+        header: {
+          left: 'prev,next',
+          center: 'title',
+          right: 'today'
+        },
+        eventRender: function(event, element) {
+          // element.addClass('fc-event');
+          var startCell = $('#calendar').find('.fc-day[data-date="' + event.start.format('YYYY-MM-DD') + '"]');
+          $('.fc-day-number').css('font-weight','500');
+            // element.css('border', 'none');
+            // element.css('text-align', 'center');
+            // element.css('color', 'white');
+            // element.css('font-weight', 'bold');
+          if (event.type == 'event') {
+          startCell.css('background-color', '#f1f8ff');
+        } else if (event.type == 'holiday') {
+          startCell.css('background-color', '#e6f1fc');
+        }
+          element.css('display', 'none');
+          element.empty()
+          element.remove();
+        },
+        dayRender: function(date, cell) {
+          var today = moment();
+          var momentDate = moment(date); // create a moment object from the date parameter
+          if (momentDate.isSame(today, 'day')) {
+          cell.css('background-color', '#e0f8f7');
+        }
+        },
+        dayClick: function(date, jsEvent, view) {
+          var events = $('#calendar').fullCalendar('clientEvents', function(event) {
+            return moment(event.start).isSame(date, 'day');
+          });
+          if (events.length > 0) {
+            var popoverContent = '<ul class="popover-ul">';
+            $.each(events, function(index, event) {
+              popoverContent += '<li>' + event.type + ": " + event.title + '</li>';
+            });
+            popoverContent += '</ul>';
+            if($(this).attr('aria-describedby')){
+              $(this).popover('hide');
+            }
+            else{
+              $(this).popover({
+                title: moment(date).format('dddd, MMMM D'),
+                content: popoverContent,
+                html: true,
+                trigger: 'manual',
+                placement: 'top'
+              }).popover('show');
+            }
+          }
+          else{
+            $('.popover').popover('hide');
+          }
+        },
+        contentHeight: 'auto', // adjust the height of the calendar to fit its content
+        aspectRatio: 2, // set the aspect ratio of the calendar to 2:1
+        // eventLimit: true, // allow "more" link when too many events
+        // eventLimitClick: 'popover' // show popover when clicking "more" link    
+      });
+    });
+</script>
+  {% if bool %}
+<script>
+var myModal = new bootstrap.Modal(document.getElementById('myModal'), {})
+myModal.show()
+</script>
+  {% endif %}
+
+
 {% endblock content %}

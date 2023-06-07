@@ -12,6 +12,7 @@ from .views import (
     SessionListView,
     SessionUpdateView,
     SiteConfigView,
+    FacultyProfileView,
     SubjectCreateView,
     SubjectDeleteView,
     SubjectListView,
@@ -20,11 +21,20 @@ from .views import (
     TermDeleteView,
     TermListView,
     TermUpdateView,
+    CalendarListView,
+    CalendarCreateView,
+    CalendarUpdateView,
+    CalendarDeleteView,
+    DriversView,
+    DriverDetailView,
+    DriverUpdateView,
+    DriverDeleteView,
 )
 
 urlpatterns = [
     path("", IndexView.as_view(), name="home"),
     path("site-config", SiteConfigView.as_view(), name="configs"),
+    path("faculty-profile", FacultyProfileView.as_view(), name="faculty-profile"),
     path(
         "current-session/", CurrentSessionAndTermView.as_view(), name="current-session"
     ),
@@ -60,4 +70,13 @@ urlpatterns = [
         SubjectDeleteView.as_view(),
         name="subject-delete",
     ),
+    path("calendar/list/", CalendarListView.as_view(), name="calendar-list"),
+    path("calendar/create/", CalendarCreateView.as_view(), name="calendar-create"),
+    path("calendar/<int:pk>/update/", CalendarUpdateView.as_view(), name="calendar-update"),
+    path('calendar/<int:pk>/delete/', CalendarDeleteView.as_view(), name='calendar-delete'),
+
+    path('drivers/view/', DriversView.as_view(), name='drivers-view'),
+    path('drivers/<str:pk>/', DriverDetailView.as_view(), name='driver-details'),
+    path("drivers/<str:pk>/update/", DriverUpdateView.as_view(), name="driver-update"),
+    path("drivers/delete/<str:pk>/", DriverDeleteView.as_view(), name="driver-delete"),
 ]

@@ -4,18 +4,22 @@ from django.utils import timezone
 
 from apps.corecode.models import AcademicSession, AcademicTerm, StudentClass
 from apps.students.models import Student
+from django.contrib.auth import get_user_model
 
+CustomUser = get_user_model()
 
 class Invoice(models.Model):
+    user = models.ForeignKey(CustomUser, on_delete = models.CASCADE)
     student = models.ForeignKey(Student, on_delete=models.CASCADE)
     session = models.ForeignKey(AcademicSession, on_delete=models.CASCADE)
     term = models.ForeignKey(AcademicTerm, on_delete=models.CASCADE)
     class_for = models.ForeignKey(StudentClass, on_delete=models.CASCADE)
     balance_from_previous_term = models.IntegerField(default=0)
+    payment_due = models.DateField(default=timezone.now, null=True, blank=True)
     status = models.CharField(
         max_length=20,
-        choices=[("active", "Active"), ("closed", "Closed")],
-        default="active",
+        choices=[("unpaid", "Unpaid"), ("paid", "Paid")],
+        default="unpaid",
     )
 
     class Meta:
@@ -58,6 +62,7 @@ class InvoiceItem(models.Model):
 
 class Receipt(models.Model):
     invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE)
+    payment_method = models.CharField(max_length=20)
     amount_paid = models.IntegerField()
     date_paid = models.DateField(default=timezone.now)
     comment = models.CharField(max_length=200, blank=True)

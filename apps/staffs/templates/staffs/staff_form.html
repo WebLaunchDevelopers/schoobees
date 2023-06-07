@@ -6,7 +6,7 @@
   {% if object %}
     Update {{ object }}
   {% else %}
-    Add new student
+    Add new faculty
   {% endif %}
 
 {% endblock title %}
@@ -22,9 +22,23 @@
   {% if object %}
     <input type="submit" class="btn btn-primary" value="Update Record">
   {% else %}
-    <input type="submit" class="btn btn-primary" value="Add new student">
+    <input type="submit" class="btn btn-primary" value="Add new faculty">
   {% endif %}
 </form>
 
 
 {% endblock content %}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+  $(document).ready(function() {
+    $("#id_mobile_number").on("input", function() {
+        var maxLength = 10;
+        if ($(this).val().length > maxLength) {
+            $(this).val($(this).val().slice(0, maxLength));
+        }
+    });
+});
+
+</script>

@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}
+Drivers
+{% endblock title %}
+
+{% block content %}
+
+<div class="container-fluid mt-3">
+  <div class="row">
+    <div class="col-md-6">
+      <h2>Drivers</h2>
+      <table id="drivertable" class="table table-bordered table-hover">
+        <thead class="thead-light">
+          <tr>
+            <th>Name</th>
+            <th>Phone Number</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for driver in drivers %}
+          <tr class='clickable-row' data-href="{% url 'driver-details' driver.id %}">
+            <td>{{ driver.name }}</td>
+            <td>{{ driver.phone_number }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="col-md-6">
+      <h2>Add Driver</h2>
+      <p>Write NA for Not Available fields</p>
+      <form method="POST">
+        {% csrf_token %}
+        {% for field in driver_form %}
+        <div class="form-group">
+          {{ field.label_tag }}
+          {% render_field field class="form-control" %}
+          {{ field.help_text }}
+          {% if field.errors %}
+          {% for error in field.errors %}
+          <div class="invalid-feedback d-block">
+            {{ error }}
+          </div>
+          {% endfor %}
+          {% endif %}
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn btn-primary">Save</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+{% endblock content %}
+
+{% block morejs %}
+<script>
+  $('#drivertable').DataTable({
+  });
+</script>
+
+{% endblock morejs %}

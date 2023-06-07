@@ -3,14 +3,12 @@
 
 
 {% block title %}
-  Select all the subjects you want to create
+  Filter the data
 {% endblock title %}
 
 
 {% block content %}
-
-
-  <p>You selected <b>{{ count }} students</b> from the previous page.</p>
+<div>
 
   <form method="POST">
     {% csrf_token %}
@@ -18,26 +16,36 @@
     {{ form.non_field_errors }}
 
     <div class="form-group row">
-      {{ form.session.errors }}
-      <label class="col-2" for="{{ form.session.id_for_label }}">{{ form.session.label_tag}}</label>
-      <div class="col">{{ form.session | add_class:"form-control" }}</div>
+      {{ form.class_name.errors }}
+      <label class="col-2" for="{{ form.class_name.id_for_label }}">{{ form.class_name.label_tag}}</label>
+      <div class="col">{{ form.class_name | add_class:"form-control" }}
+        <p><a href="{% url 'class-create' %}"> Click here</a> To Create Class</p>
+      </div>
     </div>
 
+
     <div class="form-group row">
-      {{ form.term.errors }}
-      <label class="col-2" for="{{ form.term.id_for_label }}">{{ form.term.label_tag}}</label>
-      <div class="col">{{ form.term | add_class:"form-control" }}</div>
+      {{ form.exam.errors }}
+      <label class="col-2" for="{{ form.exam.id_for_label }}">{{ form.exam.label_tag}}</label>
+      <div class="col">{{ form.exam | add_class:"form-control" }}
+        <p><a href="{% url 'exams_create' %}"> Click here</a> To Create Exam</p>
+      </div>
     </div>
+
+
+
     <div class="form-group row">
       {{ form.subjects.errors }}
       <label class="col-2" for="{{ form.subjects.id_for_label }}">{{ form.subjects.label_tag}}</label>
-      <div class="col">{{ form.subjects | add_class:"form-check-input" }}</div>
+      <div class="col">{{ form.subjects | add_class:"form-control" }}
+        <p><a href="{% url 'subject-create' %}"> Click here</a> To Create Subject</p>
+      </div>
     </div>
 
     <input type="hidden" name="finish" value="True">
     <input type="hidden" name="students" value="{{ students }}">
 
-    <input type="submit" class="btn btn-success" value="Create">
+    <input type="submit" class="btn btn-success" value="Submit">
   </form>
 
 {% endblock content %}

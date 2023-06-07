@@ -4,21 +4,26 @@ from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.forms import DateInput
 
 from apps.students.models import Student
+from django.contrib import messages
 
-from .forms import InvoiceItemFormset, InvoiceReceiptFormSet, Invoices
+from .forms import InvoiceItemFormset, InvoiceReceiptFormSet, Invoices, InvoiceForm
 from .models import Invoice, InvoiceItem, Receipt
 
 
 class InvoiceListView(LoginRequiredMixin, ListView):
     model = Invoice
 
+    def get_queryset(self):
+        queryset = super().get_queryset()
+        return queryset.filter(user=self.request.user)
 
 class InvoiceCreateView(LoginRequiredMixin, CreateView):
     model = Invoice
-    fields = "__all__"
-    success_url = "/finance/list"
+    form_class = InvoiceForm
+    success_url = "/finance/list/"
 
     def get_context_data(self, **kwargs):
         context = super(InvoiceCreateView, self).get_context_data(**kwargs)
@@ -31,15 +36,29 @@ class InvoiceCreateView(LoginRequiredMixin, CreateView):
         return context
 
     def form_valid(self, form):
+        student = form.cleaned_data['student']
+        session = form.cleaned_data['session']
+        term = form.cleaned_data['term']
+
+        existing_invoice = Invoice.objects.filter(
+            student=student, session=session, term=term
+        ).first()
+
+        if existing_invoice:
+            messages.warning(self.request, "Record already exists. Redirecting to update page.")
+            return redirect('invoice-update', pk=existing_invoice.pk)
+
         context = self.get_context_data()
         formset = context["items"]
+        form.instance.user = self.request.user
         self.object = form.save()
-        if self.object.id != None:
+
+        if self.object.id is not None:
             if form.is_valid() and formset.is_valid():
                 formset.instance = self.object
                 formset.save()
-        return super().form_valid(form)
 
+        return super().form_valid(form)
 
 class InvoiceDetailView(LoginRequiredMixin, DetailView):
     model = Invoice
@@ -54,7 +73,7 @@ class InvoiceDetailView(LoginRequiredMixin, DetailView):
 
 class InvoiceUpdateView(LoginRequiredMixin, UpdateView):
     model = Invoice
-    fields = ["student", "session", "term", "class_for", "balance_from_previous_term"]
+    form_class = InvoiceForm
 
     def get_context_data(self, **kwargs):
         context = super(InvoiceUpdateView, self).get_context_data(**kwargs)
@@ -88,7 +107,7 @@ class InvoiceDeleteView(LoginRequiredMixin, DeleteView):
 
 class ReceiptCreateView(LoginRequiredMixin, CreateView):
     model = Receipt
-    fields = ["amount_paid", "date_paid", "comment"]
+    fields = ["amount_paid", "date_paid", "payment_method", "comment"]
     success_url = reverse_lazy("invoice-list")
 
     def form_valid(self, form):
@@ -104,7 +123,6 @@ class ReceiptCreateView(LoginRequiredMixin, CreateView):
         context["invoice"] = invoice
         return context
 
-
 class ReceiptUpdateView(LoginRequiredMixin, UpdateView):
     model = Receipt
     fields = ["amount_paid", "date_paid", "comment"]
@@ -114,8 +132,3 @@ class ReceiptUpdateView(LoginRequiredMixin, UpdateView):
 class ReceiptDeleteView(LoginRequiredMixin, DeleteView):
     model = Receipt
     success_url = reverse_lazy("invoice-list")
-
-
-@login_required
-def bulk_invoice(request):
-    return render(request, "finance/bulk_invoice.html")

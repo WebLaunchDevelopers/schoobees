@@ -5,44 +5,62 @@
 Update Results
 {% endblock title %}
 
-
 {% block content %}
 <form method="POST">
   {% csrf_token %}
-  {{ formset.management_form}}
+  {{ formset.management_form }}
 
   <table id="studenttable" class="table table-sm">
     <thead>
       <tr>
-        <th></th>
+        <th>S/N</th>
         <th>Name</th>
-        <th>Subject</th>
-        <th>Test Score</th>
-        <th>Exam Score</th>
-        <th>Total</th>
-        <th>Delete</th>
         <th>Class</th>
+        <th>Subject</th>
+        <th>Exam Score</th>
+        <th>Percentage</th>
+        <th>Grade</th>
+        <th>Delete</th>
       </tr>
     </thead>
     <tbody>
       {% for form in formset %}
-      {{ form.id}}
         <tr>
-          <td>{{forloop.counter }}</td>
-          <td>{{form.instance.student }}</td>
-          <td>{{form.instance.subject}}</td>
-          <td style="width: 10%;">{{form.test_score | add_class:"form-control form-control-sm"}}</td>
-          <td style="width: 10%;">{{form.exam_score | add_class:"form-control form-control-sm"}}</td>
-          <td>{{form.instance.total_score}}</td>
-          <td>{{form.DELETE}}</td>
-          <td>{{form.instance.current_class}}</td>
-
+          <td>{{ forloop.counter }}</td>
+          <td>{{ form.instance.student }}</td>
+          <td>{{ form.instance.current_class }}</td>
+          <td>{{ form.instance.subject }}</td>
+          <td style="width: 10%;">{{ form.exam_score | add_class:"form-control form-control-sm" }}</td>
+          <td>{{ form.instance.percentage }} %</td>
+          <td>{{ form.instance.grade }}</td>
+          <td>{{ form.DELETE }}</td>
+          <td style="display: none;">{{ form.id }}</td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="8" class="no-records">No records found</td>
         </tr>
       {% endfor %}
     </tbody>
   </table>
 
-  <input type="submit" class="btn btn-success" value="Save">
-  </form>
+  {% if formset.non_form_errors %}
+    <div class="alert alert-danger">
+      {% for error in formset.non_form_errors %}
+        {{ error }}
+      {% endfor %}
+    </div>
+  {% endif %}
+  {% if records %}
+   <input type="submit" class="btn btn-success" value="Save">
+  {% endif %}
+</form>
 
+<style>
+  .no-records {
+    text-align: center;
+    font-style: italic;
+    color: gray;
+  }
+</style>
 {% endblock content %}

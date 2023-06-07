@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block title-side %}{% endblock title-side %}
+
+{% block content %}
+  <h3>{{ title }} Event/Holiday</h3>
+  <form method="post">
+    {% csrf_token %}
+    
+    {% for field in form %}
+      <div class="form-group">
+          {{ field.label_tag }}
+          {{ field|add_class:"form-control" }}
+      </div>
+    {% endfor %}
+    <button type="submit" class="btn btn-primary">{{ title }}</button>
+  </form>
+{% endblock content %}

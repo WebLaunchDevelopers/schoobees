@@ -1,0 +1,115 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <a href="{% url 'timetable_create' %}" class="btn btn-primary mb-4">Create Timetable</a>
+
+  <form method="get" class="filter-form row">
+    <div class="form-group col-md-4">
+      <label for="class-select">Class:</label>
+      <select id="class-select" name="class_id" class="form-control">
+        <option value="">All</option>
+        {% for student_class in student_classes %}
+        <option value="{{ student_class.id }}" {% if request.GET.class_id|stringformat:"s" == student_class.id|stringformat:"s" %}selected{% endif %}>
+          {{ student_class }}
+        </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-group col-md-4">
+      <label for="subject-select">Subject:</label>
+      <select id="subject-select" name="subject_id" class="form-control">
+        <option value="">All</option>
+        {% for subject in subjects %}
+          <option value="{{ subject.id }}" {% if request.GET.subject_id|stringformat:"s" == subject.id|stringformat:"s" %}selected{% endif %}>
+            {{ subject }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-group col-md-4">
+      <label for="date-input">Date:</label>
+      <input type="date" id="date-input" name="date" class="form-control" value="{% if request.GET.date %}{{ request.GET.date }}{% else %}{{ date_today }}{% endif %}" />
+    </div>
+
+
+    <div class="col-md-12 text-center">
+      <button type="submit" class="btn btn-primary">Filter</button>
+    </div>
+    <!-- Filter form code here -->
+  </form>
+
+  {% if timetables %}
+    <h2>Timetable Results</h2>
+
+    {% for student_class in class_list %}
+      <br>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Class</th>
+            <th>Subject</th>
+            <th>Date</th>
+            <th>Start Time</th>
+            <th>End Time</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for timetable in timetables %}
+          {% if timetable.class_of_id == student_class.id %}
+            <tr class="clickable-row" data-href="{% url 'timetable_edit' timetable.id %}">
+              <td>{{ timetable.class_of }}</td>
+              <td>{{ timetable.subject }}</td>
+              <td>{{ timetable.date }}</td>
+              <td>{{ timetable.start_time }}</td>
+              <td>{{ timetable.end_time }}</td>
+               <td>
+                <form method="post" action="{% url 'timetable_delete' timetable.id %}">
+                  {% csrf_token %}
+                  <input type="hidden" name="timetable_id" value="{{ timetable.id }}">
+                  <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+              </td>
+            </tr>
+          {% endif %}
+        {% endfor %}
+        </tbody>
+      </table>
+    {% endfor %}
+  {% else %}
+    <div class="no-records-container">
+      <p class="no-records">No records found</p>
+    </div>
+  {% endif %}
+{% endblock content %}
+
+<style>
+  .no-records-container {
+    text-align: center;
+    margin-top: 20px;
+  }
+
+  .no-records {
+    font-style: italic;
+    color: gray;
+  }
+
+  .clickable-row {
+    cursor: pointer;
+  }
+</style>
+
+<script>
+  // JavaScript code to handle row click event and redirect to the edit page
+  document.addEventListener("DOMContentLoaded", function() {
+    const rows = document.getElementsByClassName("clickable-row");
+    Array.from(rows).forEach(row => {
+      row.addEventListener("click", function() {
+        const url = this.getAttribute("data-href");
+        window.location.href = url;
+      });
+    });
+  });
+</script>

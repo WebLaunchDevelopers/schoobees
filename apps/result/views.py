@@ -1,114 +1,226 @@
-from django.contrib import messages
+from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import redirect, render
-from django.views.generic import DetailView, ListView, View
-
+from django.contrib import messages
+from django.forms import modelformset_factory
+from apps.corecode.models import Subject, StudentClass, AcademicTerm, AcademicSession
 from apps.students.models import Student
+from .models import Result, Exam
+from .forms import CreateResults, EditResults, ExamsForm
+from django.utils.decorators import method_decorator
+from django.views import View
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
+from django.views.generic import ListView, View
+from django.urls import reverse_lazy
+from django.urls import reverse
+from django.utils import timezone
+from apps.staffs.models import Staff
 
-from .forms import CreateResults, EditResults
-from .models import Result
+class CreateResultView(LoginRequiredMixin, View):
+    def get(self, request):
+        finaluser = self.request.user
+        if finaluser.is_faculty:
+            staffrecord = Staff.objects.get(email=finaluser.username)
+            finaluser = staffrecord.user
+        current_session = AcademicSession.objects.filter(user=finaluser, current=True).first()
+        current_term = AcademicTerm.objects.filter(user=finaluser, current=True).first()
+        form = CreateResults(user=finaluser, initial={'session': current_session, 'term': current_term})
+        return render(request, "result/create_result_page2.html", {"form": form})
 
+    def post(self, request):
+        finaluser = self.request.user
+        if finaluser.is_faculty:
+            staffrecord = Staff.objects.get(email=finaluser.username)
+            finaluser = staffrecord.user
+        current_session = AcademicSession.objects.filter(user=finaluser, current=True).first()
+        current_term = AcademicTerm.objects.filter(user=finaluser, current=True).first()
 
-@login_required
-def create_result(request):
-    students = Student.objects.all()
-    if request.method == "POST":
-
-        # after visiting the second page
-        if "finish" in request.POST:
-            form = CreateResults(request.POST)
-            if form.is_valid():
-                subjects = form.cleaned_data["subjects"]
-                session = form.cleaned_data["session"]
-                term = form.cleaned_data["term"]
-                students = request.POST["students"]
-                results = []
-                for student in students.split(","):
-                    stu = Student.objects.get(pk=student)
-                    if stu.current_class:
-                        for subject in subjects:
-                            check = Result.objects.filter(
-                                session=session,
-                                term=term,
-                                current_class=stu.current_class,
-                                subject=subject,
-                                student=stu,
-                            ).first()
-                            if not check:
-                                results.append(
-                                    Result(
-                                        session=session,
-                                        term=term,
-                                        current_class=stu.current_class,
-                                        subject=subject,
-                                        student=stu,
-                                    )
-                                )
-
-                Result.objects.bulk_create(results)
-                return redirect("edit-results")
-
-        # after choosing students
-        id_list = request.POST.getlist("students")
-        if id_list:
-            form = CreateResults(
-                initial={
-                    "session": request.current_session,
-                    "term": request.current_term,
-                }
-            )
-            studentlist = ",".join(id_list)
-            return render(
-                request,
-                "result/create_result_page2.html",
-                {"students": studentlist, "form": form, "count": len(id_list)},
-            )
-        else:
-            messages.warning(request, "You didnt select any student.")
-    return render(request, "result/create_result.html", {"students": students})
-
-
-@login_required
-def edit_results(request):
-    if request.method == "POST":
-        form = EditResults(request.POST)
+        form = CreateResults(request.POST, user=finaluser, initial={'session': current_session, 'term': current_term})
         if form.is_valid():
-            form.save()
+            class_name = form.cleaned_data["class_name"]
+            subject = form.cleaned_data["subjects"]
+            exam = form.cleaned_data["exam"]
+            results = []
+
+            for student in Student.objects.filter(user=finaluser, current_class=class_name):
+                check = Result.objects.filter(user=finaluser, current_class=class_name, subject=subject, student=student, exam=exam, session=current_session, term=current_term).first()
+                if not check:
+                    result = Result(
+                        user=finaluser,
+                        current_class=class_name,
+                        subject=subject,
+                        student=student,
+                        exam=exam,
+                        exam_score=0,
+                        session=current_session,
+                        term=current_term,
+                    )
+                    results.append(result)
+
+            Result.objects.bulk_create(results)
+            redirect_url = reverse("edit-results")
+            redirect_url += f"?classid={class_name.id}&subjectid={subject.id}&examid={exam.id}"
+            return redirect(redirect_url)
+        return render(request, "result/create_result_page2.html", {"form": form})
+
+class EditResultsView(LoginRequiredMixin, View):
+    def get(self, request):
+        classid = request.GET.get("classid")
+        subjectid = request.GET.get("subjectid")
+        examid = request.GET.get("examid")
+        results = Result.objects.filter(user=request.user, current_class=classid, subject=subjectid, exam=examid)
+        formset = EditResults(queryset=results)
+        records = False
+        if results.exists():
+            records = True
+        return render(request, "result/edit_results.html", {"formset": formset, "records": records})
+
+    def post(self, request):
+        classid = request.GET.get("classid")
+        subjectid = request.GET.get("subjectid")
+        examid = request.GET.get("examid")
+        formset = EditResults(request.POST)
+        if formset.is_valid():
+            formset.save()
             messages.success(request, "Results successfully updated")
-            return redirect("edit-results")
-    else:
-        results = Result.objects.filter(
-            session=request.current_session, term=request.current_term
+            redirect_url = reverse("edit-results")
+            redirect_url += f"?classid={classid}&subjectid={subjectid}&examid={examid}"
+            return redirect(redirect_url)
+        else:
+            messages.error(request, "Exam score should not exceed 100")
+            redirect_url = reverse("edit-results")
+            redirect_url += f"?classid={classid}&subjectid={subjectid}&examid={examid}"
+            return redirect(redirect_url)
+
+class GetResultsView(LoginRequiredMixin, View):
+    def get(self, request):
+        class_id = request.GET.get("class_id")
+        exam_id = request.GET.get("exam_id")
+        subject_id = request.GET.get("subject_id")
+        finaluser = self.request.user
+        if finaluser.is_faculty:
+            staffrecord = Staff.objects.get(email=finaluser.username)
+            finaluser = staffrecord.user
+
+        current_session = AcademicSession.objects.filter(user=finaluser, current=True).first()
+        current_term = AcademicTerm.objects.filter(user=finaluser, current=True).first()
+
+        results = Result.objects.filter(user=finaluser, session=current_session, term=current_term)
+        exams = Exam.objects.filter(user=finaluser, session=current_session, term=current_term)
+
+        if class_id:
+            results = results.filter(current_class_id=class_id)
+
+        if exam_id:
+            results = results.filter(exam_id=exam_id)
+        elif exams.exists():
+            results = results.filter(exam_id=exams.first().id)
+
+        if subject_id:
+            results = results.filter(subject_id=subject_id)
+
+        classes = StudentClass.objects.filter(user=finaluser)
+        filter_subject = Subject.objects.filter(user=finaluser)
+        resultss = {}
+        has_records = False
+
+        for eachclass in classes:
+            subjects, students = [], []
+            unique_subjects = results.filter(current_class=eachclass).values("subject").distinct()
+            unique_student_ids = results.filter(current_class=eachclass).values_list("student_id", flat=True).distinct()
+
+            for subject in unique_subjects:
+                subjects.append(Subject.objects.get(pk=subject["subject"]))
+
+            for student_id in unique_student_ids:
+                student = Student.objects.get(pk=student_id)
+                total_score = 0
+                count = 0
+
+                for subject in subjects:
+                    result = results.filter(current_class=eachclass, student=student, subject=subject).first()
+                    gradepoint = result.grade()
+                    if result:
+                        count += 1
+                        total_score += result.exam_score
+
+                percent = round(((total_score / (count * 100)) * 100), 1)
+                if subject_id:
+                    total_score = gradepoint
+                students.append({"student": student, "total_score": total_score, "percent": percent})
+
+            if subjects or students:
+                has_records = True
+                class_students = []
+                for student_data in students:
+                    if student_data["student"] not in [s["student"] for s in class_students]:
+                        class_students.append(student_data)
+                    else:
+                        continue
+
+                resultss[eachclass] = {"exam": None, "students": class_students, "subjects": subjects}
+
+        return render(
+            request,
+            "result/all_results.html",
+            {
+                "results": results,
+                "student_classes": classes,
+                "exams": exams,
+                "filter_subject": filter_subject,
+                "resultss": resultss,
+                "has_records": has_records,
+            },
         )
-        form = EditResults(queryset=results)
-    return render(request, "result/edit_results.html", {"formset": form})
 
+class ExamsListView(LoginRequiredMixin, ListView):
+    model = Exam
+    template_name = 'corecode/exams_list.html'
+    context_object_name = 'exams'
 
-class ResultListView(LoginRequiredMixin, View):
-    def get(self, request, *args, **kwargs):
-        results = Result.objects.filter(
-            session=request.current_session, term=request.current_term
-        )
-        bulk = {}
+    def get_queryset(self):
+        finaluser = self.request.user
+        if finaluser.is_faculty:
+            staffrecord = Staff.objects.get(email=finaluser.username)
+            finaluser = staffrecord.user
+        queryset = super().get_queryset()
+        return queryset.filter(user=finaluser)
 
-        for result in results:
-            test_total = 0
-            exam_total = 0
-            subjects = []
-            for subject in results:
-                if subject.student == result.student:
-                    subjects.append(subject)
-                    test_total += subject.test_score
-                    exam_total += subject.exam_score
+class ExamsCreateView(LoginRequiredMixin, CreateView):
+    model = Exam
+    form_class = ExamsForm
+    template_name = 'corecode/exams_form.html'
+    success_url = reverse_lazy('exams_list')
+    success_message = "Exams added successfully."
 
-            bulk[result.student.id] = {
-                "student": result.student,
-                "subjects": subjects,
-                "test_total": test_total,
-                "exam_total": exam_total,
-                "total_total": test_total + exam_total,
-            }
+    def get_form_kwargs(self):
+        finaluser = self.request.user
+        if finaluser.is_faculty:
+            staffrecord = Staff.objects.get(email=finaluser.username)
+            finaluser = staffrecord.user        
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = finaluser
+        return kwargs
 
-        context = {"results": bulk}
-        return render(request, "result/all_results.html", context)
+    def post(self, request, *args, **kwargs):
+        finaluser = self.request.user
+        if finaluser.is_faculty:
+            staffrecord = Staff.objects.get(email=finaluser.username)
+            finaluser = staffrecord.user
+        form = self.get_form()
+        if form.is_valid():
+            form.instance.user = finaluser
+            return self.form_valid(form)
+        else:
+            return self.form_invalid(form)
+
+class ExamsUpdateView(LoginRequiredMixin, UpdateView):
+    model = Exam
+    form_class = ExamsForm
+    template_name = 'corecode/exams_form.html'
+    success_url = reverse_lazy('exams_list')
+
+class ExamsDeleteView(LoginRequiredMixin, DeleteView):
+    model = Exam
+    template_name = 'corecode/core_confirm_delete.html'
+    success_url = reverse_lazy('exams_list')

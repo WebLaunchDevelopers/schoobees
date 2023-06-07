@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% load widget_tweaks %}
+
+{% block title %}
+Exams
+{% endblock title %}
+
+{% block breadcrumb %}
+  <a class="btn btn-primary" href="{% url 'exams_create' %}" >
+    <i class="fa fa-plus"></i>
+    Add new Exam
+  </a>
+{% endblock breadcrumb %}
+
+{% block content %}
+  <h1>Exams List</h1>
+  <div class="row">
+    <div class="col-sm-12">
+
+        <table class="table table-bordered">
+          <tbody>
+            {% for exam in exams %}
+            <tr>
+              <td>{{ exam.exam_name }} - {{ exam.exam_date }}</td>
+              <td><a href="{% url 'exams_update' pk=exam.pk %}"><i
+                    class="fa fa-edit"></i></a> <a
+                  href="{% url 'exams_delete'  pk=exam.pk %}"><i
+                    class="fa fa-trash-alt"></i></a></td>
+            </tr>
+           {% endfor %}
+          </tbody>
+        </table>
+    </div>
+  </div>
+{% endblock %}

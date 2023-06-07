@@ -2,12 +2,11 @@
 {% load widget_tweaks %}
 
 {% block title %}
-  {{title}}
+  {{ title }}
 {% endblock title %}
 
-
-
-{% block title-side %}{% endblock title-side %}
+{% block title-side %}
+{% endblock title-side %}
 
 {% block content %}
   <div class="row">
@@ -17,22 +16,24 @@
 
         <div class="mb-3">
           {% for field in form %}
-          <div class="form-group">
-            {{ field.label_tag}}
-            {{ field | add_class:"form-control" |add_error_class:"is-invalid" | attr:"required"}}
-            {{field.help_text}}
-            {{field.errors}}
+            {% if field.name == 'current' %}
+            <div class="form-group d-flex" style="flex-direction: row; justify-content: start; align-items: center;">
+              <input type="checkbox" name="{{ field.name }}" required class="form-control" id="{{ field.id_for_label }}" value="checked" {% if field.value == 'checked' %}checked{% endif %} style="width: 20px;">
+              <label for="{{ field.id_for_label }}" style="margin-left: 10px; margin-bottom: 0;">{{ field.label }}</label>
           </div>
+          
+            {% else %}
+              <div class="form-group">
+                {{ field.label_tag }}
+                {{ field | add_class:"form-control" | add_error_class:"is-invalid" | attr:"required" }}
+                {{ field.errors }}
+              </div>
+            {% endif %}
           {% endfor %}
         </div>
 
-
         <input type="submit" value="Save" class="w-25 btn btn-primary">
-
       </form>
     </div>
   </div>
-
 {% endblock content %}
-
-

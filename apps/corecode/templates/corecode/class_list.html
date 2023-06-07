@@ -16,20 +16,25 @@ Classes
   
 
 {% block content %}
+{% if object in object_list %}
+              Worls
+            {% endif %}
   <div class="row">
     <div class="col-sm-12">
 
         <table class="table table-bordered">
           <tbody>
+            
             {% for object in object_list %}
             <tr>
               <td>{{ object }}</td>
-              <td><a href="{% url 'class-update' object.id %}"><i
+              <td><a href="{% url 'class-update' object.pk %}"><i
                     class="fa fa-edit"></i></a> <a
-                  href="{% url 'class-delete' object.id %}"><i
+                  href="{% url 'class-delete' object.pk %}"><i
                     class="fa fa-trash-alt"></i></a></td>
             </tr>
             {% endfor %}
+            
           </tbody>
         </table>
 

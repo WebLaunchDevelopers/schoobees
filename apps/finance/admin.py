@@ -1,30 +1,24 @@
 from django.contrib import admin
 from .models import Invoice, InvoiceItem, Receipt
 
+
+@admin.register(Invoice)
 class InvoiceAdmin(admin.ModelAdmin):
-    # list_display = ('id', 'name', 'roll_number', 'department')
-    # list_display_links = ('id', 'name')
-    # list_filter = ('department',)
-    # search_fields = ('name', 'roll_number')
-    class Meta:
-        model = Invoice
+    list_display = ('student', 'session', 'term', 'class_for', 'balance', 'status')
+    search_fields = ('student__first_name', 'student__last_name')
+    list_filter = ('session', 'term', 'class_for', 'status')
+    readonly_fields = ('balance',)
+    ordering = ('student', 'term')
 
+
+@admin.register(InvoiceItem)
 class InvoiceItemAdmin(admin.ModelAdmin):
-    # list_display = ('id', 'name', 'roll_number', 'department')
-    # list_display_links = ('id', 'name')
-    # list_filter = ('department',)
-    # search_fields = ('name', 'roll_number')
-    class Meta:
-        model = InvoiceItem
+    list_display = ('invoice', 'description', 'amount')
+    list_filter = ('invoice__session', 'invoice__term', 'invoice__class_for')
 
+
+@admin.register(Receipt)
 class ReceiptAdmin(admin.ModelAdmin):
-    # list_display = ('id', 'name', 'roll_number', 'department')
-    # list_display_links = ('id', 'name')
-    # list_filter = ('department',)
-    # search_fields = ('name', 'roll_number')
-    class Meta:
-        model = Receipt
-
-admin.site.register(Invoice, InvoiceAdmin)
-admin.site.register(InvoiceItem, InvoiceItemAdmin)
-admin.site.register(Receipt, ReceiptAdmin)
+    list_display = ('invoice', 'amount_paid', 'date_paid', 'payment_method')
+    search_fields = ('invoice__student__first_name', 'invoice__student__last_name', 'payment_method')
+    list_filter = ('invoice__session', 'invoice__term', 'invoice__class_for')

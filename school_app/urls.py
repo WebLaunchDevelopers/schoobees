@@ -18,8 +18,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import include, path
 
-admin.site.site_header = 'SchoolBee Admin Panel'
-admin.site.site_title = 'School Bee'
+admin.site.site_header = 'SchooBee Admin Panel'
+admin.site.site_title = 'SchooBee'
 admin.site.index_title = 'Administration'
 
 urlpatterns = [
@@ -31,4 +31,10 @@ urlpatterns = [
     path("staff/", include("apps.staffs.urls")),
     path("finance/", include("apps.finance.urls")),
     path("result/", include("apps.result.urls")),
+    path("api/", include("apps.api.urls")),
+    path("attendance/", include("apps.attendance.urls")),
+    path('timetable/', include('apps.time_table.urls')),
+
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+handler404 = 'apps.base.views.error_404_view'
