@@ -13,10 +13,9 @@
   <div class="col-sm-12">
     <div class="col-sm-4">
       {% include 'corecode/form_snippet.html' %}
-      <div id="passport-container">
-        {% if staff_profile_form.passport %}
-          <img id="passport-image" src="{{ staff_profile_form.passport.url }}" class="float-left rounded-circle mr-3" style="width: 120px; height: 120px;">
           <input id="passport-input" type="file" name="passport" style="display: none;">
+        {% if object.passport %}
+          <img id="passport-image" src="{{ object.passport.url }}" class="float-left rounded-circle mr-3" style="width: 120px; height: 120px;">
         {% else %}
           {% if object.gender == "female" %}
             <img id="passport-image-gender1" src="{% static 'dist/img/avatar3.png' %}" class="float-left rounded-circle mr-3" style="width: 120px; height: 120px;">
