@@ -80,6 +80,7 @@
   }
 </style>
 
+{% if not user.is_faculty %}
   <div class="container-fluid mt-5">
     <div class="row">
       <div class="col-md-3">
@@ -95,7 +96,6 @@
           </a>
         </div>
       </div>
-      {% if not user.is_faculty %}
       <div class="col-md-3">
         <div class="card dashboard-card">
           <a href="{% url 'staff-list' %}" style="text-decoration: none;">
@@ -135,9 +135,9 @@
           </a>
         </div>
       </div>
-      {% endif %}
     </div>
   </div>
+  {% endif %}
   <div class="d-flex">
     <div class="float-left">
       <div class="container-fluid mt-5">
@@ -282,7 +282,6 @@
     <div class="float-right">
       <div id='calendar'></div>
       <div class="card dashboard-card">
-        {% if not user.is_faculty %}
         <div class="card-body">
           <h5 class="card-title">
             <i class="fa fa-birthday-cake fa-lg mr-2"></i>
@@ -293,7 +292,6 @@
           <p class="card-text">{{Bdays}}</p>
           {% endfor %}
         </div>
-         {% endif %}
       </div>    
     </div>
 
