@@ -255,6 +255,11 @@ class FeedbackListView(LoginRequiredMixin, ListView):
     def get(self, request, *args, **kwargs):
         feedbacks = self.get_queryset()
         feedbacks.update(is_seen=True)  # Update is_seen to True for all feedbacks
+
+        if not self.request.user.has_perm('app_name.can_view_feedbacks'):
+            message = "You don't have access to this page."
+            return HttpResponse(message)
+
         return super().get(request, *args, **kwargs)
 
 

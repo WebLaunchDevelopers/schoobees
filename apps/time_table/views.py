@@ -11,6 +11,7 @@ from django.db import transaction
 from django.contrib import messages
 from django.views import View
 from django.http import HttpResponseRedirect
+from apps.staffs.models import Staff
 
 class TimetableCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     template_name = 'timetable/create_time_table.html'
@@ -18,9 +19,13 @@ class TimetableCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     form_class = TimetableForm
 
     def get(self, request):
+        finaluser = request.user
+        if finaluser.is_faculty:
+            staffrecord = Staff.objects.get(email=finaluser.username)
+            finaluser = staffrecord.user
         try:
-            AcademicSession.objects.get(user=request.user, current=True)
-            AcademicTerm.objects.get(user=request.user, current=True)
+            AcademicSession.objects.get(user=finaluser, current=True)
+            AcademicTerm.objects.get(user=finaluser, current=True)
         except (AcademicSession.DoesNotExist, AcademicTerm.DoesNotExist):
             messages.error(request, "Academic session or term not found.")
 
@@ -36,9 +41,14 @@ class TimetableCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         form = self.get_form()
 
         if form.is_valid():
+            finaluser = request.user
+            if finaluser.is_faculty:
+                staffrecord = Staff.objects.get(email=finaluser.username)
+                finaluser = staffrecord.user
+            print(finaluser)
             try:
-                current_session = AcademicSession.objects.get(user=request.user, current=True)
-                current_term = AcademicTerm.objects.get(user=request.user, current=True)
+                current_session = AcademicSession.objects.get(user=finaluser, current=True)
+                current_term = AcademicTerm.objects.get(user=finaluser, current=True)
             except (AcademicSession.DoesNotExist, AcademicTerm.DoesNotExist):
                 messages.error(request, "Academic session or term not found.")
                 return redirect('timetable_create')
@@ -47,14 +57,14 @@ class TimetableCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
             timetable_data.update({
                 'session': current_session,
                 'term': current_term,
-                'user': request.user
+                'user': finaluser
             })
 
             # Check if a similar timetable record already exists
             existing_timetable = Timetable.objects.filter(
                 session=current_session,
                 term=current_term,
-                user=request.user,
+                user=finaluser,
                 class_of=timetable_data['class_of'],
                 start_time=timetable_data['start_time'],
                 date=timetable_data['date'],
@@ -78,13 +88,18 @@ class ViewTimeTableView(LoginRequiredMixin, View):
     template_name = 'timetable/view_time_table.html'
 
     def get(self, request):
+        finaluser = request.user
+        if finaluser.is_faculty:
+            staffrecord = Staff.objects.get(email=finaluser.username)
+            finaluser = staffrecord.user
+        print(finaluser)
         class_id = request.GET.get('class_id')
         subject_id = request.GET.get('subject_id')
         date = request.GET.get('date') or timezone.now().date()
 
-        current_session = AcademicSession.objects.filter(user=request.user, current=True).first()
-        current_term = AcademicTerm.objects.filter(user=request.user, current=True).first()
-        timetables = Timetable.objects.filter(session=current_session, term=current_term, user=request.user)
+        current_session = AcademicSession.objects.filter(user=finaluser, current=True).first()
+        current_term = AcademicTerm.objects.filter(user=finaluser, current=True).first()
+        timetables = Timetable.objects.filter(session=current_session, term=current_term, user=finaluser)
 
         if class_id:
             timetables = timetables.filter(class_of_id=class_id)
@@ -96,8 +111,8 @@ class ViewTimeTableView(LoginRequiredMixin, View):
             timetables = timetables.filter(date=date)
 
         timetables = timetables.order_by('class_of', 'start_time')
-        student_classes = StudentClass.objects.filter(user=request.user)
-        subjects = Subject.objects.filter(user=request.user)
+        student_classes = StudentClass.objects.filter(user=finaluser)
+        subjects = Subject.objects.filter(user=finaluser)
         date_today = timezone.now().date().strftime('%Y-%m-%d')
 
         class_ids = timetables.values_list('class_of_id', flat=True).distinct()  # Get unique class IDs

@@ -65,10 +65,14 @@ class CreateResultView(LoginRequiredMixin, View):
 
 class EditResultsView(LoginRequiredMixin, View):
     def get(self, request):
+        finaluser = request.user
+        if finaluser.is_faculty:
+            staffrecord = Staff.objects.get(email=finaluser.username)
+            finaluser = staffrecord.user
         classid = request.GET.get("classid")
         subjectid = request.GET.get("subjectid")
         examid = request.GET.get("examid")
-        results = Result.objects.filter(user=request.user, current_class=classid, subject=subjectid, exam=examid)
+        results = Result.objects.filter(user=finaluser, current_class=classid, subject=subjectid, exam=examid)
         formset = EditResults(queryset=results)
         records = False
         if results.exists():
