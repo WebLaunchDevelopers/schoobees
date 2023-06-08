@@ -40,14 +40,15 @@ class CustomUserForm(forms.ModelForm):
     def save(self):
         user = super().save(commit=False)
         user.email = self.cleaned_data.get('email')
-        user.username = self.cleaned_data.get('email')
+        if user.is_faculty:
+            user.username = self.cleaned_data.get('email')
         user.save()
         return user
 
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
-        fields = ['school_name', 'chairman', 'principal', 'mobile_number', 'address', 'country']
+        fields = ['school_name', 'chairman', 'principal', 'mobile_number', 'address', 'country', 'profile_picture']
         widgets = {
             'school_name': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your school name'}),
             'chairman': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter your chairman name'}),
@@ -60,7 +61,7 @@ class UserProfileForm(forms.ModelForm):
 class StaffProfileForm(forms.ModelForm):
     class Meta:
         model = Staff
-        fields = ['first_name', 'last_name','mobile_number', 'address', 'gender', 'date_of_birth', 'email']
+        fields = ['first_name', 'last_name','mobile_number', 'address', 'gender', 'date_of_birth', 'email', 'passport']
         widgets={
             "first_name": forms.TextInput(attrs={"class": "form-control", "placeholder": "Enter first name"}),
             "last_name": forms.TextInput(attrs={"class": "form-control", "placeholder": "Enter last name"}),

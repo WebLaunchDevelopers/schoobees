@@ -13,26 +13,20 @@
   <div class="col-sm-12">
     <div class="col-sm-4">
       {% include 'corecode/form_snippet.html' %}
-          <input id="passport-input" type="file" name="passport" style="display: none;">
-        {% if object.passport %}
-          <img id="passport-image" src="{{ object.passport.url }}" class="float-left rounded-circle mr-3" style="width: 120px; height: 120px;">
+        {% if staff_url %}
+          <img id="passport-image" src="{{ staff_url }}" class="float-left rounded-circle mr-3" style="width: 120px; height: 120px;margin-top: 2rem;">
         {% else %}
-          {% if object.gender == "female" %}
-            <img id="passport-image-gender1" src="{% static 'dist/img/avatar3.png' %}" class="float-left rounded-circle mr-3" style="width: 120px; height: 120px;">
+          {% if staff_profile_form.gender.value == "female" %}
+            <img id="passport-image-gender1" src="{% static 'dist/img/avatar3.png' %}" class="float-left rounded-circle mr-3" style="width: 120px; height: 120px;margin-top: 2rem;">
           {% else %}
-            <img id="passport-image-gender2" src="{% static 'dist/img/avatar5.png' %}" class="float-left rounded-circle mr-3" style="width: 120px; height: 120px;">
+            <img id="passport-image-gender2" src="{% static 'dist/img/avatar5.png' %}" class="float-left rounded-circle mr-3" style="width: 120px; height: 120px;margin-top: 2rem;">
           {% endif %}
         {% endif %}
       </div>
     </div>
     <br>
-    <div class="col-sm-8">
+    <div class="col-sm-12">
       <div>
-        <div class="form-group">
-          <label>Register ID:</label>
-          <span class="form-control-static">{{ custom_user_form.register_id.value }}</span>
-        </div>
-
         <input type="hidden" name="register_id" value="{{ custom_user_form.instance.register_id }}">
 
         <div class="form-group d-flex">
@@ -75,6 +69,10 @@
             {{ staff_profile_form.date_of_birth|add_class:"form-control"|attr:"placeholder: Enter your date of birth" }}
           </div>
         </div>
+        <div style="margin-bottom: 20px;">
+          <label for="{{ staff_profile_form.passport.id_for_label }}">Passport:</label><br>
+          <input type="file" name="passport" accept="image/*" id="id_passport">
+        </div>
 
         <button type="submit" class="btn btn-primary">Submit</button>
         <p style="margin-top: 15px;margin-bottom: 0;"><a href="{% url 'change_password' %}"> Click here</a> To Change the Password</p>
@@ -82,22 +80,4 @@
     </div>
   </div>
 </form>
-
-<script>
-  $(document).ready(function() {
-    $('#passport-image').click(function() {
-      $('#passport-input').click();
-    });
-
-    $('#passport-input').change(function() {
-      var file = $(this)[0].files[0];
-      var reader = new FileReader();
-      reader.onload = function(e) {
-        $('#passport-image').attr('src', e.target.result);
-      };
-      reader.readAsDataURL(file);
-    });
-  });
-</script>
-
 {% endblock content %}

@@ -96,7 +96,7 @@ class IndexView(LoginRequiredMixin, ListView):
         staffBdays=Staff.objects.filter(user=finaluser, date_of_birth__month=today.month, date_of_birth__day=today.day)
         context["staffBdays"]=staffBdays
         
-        events = Calendar.objects.filter(user=self.request.user)
+        events = Calendar.objects.filter(user=finaluser)
         event_list = [{'title': event.title, 'start': str(event.date), 'type': event.type} for event in events]
         context.update({
             'event_list': json.dumps(event_list)
@@ -114,7 +114,8 @@ class SiteConfigView(LoginRequiredMixin, View):
         user = request.user
         custom_user_form = CustomUserForm(instance=user)
         user_profile_form = UserProfileForm(instance=user.userprofile)
-        return render(request, 'corecode/siteconfig.html', {'custom_user_form': custom_user_form, 'user_profile_form': user_profile_form})
+        passport_url = user.userprofile.profile_picture.url if user.userprofile.profile_picture else None
+        return render(request, 'corecode/siteconfig.html', {'custom_user_form': custom_user_form, 'user_profile_form': user_profile_form, 'user_url': passport_url})
 
     def post(self, request):
         if request.user.is_faculty:
@@ -153,7 +154,8 @@ class FacultyProfileView(LoginRequiredMixin, View):
 
         custom_user_form = CustomUserForm(instance=user)
         staff_profile_form = StaffProfileForm(instance=staff)
-        return render(request, 'corecode/facultyprofile.html', {'custom_user_form': custom_user_form, 'staff_profile_form': staff_profile_form})
+        passport_url = staff.passport.url if staff.passport else None
+        return render(request, 'corecode/facultyprofile.html', {'custom_user_form': custom_user_form, 'staff_profile_form': staff_profile_form, 'staff_url': passport_url})
 
     def post(self, request):
         if not request.user.is_faculty:

@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% load widget_tweaks %}
 
 {% block title %}
@@ -6,9 +7,19 @@
 {% endblock title %}
 
 {% block content %}
-  <form method="POST">
+  <form method="POST" enctype="multipart/form-data">
     {% csrf_token %}
-
+    <div class="col-sm-12">
+      <div style="text-align: center;">
+        {% include 'corecode/form_snippet.html' %}
+          {% if user_url %}
+            <img id="passport-image" src="{{ user_url }}" class="rounded-circle mr-3" style="width: 120px; height: 120px;margin-top: 2rem;">
+          {% else %}
+            <img id="passport-image-gender2" src="{% static 'dist/img/school3.png' %}" class="rounded-circle mr-3" style="width: 120px; height: 120px;margin-top: 2rem;">
+          {% endif %}
+        </div>
+      </div>
+      <br>
     <div class="form-group">
       <label>Register ID:</label>
       <span class="form-control-static">{{ custom_user_form.register_id.value }}</span>
@@ -54,7 +65,11 @@
         <label for="{{ user_profile_form.country.id_for_label }}">Country:</label>
         {{ user_profile_form.country|add_class:"form-control"|attr:"placeholder: Enter your country" }}
       </div>
-    </div>    
+    </div>
+    <div style="margin-bottom: 20px;">
+      <label for="{{ user_profile_form.profile_picture.id_for_label }}">Passport:</label><br>
+      <input type="file" name="profile_picture" accept="image/*" id="id_profile_picture">
+    </div>
 
     <button type="submit" class="btn btn-primary">Submit</button>
 
