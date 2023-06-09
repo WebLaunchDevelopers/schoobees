@@ -1,5 +1,5 @@
 from django import forms
-from django.forms import ModelForm, modelformset_factory
+from django.forms import ModelForm
 
 from .models import (
     AcademicSession,
@@ -13,12 +13,7 @@ from .models import (
 
 from apps.base.models import UserProfile, CustomUser
 from apps.staffs.models import Staff
-from django.contrib.auth import get_user_model
-
-# CustomUser = get_user_model()
-from django.contrib.auth.forms import UserCreationForm
 from django.db import transaction
-from django.core.exceptions import ValidationError
 
 class CustomUserForm(forms.ModelForm):
     email = forms.EmailField(required=True)

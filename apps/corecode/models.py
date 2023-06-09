@@ -5,8 +5,6 @@ import random
 import string
 
 CustomUser = get_user_model()
-# Create your models here.
-
 
 class SiteConfig(models.Model):
     """Site Configurations"""

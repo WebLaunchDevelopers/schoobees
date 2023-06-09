@@ -1,5 +1,5 @@
 from django import forms
-from apps.corecode.models import AcademicSession, AcademicTerm, StudentClass, Subject
+from apps.corecode.models import StudentClass, Subject
 from .models import Timetable
 from django.utils.safestring import mark_safe
 from django.urls import reverse_lazy

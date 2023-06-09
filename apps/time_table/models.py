@@ -1,7 +1,6 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
 from django.contrib.auth import get_user_model
-from apps.corecode.models import Subject,StudentClass,AcademicTerm,AcademicSession
+from apps.corecode.models import Subject, StudentClass, AcademicTerm, AcademicSession
 from django.utils import timezone
 
 CustomUser = get_user_model()

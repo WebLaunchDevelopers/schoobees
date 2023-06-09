@@ -1,22 +1,11 @@
-from django.views import View
-from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
-from django.utils.decorators import method_decorator
-from apps.base.models import CustomUser
 from .forms import UpdateAttendance, EditAttendance
 from .models import Attendance
 from django.shortcuts import render, redirect
-from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from django.forms import modelformset_factory
-from apps.corecode.models import Subject, StudentClass, AcademicTerm, AcademicSession
+from apps.corecode.models import Subject, AcademicTerm, AcademicSession
 from apps.students.models import Student
-from django.utils.decorators import method_decorator
-from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.views.generic.edit import CreateView, DeleteView, UpdateView
-from django.views.generic import ListView, View
-from django.urls import reverse_lazy
+from django.views.generic import  View
 from django.urls import reverse
 from django.utils import timezone
 from apps.staffs.models import Staff

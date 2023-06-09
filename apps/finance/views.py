@@ -1,15 +1,10 @@
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.shortcuts import redirect, render
+from django.shortcuts import redirect
 from django.urls import reverse_lazy
 from django.views.generic import DetailView, ListView
 from django.views.generic.edit import CreateView, DeleteView, UpdateView
-from django.forms import DateInput
-
-from apps.students.models import Student
 from django.contrib import messages
-
-from .forms import InvoiceItemFormset, InvoiceReceiptFormSet, Invoices, InvoiceForm
+from .forms import InvoiceItemFormset, InvoiceReceiptFormSet, InvoiceForm
 from .models import Invoice, InvoiceItem, Receipt
 
 

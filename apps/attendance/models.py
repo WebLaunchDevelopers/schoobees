@@ -1,5 +1,4 @@
 from django.db import models
-from apps.corecode.models import AcademicSession, AcademicTerm, Subject
 from apps.corecode.models import (
     AcademicSession,
     AcademicTerm,

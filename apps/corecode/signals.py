@@ -1,6 +1,5 @@
-from django.db.models.signals import post_save, post_migrate
+from django.db.models.signals import post_save
 from django.dispatch import receiver
-from datetime import datetime
 
 from .models import AcademicSession, AcademicTerm
 

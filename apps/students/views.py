@@ -1,5 +1,4 @@
 import csv
-
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.forms import widgets
@@ -10,20 +9,15 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.shortcuts import render, redirect
 from django.utils.safestring import mark_safe
 from apps.finance.models import Invoice
-from django.db.models import Count
-from .models import Student, StudentBulkUpload, Feedback, Notification, AcademicSession,AcademicTerm
+from .models import Student, StudentBulkUpload, Feedback, Notification, AcademicSession, AcademicTerm
 from apps.staffs.models import Staff
 from apps.result.models import Result
 from apps.corecode.models import StudentClass
-from apps.base.models import CustomUser
 from plotly.offline import plot
 import plotly.express as px 
 import pandas as pd
 from django.core.exceptions import ValidationError
 from django.contrib import messages
-from django import forms
-
-from django.views.generic import FormView
 from io import StringIO
 
 class StudentListView(LoginRequiredMixin, ListView):

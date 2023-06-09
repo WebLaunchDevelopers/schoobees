@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import TimetableCreateView, ViewTimeTableView,TimetableEditView,TimetableDeleteView
+from .views import TimetableCreateView, ViewTimeTableView, TimetableEditView, TimetableDeleteView
 
 urlpatterns = [
     path('create/', TimetableCreateView.as_view(), name='timetable_create'),

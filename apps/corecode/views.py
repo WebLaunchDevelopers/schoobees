@@ -1,17 +1,12 @@
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.shortcuts import HttpResponseRedirect, redirect, render
+from django.shortcuts import  redirect, render
 from django.urls import reverse_lazy
 from django.views.generic import ListView, TemplateView, View, DetailView
-from django.views.generic.edit import CreateView, DeleteView, UpdateView, FormMixin, ModelFormMixin
+from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.db import IntegrityError
 from django.http import HttpResponse
-import qrcode
-from django.conf import settings
-from django.core.files.storage import FileSystemStorage
-import os
 from django.urls import reverse
 from django.utils.html import strip_tags
 from apps.students.models import Feedback
@@ -20,7 +15,6 @@ from .forms import (
     AcademicSessionForm,
     AcademicTermForm,
     CurrentSessionForm,
-    # SiteConfigForm,
     ProfileForm,
     CustomUserForm,
     UserProfileForm,
@@ -33,11 +27,9 @@ from .forms import (
 from .models import (
     AcademicSession,
     AcademicTerm,
-    SiteConfig,
     StudentClass,
     Subject,
     Calendar,
-    Driver,
 )
 
 import json

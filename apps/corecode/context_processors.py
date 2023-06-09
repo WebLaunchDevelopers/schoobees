@@ -1,5 +1,5 @@
-from .models import SiteConfig, AcademicSession, AcademicTerm
-from apps.base.models import CustomUser, UserProfile
+from .models import  AcademicSession, AcademicTerm
+from apps.base.models import UserProfile
 from apps.staffs.models import Staff
 
 def site_defaults(request):
