@@ -38,6 +38,7 @@ debug.log*
 
 static/admin
 static/rest_framework
+static/fontawesome_5/
 
 /media/*
 /media

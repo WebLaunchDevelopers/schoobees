@@ -309,17 +309,12 @@
           right: 'today'
         },
         eventRender: function(event, element) {
-          // element.addClass('fc-event');
           var startCell = $('#calendar').find('.fc-day[data-date="' + event.start.format('YYYY-MM-DD') + '"]');
           $('.fc-day-number').css('font-weight','500');
-            // element.css('border', 'none');
-            // element.css('text-align', 'center');
-            // element.css('color', 'white');
-            // element.css('font-weight', 'bold');
           if (event.type == 'event') {
-          startCell.css('background-color', '#A18648');
+          startCell.css('background-color', '#a60fdc');
         } else if (event.type == 'holiday') {
-          startCell.css('background-color', '#4863A0');
+          startCell.css('background-color', '#dc3545');
         }
           element.css('display', 'none');
           element.empty()
@@ -329,7 +324,7 @@
           var today = moment();
           var momentDate = moment(date); // create a moment object from the date parameter
           if (momentDate.isSame(today, 'day')) {
-          cell.css('background-color', '#A14863');
+          cell.css('background-color', '#4db6f1');
         }
         },
         dayClick: function(date, jsEvent, view) {
@@ -360,9 +355,7 @@
           }
         },
         contentHeight: 'auto', // adjust the height of the calendar to fit its content
-        aspectRatio: 2, // set the aspect ratio of the calendar to 2:1
-        // eventLimit: true, // allow "more" link when too many events
-        // eventLimitClick: 'popover' // show popover when clicking "more" link    
+        aspectRatio: 2, // set the aspect ratio of the calendar to 2:1 
       });
     });
 </script>

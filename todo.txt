@@ -69,3 +69,6 @@ data lekeage
 staff releated login works
 
 testing the website
+
+school name length issue
+delete previous passport in media folder if pic changed
