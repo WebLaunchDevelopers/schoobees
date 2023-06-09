@@ -138,8 +138,8 @@ class GetResultsView(LoginRequiredMixin, View):
 
                 for subject in subjects:
                     result = results.filter(current_class=eachclass, student=student, subject=subject).first()
-                    gradepoint = result.grade()
                     if result:
+                        gradepoint = result.grade()
                         count += 1
                         total_score += result.exam_score
 

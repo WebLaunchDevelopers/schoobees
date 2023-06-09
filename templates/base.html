@@ -11,7 +11,7 @@
 
   <title>{{ school_name | default:"SchooBees | MySchool" }}</title>
   <link rel="shortcut icon" href="{% static 'dist/img/logos/logo_y.png' %}" type="image/x-icon">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha384-vMFd+I7DQv8KPBkdOgX+j7n+r3iVo1j4MYzbw1EzI0RTO1Dk1ETWE1Thvm3lLb7x" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="{% static 'plugins/fontawesome-free/css/all.min.css' %}">
@@ -129,7 +129,7 @@
     <!-- Main Sidebar Container -->
     <aside class="main-sidebar sidebar-dark-primary elevation-4">
       <!-- Brand Logo -->
-      <a href="{% url 'home' %}" class="brand-link" style="text-decoration: none;">{{ school_name | default:"MySchool" }}</a>
+      <a href="{% url 'home' %}" class="brand-link" style="text-decoration: none;text-overflow: ellipsis;white-space: nowrap;">{{ school_name | default:"MySchool" }}</a>
 
       <!-- Sidebar -->
       <div class="sidebar">
