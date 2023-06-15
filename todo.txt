@@ -70,5 +70,9 @@ staff releated login works
 
 testing the website
 
-school name length issue
 delete previous passport in media folder if pic changed
+
+if user created in admin panel but userprofile is not created then https://schoobees.com/site-config giving error
+
+Currently using Avinash Email
+excluded_users = CustomUser.objects.filter(username__in=['admin1', 'admin2'])

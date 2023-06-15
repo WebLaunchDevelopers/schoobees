@@ -148,15 +148,6 @@
                             </span>
                         </div>
 
-                        <div class="wrap-input100 validate-input mx-2" data-validate="Valid Document">
-                            <input class="input100" id="supporting_documents" name="supporting_documents" type="file" placeholder="Supporting Documents" accept=".pdf,.doc,.docx" required>
-                            <span class="focus-input100"></span>
-                            <span class="symbol-input100">
-                                <i class="fa fa-upload" aria-hidden="true"></i>
-                            </span>
-                        </div>
-
-
                         <div class="d-flex justify-content-center wrap-input100 validate-input">
                             <div class="form-group mx-2">
                                 {{ profile_form.country }}
@@ -188,7 +179,7 @@
                                 </span>
                             </div>
 
-                            <div class="wrap-input100 validate-input " data-validate="Principal name is required">
+                            <div class="wrap-input100 validate-input" data-validate="Principal name is required">
                                 <input class="input100" id="principal" name="principal" type="text" placeholder="Principal" required>
                                 <span class="focus-input100"></span>
                                 <span class="symbol-input100">
@@ -197,27 +188,41 @@
                             </div>
                         </div>
 
-                        <div class="wrap-input100 validate-input" data-validate="Password is required">
-                            <input type="password" name="password1" id="password1" class="input100" placeholder="Password" required>
-                            <span class="focus-input100"></span>
-                            <span class="symbol-input100">
-                                <i class="fa fa-lock" aria-hidden="true"></i>
-                            </span>
+                        <div class="d-flex justify-content-center">
+                            <div class="wrap-input100 validate-input  mx-2" data-validate="Password is required">
+                                <input type="password" name="password1" id="password1" class="input100" placeholder="Password" required>
+                                <span class="focus-input100"></span>
+                                <span class="symbol-input100">
+                                    <i class="fa fa-lock" aria-hidden="true"></i>
+                                </span>
+                            </div>
+    
+                            <!-- Confirm Password -->
+                            <div class="wrap-input100 validate-input" data-validate="Confirm Password is required">
+                                <input type="password" name="password2" id="password2" class="input100" placeholder="Confirm Password" required>
+                                <span class="focus-input100"></span>
+                                <span class="symbol-input100">
+                                    <i class="fa fa-lock" aria-hidden="true"></i>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="wrap-input100 validate-input mx-2 mt-2" data-validate="Valid Document">
+                            <label for="">Supporting Documents:</label>
+                            <input id="supporting_documents" name="supporting_documents" type="file" placeholder="Supporting Documents" accept=".pdf,.doc,.docx" required>
                         </div>
 
-                        <!-- Confirm Password -->
-                        <div class="wrap-input100 validate-input" data-validate="Confirm Password is required">
-                            <input type="password" name="password2" id="password2" class="input100" placeholder="Confirm Password" required>
-                            <span class="focus-input100"></span>
-                            <span class="symbol-input100">
-                                <i class="fa fa-lock" aria-hidden="true"></i>
-                            </span>
-                        </div>
-
-                        <div class="container-login100-form-btn my-4">
+                        <div class="container-login100-form-btn">
                             <button class="login100-form-btn" type="submit">
                                 Create Account
                             </button>
+                        </div>
+                        <div class="text-center p-t-12">
+                            <span class="txt1">
+                                Already have an
+                            </span>
+                            <a class="txt2" href="{% url 'login' %}">
+                                Account?
+                            </a>
                         </div>
                     </div>
                 </form>
