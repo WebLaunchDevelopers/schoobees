@@ -121,7 +121,7 @@
 
             <!-- Registration Form -->
             <div class="col-md-7 col-lg-6 ml-auto">
-                <form method="post">
+                <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="row">
                         <div class="wrap-input100 validate-input mx-2" data-validate="Enter username">
@@ -147,6 +147,15 @@
                                 <i class="fa fa-building" aria-hidden="true"></i>
                             </span>
                         </div>
+
+                        <div class="wrap-input100 validate-input mx-2" data-validate="Valid Document">
+                            <input class="input100" id="supporting_documents" name="supporting_documents" type="file" placeholder="Supporting Documents" accept=".pdf,.doc,.docx" required>
+                            <span class="focus-input100"></span>
+                            <span class="symbol-input100">
+                                <i class="fa fa-upload" aria-hidden="true"></i>
+                            </span>
+                        </div>
+
 
                         <div class="d-flex justify-content-center wrap-input100 validate-input">
                             <div class="form-group mx-2">

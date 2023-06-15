@@ -54,7 +54,7 @@ class StaffCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 
 class StaffUpdateView(SuccessMessageMixin, UpdateView):
     model = Staff
-    fields = ['current_status','first_name','last_name','gender','date_of_birth','email','mobile_number','address','comments', 'passport']
+    fields = ['current_status', 'first_name', 'last_name', 'gender', 'date_of_birth', 'email', 'mobile_number', 'address', 'comments', 'passport']
     success_message = "Record successfully updated."
 
     def get_form(self):

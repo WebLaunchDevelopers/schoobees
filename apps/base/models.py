@@ -32,7 +32,7 @@ class UserProfile(models.Model):
         ('AU', 'Australia (+61)'),
     )
     user = models.OneToOneField(CustomUser, on_delete=models.CASCADE)
-    profile_picture = models.ImageField(upload_to='profile_pictures/', null=True, blank=True)
+    profile_picture = models.ImageField(upload_to='user/profile_pictures/', null=True, blank=True)
     # Fields specific to schools
     mobile_number = models.CharField(max_length=15)
     address = models.CharField(max_length=100)
@@ -41,4 +41,5 @@ class UserProfile(models.Model):
     # school_type = models.CharField(max_length=10, choices=SCHOOL_CHOICES, blank=True, null=True)
     chairman = models.CharField(max_length=50, blank=True, null=True)
     principal = models.CharField(max_length=50, blank=True, null=True)
+    supporting_documents = models.FileField(upload_to='user/supporting_documents/', null=True, blank=True)
     # Additional fields that are specific to certain user types go here
