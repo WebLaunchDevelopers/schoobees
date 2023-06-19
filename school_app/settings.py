@@ -175,10 +175,11 @@ USE_TZ = True
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10240
 
 STATIC_URL = "/static/"
+STATIC_ROOT = os.path.join(BASE_DIR, 'static') # for server, comment for local
 
-STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),)
+# STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),) # uncomment for local, comment for server
 
-# STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles") # comment for server
+# STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles") # comment for server, uncomment for local
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
