@@ -28,7 +28,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 class DriverSerializer(serializers.ModelSerializer):
 	class Meta:
 		model = Driver
-		fields = ['id', 'name', 'phone_number', 'alternate_number', 'email', 'address', 'aadhaar_number', 'license_number', 'vehicle_name', 'vehicle_model', 'vehicle_number', 'latitude', 'longitude']
+		fields = ['id', 'name', 'phone_number', 'alternate_number', 'email', 'address', 'aadhaar_number', 'license_number', 'vehicle_name', 'vehicle_model', 'vehicle_number', 'latitude', 'longitude', 'is_driveradmin']
 
 class RouteSerializer(serializers.ModelSerializer):
     created_at = serializers.SerializerMethodField()

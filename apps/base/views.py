@@ -108,10 +108,18 @@ class ChangePasswordView(View):
     success_url = 'change_password'
 
     def get(self, request):
+        if request.user.is_authenticated:
+            if request.user.is_superuser:
+                return redirect('/admin/login')
+            
         form = self.form_class(request.user)
         return render(request, self.template_name, {'form': form})
 
     def post(self, request, *args, **kwargs):
+        if request.user.is_authenticated:
+            if request.user.is_superuser:
+                return redirect('/admin/login')
+      
         form = self.form_class(request.user, request.POST)
         if form.is_valid():
             new_password1 = form.cleaned_data.get('new_password1')

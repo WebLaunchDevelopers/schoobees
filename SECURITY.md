@@ -2,7 +2,7 @@
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability in this project, please email the project maintainers at avinashgummadi2021weblaunch@gmail.com with a description of the vulnerability and steps to reproduce it. Please do not create a public GitHub issue for the vulnerability.
+If you discover a security vulnerability in this project, please email the project maintainers at schoobees@gmail.com with a description of the vulnerability and steps to reproduce it. Please do not create a public GitHub issue for the vulnerability.
 
 We take all security vulnerabilities seriously and will investigate promptly. We appreciate your help in disclosing the issue responsibly and giving us the opportunity to address it before making it public.
 

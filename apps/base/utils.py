@@ -24,7 +24,7 @@ def send_password_reset_email(user, request):
     send_mail(
         'Reset your password',
         f'Please click the following link to reset your password: {reset_password_link}',
-        'avinashgummadi2021weblaunch@gmail.com',
+        'schoobees@gmail.com',
         [user.email],
         fail_silently=False,
     )

@@ -73,6 +73,7 @@ testing the website
 delete previous passport in media folder if pic changed
 
 if user created in admin panel but userprofile is not created then https://schoobees.com/site-config giving error
+check all links which are not restricted for admin
+s3 if needed
 
-Currently using Avinash Email
 excluded_users = CustomUser.objects.filter(username__in=['admin1', 'admin2'])
