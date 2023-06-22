@@ -251,7 +251,7 @@ class FeedbackListView(LoginRequiredMixin, ListView):
         feedbacks.update(is_seen=True)  # Update is_seen to True for all feedbacks
 
         if self.request.user.is_faculty:
-            message = "You don't have access to this page."
+            message = "You don't have access to this page. <a href='/'>back to home </a>"
             return HttpResponse(message)
 
         return super().get(request, *args, **kwargs)

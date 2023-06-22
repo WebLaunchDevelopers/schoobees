@@ -7,6 +7,7 @@ from apps.base.models import CustomUser
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from .models import Staff
+from django.shortcuts import redirect
 
 class StaffListView(LoginRequiredMixin, ListView):
     model = Staff
@@ -14,10 +15,28 @@ class StaffListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         queryset = super().get_queryset()
         return queryset.filter(user=self.request.user)
+    
+    def dispatch(self, request, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            if self.request.user.is_faculty:
+                messages.warning(self.request, "You don't have access to this page")
+                return redirect('home')  # Replace 'home' with the appropriate URL name for your home page
+        else:
+            return redirect('login')
+        return super().dispatch(request, *args, **kwargs)
 
-class StaffDetailView(DetailView):
+class StaffDetailView(LoginRequiredMixin, DetailView):
     model = Staff
     template_name = "staffs/staff_detail.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            if self.request.user.is_faculty:
+                messages.warning(self.request, "You don't have access to this page")
+                return redirect('home')  # Replace 'home' with the appropriate URL name for your home page
+        else:
+            return redirect('login')
+        return super().dispatch(request, *args, **kwargs)
 
 class StaffCreateView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     model = Staff

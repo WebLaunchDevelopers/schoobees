@@ -7,13 +7,22 @@ from django.contrib import messages
 from .forms import InvoiceItemFormset, InvoiceReceiptFormSet, InvoiceForm
 from .models import Invoice, InvoiceItem, Receipt
 
-
 class InvoiceListView(LoginRequiredMixin, ListView):
     model = Invoice
 
     def get_queryset(self):
         queryset = super().get_queryset()
         return queryset.filter(user=self.request.user)
+    
+    def dispatch(self, request, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            if self.request.user.is_faculty:
+                messages.warning(self.request, "You don't have access to payments")
+                return redirect('home')  # Replace 'home' with the appropriate URL name for your home page
+        else:
+            return redirect('login')
+        return super().dispatch(request, *args, **kwargs)
+
 
 class InvoiceCreateView(LoginRequiredMixin, CreateView):
     model = Invoice
@@ -29,6 +38,15 @@ class InvoiceCreateView(LoginRequiredMixin, CreateView):
         else:
             context["items"] = InvoiceItemFormset(prefix="invoiceitem_set")
         return context
+    
+    def dispatch(self, request, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            if self.request.user.is_faculty:
+                messages.warning(self.request, "You don't have access to payments")
+                return redirect('home')  # Replace 'home' with the appropriate URL name for your home page
+        else:
+            return redirect('login')
+        return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
         student = form.cleaned_data['student']
@@ -64,7 +82,15 @@ class InvoiceDetailView(LoginRequiredMixin, DetailView):
         context["receipts"] = Receipt.objects.filter(invoice=self.object)
         context["items"] = InvoiceItem.objects.filter(invoice=self.object)
         return context
-
+    
+    def dispatch(self, request, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            if self.request.user.is_faculty:
+                messages.warning(self.request, "You don't have access to payments")
+                return redirect('home')  # Replace 'home' with the appropriate URL name for your home page
+        else:
+            return redirect('login')
+        return super().dispatch(request, *args, **kwargs)
 
 class InvoiceUpdateView(LoginRequiredMixin, UpdateView):
     model = Invoice
@@ -83,6 +109,15 @@ class InvoiceUpdateView(LoginRequiredMixin, UpdateView):
             context["receipts"] = InvoiceReceiptFormSet(instance=self.object)
             context["items"] = InvoiceItemFormset(instance=self.object)
         return context
+
+    def dispatch(self, request, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            if self.request.user.is_faculty:
+                messages.warning(self.request, "You don't have access to payments")
+                return redirect('home')  # Replace 'home' with the appropriate URL name for your home page
+        else:
+            return redirect('login')
+        return super().dispatch(request, *args, **kwargs)
 
     def form_valid(self, form):
         context = self.get_context_data()
@@ -117,11 +152,29 @@ class ReceiptCreateView(LoginRequiredMixin, CreateView):
         invoice = Invoice.objects.get(pk=self.request.GET["invoice"])
         context["invoice"] = invoice
         return context
+    
+    def dispatch(self, request, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            if self.request.user.is_faculty:
+                messages.warning(self.request, "You don't have access to payments")
+                return redirect('home')  # Replace 'home' with the appropriate URL name for your home page
+        else:
+            return redirect('login')
+        return super().dispatch(request, *args, **kwargs)
 
 class ReceiptUpdateView(LoginRequiredMixin, UpdateView):
     model = Receipt
     fields = ["amount_paid", "date_paid", "comment"]
     success_url = reverse_lazy("invoice-list")
+
+    def dispatch(self, request, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            if self.request.user.is_faculty:
+                messages.warning(self.request, "You don't have access to payments")
+                return redirect('home')  # Replace 'home' with the appropriate URL name for your home page
+        else:
+            return redirect('login')
+        return super().dispatch(request, *args, **kwargs)
 
 
 class ReceiptDeleteView(LoginRequiredMixin, DeleteView):

@@ -31,10 +31,15 @@ Drivers
 
     <div class="col-md-6">
       <h2>Add Driver</h2>
-      <p>Write NA for Not Available fields</p>
       <form method="POST">
         {% csrf_token %}
         {% for field in driver_form %}
+        {% if field.name == 'is_driveradmin' %}
+        <div class="form-group d-flex" style="flex-direction: row; justify-content: start; align-items: center;">
+          <input type="checkbox" name="is_driveradmin" class="form-control" id="id_is_driveradmin" style="width: 20px;">
+          <label for="id_is_driveradmin" style="margin-left: 10px; margin-bottom: 0;">Transport Manager</label>
+        </div>
+        {% else %}
         <div class="form-group">
           {{ field.label_tag }}
           {% render_field field class="form-control" %}
@@ -47,6 +52,7 @@ Drivers
           {% endfor %}
           {% endif %}
         </div>
+        {% endif %}
         {% endfor %}
         <button type="submit" class="btn btn-primary">Save</button>
       </form>

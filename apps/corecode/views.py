@@ -504,7 +504,7 @@ class CurrentSessionAndTermView(LoginRequiredMixin, View):
 
     def get(self, request, *args, **kwargs):
         if self.request.user.is_faculty:
-            message = "You don't have access to this page."
+            message = "You don't have access to this page. <a href='/'>back to home </a>"
             return HttpResponse(message)
         current_session = AcademicSession.objects.filter(user=request.user, current=True).first()
         current_term = AcademicTerm.objects.filter(user=request.user, current=True).first()

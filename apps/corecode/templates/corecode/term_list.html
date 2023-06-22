@@ -63,10 +63,17 @@ Academic Term
               {% csrf_token %}
 
               {% for field in form %}
+                {% if field.name == 'current' %}
+                  <div class="form-group d-flex" style="flex-direction: row; justify-content: start; align-items: center;">
+                    <input type="checkbox" style="width: 20px;" name="Academic Session-current" class="form-control" id="id_Academic Session-current" checked="">
+                    <label for="id_Academic Session-current" style="margin-left: 10px; margin-bottom: 0;">Current</label>
+                  </div>
+                {% else %}
                   <div class="form-group">
                     {{field.label_tag}}
                     {{ field|add_class:"form-control" }}
                   </div>
+                {% endif %}
               {% endfor %}
             
           </div>
