@@ -260,6 +260,97 @@ class DriverLocationAPIView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
+class DriverMapAPIView(APIView):
+    def get(self, request):
+        # Concatenate the words and encode as UTF-8
+        text = "DriverAppToWebFromWebLaunch".encode("utf-8")
+        # Generate a SHA-256 hash from the text
+        hash_object = sha256(text)
+        # Convert the hash to a hexadecimal string
+        token = hash_object.hexdigest()
+        print(token)
+
+        driver_id = request.query_params.get('driver_auth')
+
+        # Check if driver_auth is present in query params
+        if not driver_id:
+            return Response(
+                {'error': 'Missing required parameter(driver_auth)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+
+        # Check if registerid is present in query params
+        register_id = request.query_params.get('registerid')
+        if not register_id:
+            return Response(
+                {'error': 'Missing required parameter(registerid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+
+        # Check if token is present in query params
+        paramstoken = request.query_params.get('token')
+        if not paramstoken:
+            return Response(
+                {'error': 'Missing required parameter(token)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+
+        # Check if modid is present in query params
+        modid = request.query_params.get('modid')
+        if not modid:
+            return Response(
+                {'error': 'Missing required parameter(modid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+
+        if token == paramstoken and modid in MODLIST:
+            try:
+                userdata = CustomUser.objects.get(register_id=register_id)
+            except CustomUser.DoesNotExist:
+                return Response(
+                    {'error': 'School not found', 'status': status.HTTP_404_NOT_FOUND},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
+            try:
+                driverdata = Driver.objects.get(user=userdata, id=driver_id)
+            except Driver.DoesNotExist:
+                return Response(
+                    {'error': 'Driver not found', 'status': status.HTTP_404_NOT_FOUND},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+            try:
+                routedata = Route.objects.filter(user=userdata, assigned_driver = driver_id)
+                routeserializer = RouteSerializer(routedata, many=True)
+                # Iterate over each route_data object
+                for route_data in routedata:
+                    route_nodes = RouteNode.objects.filter(route=route_data)
+                    route_nodes_serializer = RouteNodesSerializer(route_nodes, many=True)
+                    # Include route_nodes_serializer.data in routeserializer.data for each route_data object
+                    route_data_serializer_data = next((item for item in routeserializer.data if item['id'] == route_data.id), None)
+                    if route_data_serializer_data:
+                        route_data_serializer_data['routenodes'] = route_nodes_serializer.data
+
+                return Response(
+                    {'status': status.HTTP_200_OK, 'drivermap': {
+                        'id': driverdata.id,
+                        'name': driverdata.name,
+                        'latitude': driverdata.latitude,
+                        'longitude': driverdata.longitude,
+                        'routedata': routeserializer.data,
+                    }},status=status.HTTP_200_OK
+                    )
+            except:
+                return Response(
+                    {'error': 'Something went wrong', 'status': status.HTTP_500_INTERNAL_SERVER_ERROR},
+                    status=status.HTTP_500_INTERNAL_SERVER_ERROR
+                )
+        else:
+            return Response(
+                {'error': 'Invalid parameter value', 'status': status.HTTP_400_BAD_REQUEST},
+                status=status.HTTP_400_BAD_REQUEST
+            )    
+
 class StudentAPIView(APIView):
     def get(self, request):
         # Concatenate the words and encode as UTF-8

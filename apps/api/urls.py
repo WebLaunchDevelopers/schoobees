@@ -4,6 +4,7 @@ from .views import (
     DriverAPIView,
     DriverListAPIView,
     DriverLocationAPIView,
+    DriverMapAPIView,
     StudentAPIView,
     FeedbackAPIView,
     InvoiceAPIView,
@@ -23,6 +24,7 @@ urlpatterns = [
     path('driver/', DriverAPIView.as_view(), name="driver"), # only get
     path('driverlist/', DriverListAPIView.as_view(), name="driverlist"), # only get
     path('driverlocation/', DriverLocationAPIView.as_view(), name="driverlocation"), # only post
+    path('drivermap/', DriverMapAPIView.as_view(), name="drivermap"),
     path('route/', RouteAPIView.as_view(), name="route"), # both get and post
     path('routenodes/', RouteNodesAPIView.as_view(), name="routenodes"), # both get and post
     path('student/', StudentAPIView.as_view(), name="student"), # only get
