@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from apps.students.models import Student, Feedback, Notification
 from apps.base.models import CustomUser, UserProfile
-from apps.corecode.models import Driver, Route, Calendar, RouteNode, Subject
+from apps.corecode.models import Driver, Route, Calendar, RouteNode, Subject, StudentClass
 from apps.finance.models import Invoice, InvoiceItem, Receipt
 from apps.result.models import Result, Exam
 from apps.time_table.models import Timetable
@@ -126,4 +126,9 @@ class ExamSerializer(serializers.ModelSerializer):
 class SubjectSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subject
+        fields = ['id', 'name']
+
+class ClassSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StudentClass
         fields = ['id', 'name']

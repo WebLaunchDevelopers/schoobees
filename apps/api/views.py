@@ -15,16 +15,16 @@ from .serializers import (
     RouteSerializer,
     RouteNodesSerializer,
     CalendarSerializer,
-    PerformanceSerializer,
     NotificationSerializer,
     TimetableSerializer,
     ExamSerializer,
-    SubjectSerializer
+    SubjectSerializer,
+    ClassSerializer
 )
 
 from apps.students.models import Student, Feedback, Notification
 from apps.base.models import CustomUser
-from apps.corecode.models import Driver, Route, Calendar, RouteNode, Subject
+from apps.corecode.models import Driver, Route, Calendar, RouteNode, Subject, StudentClass, AcademicSession, AcademicTerm
 from apps.finance.models import Invoice, InvoiceItem, Receipt
 from apps.result.models import Result, Exam
 from apps.attendance.models import Attendance
@@ -427,6 +427,112 @@ class StudentAPIView(APIView):
                 {'error': 'Invalid parameter value', 'status': status.HTTP_400_BAD_REQUEST},
                 status=status.HTTP_400_BAD_REQUEST
             )
+
+class StudentCreateAPIView(APIView):
+    params = ["registerid","modid","token","roll_no","first_name","last_name","guardian_name","gender","date_of_birth","current_class","date_of_admission","parent_mobile_number","address"]
+
+    def check_post_params(self, request):
+        for param in self.params:
+            if param not in request.data:
+                return Response(
+                    {'error': f'Missing required parameter({param})', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                    status=status.HTTP_422_UNPROCESSABLE_ENTITY
+                )
+        return None
+        
+    def post(self, request):
+        # Concatenate the words and encode as UTF-8
+        text = "StudentAppToWebFromWebLaunch".encode("utf-8")
+        # Generate a SHA-256 hash from the text
+        hash_object = sha256(text)
+        # Convert the hash to a hexadecimal string
+        token = hash_object.hexdigest()
+        print(token)
+
+        check_result = self.check_post_params(request)
+        if check_result:
+            return check_result
+
+        register_id = request.data.get('registerid')
+        modid = request.data.get('modid')
+        paramstoken = request.data.get('token')
+        registration_number = request.data.get('roll_no')
+        first_name = request.data.get('first_name')
+        last_name = request.data.get('last_name')
+        guardian_name = request.data.get('guardian_name')
+        gender = request.data.get('gender')
+        date_of_birth = request.data.get('date_of_birth')
+        current_class = request.data.get('current_class')
+        date_of_admission = request.data.get('date_of_admission')
+        parent_mobile_number = request.data.get('parent_mobile_number')
+        address = request.data.get('address')
+
+        if paramstoken != token or modid not in MODLIST:
+            return Response(
+                {'error': 'Invalid parameter value', 'status': status.HTTP_400_BAD_REQUEST},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            schoolUser = CustomUser.objects.get(register_id=register_id)
+        except CustomUser.DoesNotExist:
+            return Response(
+                {'error': 'School not found', 'status': status.HTTP_404_NOT_FOUND},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        try:
+            currentClass = StudentClass.objects.get(user=schoolUser, id=current_class)
+        except StudentClass.DoesNotExist:
+            return Response(
+                {'error': 'Class not found', 'status': status.HTTP_404_NOT_FOUND},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        try:
+            current_session = AcademicSession.objects.get(user=schoolUser, current=True)
+        except AcademicSession.DoesNotExist:
+            return Response(
+                {'error': 'Academic session is not created yet by school', 'status': status.HTTP_404_NOT_FOUND},
+                status=status.HTTP_404_NOT_FOUND
+            )
+
+        try:
+            current_term = AcademicTerm.objects.get(user=schoolUser, current=True)
+        except AcademicTerm.DoesNotExist:
+            return Response(
+                {'error': 'Academic term is not created yet by school', 'status': status.HTTP_404_NOT_FOUND},
+                status=status.HTTP_404_NOT_FOUND
+            )
+        
+        try:
+            student = Student(
+                user=schoolUser,
+                registration_number=registration_number,
+                first_name=first_name,
+                last_name=last_name,
+                guardian_name=guardian_name,
+                gender=gender,
+                date_of_birth=date_of_birth,
+                current_class=currentClass,
+                date_of_admission=date_of_admission,
+                parent_mobile_number=parent_mobile_number,
+                address=address,
+                session = current_session,
+                term = current_term
+            )
+            student.save()
+
+            return Response(
+                {'status': status.HTTP_201_CREATED, 'message': 'Student created successfully'},
+                status=status.HTTP_201_CREATED
+            )
+        except:
+            return Response(
+                {'error': 'Student not created', 'status': status.HTTP_500_INTERNAL_SERVER_ERROR},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+
 
 class FeedbackAPIView(APIView):
     params = ["registerid", "modid", "token", "studentid"]
@@ -1501,12 +1607,69 @@ class SubjectsListAPIView(APIView):
                     {'error': 'School not found', 'status': status.HTTP_404_NOT_FOUND},
                     status=status.HTTP_404_NOT_FOUND
                 )
-            exams = Subject.objects.filter(user=schoolUser)
-            examsserializer = SubjectSerializer(exams, many=True)
+            subjects = Subject.objects.filter(user=schoolUser)
+            subjectsserializer = SubjectSerializer(subjects, many=True)
             return Response(
                 {
                     'status': status.HTTP_200_OK,
-                    'subjectslist': examsserializer.data,
+                    'subjectslist': subjectsserializer.data,
+                },
+                status=status.HTTP_200_OK
+            )
+        else:
+            return Response(
+                {'error': 'Invalid parameter value', 'status': status.HTTP_400_BAD_REQUEST},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+class ClassListAPIView(APIView):
+    def get(self, request):
+        # Concatenate the words and encode as UTF-8
+        text = "StudentAppToWebFromWebLaunch".encode("utf-8")
+        # Generate a SHA-256 hash from the text
+        hash_object = sha256(text)
+        # Convert the hash to a hexadecimal string
+        token = hash_object.hexdigest()
+        print(token)
+
+        # Check if registerid is present in query params
+        register_id = request.query_params.get('registerid')
+        if not register_id:
+            return Response(
+                {'error': 'Missing required parameter(registerid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+        
+        # Check if modid is present in query params
+        modid = request.query_params.get('modid')
+        if not modid:
+            return Response(
+                {'error': 'Missing required parameter(modid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+        
+        # Check if token is present in query params
+        paramstoken = request.query_params.get('token')
+        if not paramstoken:
+            return Response(
+                {'error': 'Missing required parameter(token)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+        
+        if token == paramstoken and modid in MODLIST:
+            try:
+                schoolUser = CustomUser.objects.get(register_id=register_id)
+            except CustomUser.DoesNotExist:
+                return Response(
+                    {'error': 'School not found', 'status': status.HTTP_404_NOT_FOUND},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+            classes = StudentClass.objects.filter(user=schoolUser)
+            classesserializer = ClassSerializer(classes, many=True)
+            return Response(
+                {
+                    'status': status.HTTP_200_OK,
+                    'classlist': classesserializer.data,
                 },
                 status=status.HTTP_200_OK
             )
