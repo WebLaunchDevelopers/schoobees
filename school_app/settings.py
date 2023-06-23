@@ -26,8 +26,8 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True # For 404 page keep it in False
 
-ALLOWED_HOSTS = ['*']
-# ALLOWED_HOSTS = ['dev.schoobees.com','16.170.230.176']
+# ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['dev.schoobees.com','16.170.230.176']
 
 
 # Application definition
@@ -97,34 +97,23 @@ WSGI_APPLICATION = 'school_app.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'schoobeesdb',
-#         'USER': 'schoobeesdbuser',
-#         'PASSWORD': 'avinashgummadi',
-#         'HOST': 'localhost',
-#         'PORT': '',
-#     }
-# }
-
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#         'NAME': 'schoobeesdb',  # DB identifier
-#         'USER': 'schoobeesdbuser',  # Master username
-#         'PASSWORD': 'avinashgummadi',
-#         'HOST': 'schoobeesdb.cpdnafjyf3dy.eu-north-1.rds.amazonaws.com',  # Endpoint
-#         'PORT': '5432',  # Port
-#     }
-# }
-
 DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': config('DBNAME'),
+        'USER': config('DBUSER'),
+        'PASSWORD': config('DBPASSWORD'),
+        'HOST': config('DBHOST'),
+        'PORT': '',
     }
 }
+
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -175,11 +164,11 @@ USE_TZ = True
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 10240
 
 STATIC_URL = "/static/"
-# STATIC_ROOT = os.path.join(BASE_DIR, 'static') # for server, comment for local
+STATIC_ROOT = os.path.join(BASE_DIR, 'static') # for server, comment for local
 
-STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),) # uncomment for local, comment for server
+# STATICFILES_DIRS = (os.path.join(BASE_DIR, "static"),) # uncomment for local, comment for server
 
-STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles") # comment for server, uncomment for local
+# STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles") # comment for server, uncomment for local
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
