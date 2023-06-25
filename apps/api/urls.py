@@ -18,7 +18,9 @@ from .views import (
     TimetableAPIView,
     ExamsListAPIView,
     SubjectsListAPIView,
-    ClassListAPIView
+    ClassListAPIView,
+    RouteDeleteAPIView,
+    RouteNodeDeleteAPIView,
 )
 
 urlpatterns = [
@@ -41,4 +43,6 @@ urlpatterns = [
     path('examslist/', ExamsListAPIView.as_view(), name="examslist"), # only get
     path('subjectslist/', SubjectsListAPIView.as_view(), name="subjectslist"), # only get'
     path('classlist/', ClassListAPIView.as_view(), name="classlist"), # only get'
+    path('routedelete/', RouteDeleteAPIView.as_view(), name="routedelete"), # only delete
+    path('routenodedelete/', RouteNodeDeleteAPIView.as_view(), name="routenodedelete"), # only delete
 ]

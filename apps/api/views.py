@@ -1678,3 +1678,174 @@ class ClassListAPIView(APIView):
                 {'error': 'Invalid parameter value', 'status': status.HTTP_400_BAD_REQUEST},
                 status=status.HTTP_400_BAD_REQUEST
             )
+        
+class RouteDeleteAPIView(APIView):
+    def delete(self, request):
+        # Concatenate the words and encode as UTF-8
+        text = "DriverAppToWebFromWebLaunch".encode("utf-8")
+        # Generate a SHA-256 hash from the text
+        hash_object = sha256(text)
+        # Convert the hash to a hexadecimal string
+        token = hash_object.hexdigest()
+        print(token)
+
+        # Check if registerid is present in query params
+        register_id = request.query_params.get('registerid')
+        if not register_id:
+            return Response(
+                {'error': 'Missing required parameter(registerid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+        
+        # Check if modid is present in query params
+        modid = request.query_params.get('modid')
+        if not modid:
+            return Response(
+                {'error': 'Missing required parameter(modid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+        
+        # Check if token is present in query params
+        paramstoken = request.query_params.get('token')
+        if not paramstoken:
+            return Response(
+                {'error': 'Missing required parameter(token)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+        
+        # Check if routeid is present in query params
+        routeid = request.query_params.get('routeid')
+        if not routeid:
+            return Response(
+                {'error': 'Missing required parameter(routeid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+        
+        # Check if token is valid
+        if token == paramstoken and modid in MODLIST:
+            try:
+                schoolUser = CustomUser.objects.get(register_id=register_id)
+            except CustomUser.DoesNotExist:
+                return Response(
+                    {'error': 'School not found', 'status': status.HTTP_404_NOT_FOUND},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
+            try:
+                route = Route.objects.get(id=routeid, user=schoolUser)
+            except Route.DoesNotExist:
+                return Response(
+                    {'error': 'Route not found', 'status': status.HTTP_404_NOT_FOUND},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+            try:
+                route.delete()
+                return Response(
+                    {
+                        'status': status.HTTP_200_OK, 'message': 'Route deleted successfully'
+                    },
+                    status=status.HTTP_200_OK
+                )
+            except Exception as e:
+                return Response(
+                    {'error': 'Error deleting route', 'status': status.HTTP_400_BAD_REQUEST, 'message': str(e)},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+        else:
+            return Response(
+                {'error': 'Invalid parameter value', 'status': status.HTTP_400_BAD_REQUEST},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+class RouteNodeDeleteAPIView(APIView):
+    def delete(self, request):
+        # Concatenate the words and encode as UTF-8
+        text = "DriverAppToWebFromWebLaunch".encode("utf-8")
+        # Generate a SHA-256 hash from the text
+        hash_object = sha256(text)
+        # Convert the hash to a hexadecimal string
+        token = hash_object.hexdigest()
+        print(token)
+
+        # Check if registerid is present in query params
+        register_id = request.query_params.get('registerid')
+        if not register_id:
+            return Response(
+                {'error': 'Missing required parameter(registerid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+        
+        # Check if modid is present in query params
+        modid = request.query_params.get('modid')
+        if not modid:
+            return Response(
+                {'error': 'Missing required parameter(modid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+        
+        # Check if token is present in query params
+        paramstoken = request.query_params.get('token')
+        if not paramstoken:
+            return Response(
+                {'error': 'Missing required parameter(token)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+        
+        # Check if routeid is present in query params
+        routeid = request.query_params.get('routeid')
+        if not routeid:
+            return Response(
+                {'error': 'Missing required parameter(routeid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+        
+        # Check if routenodeid is present in query params
+        routenodeid = request.query_params.get('routenodeid')
+        if not routenodeid:
+            return Response(
+                {'error': 'Missing required parameter(routenodeid)', 'status': status.HTTP_422_UNPROCESSABLE_ENTITY},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY
+            )
+        
+        # Check if token is valid
+        if token == paramstoken and modid in MODLIST:
+            try:
+                schoolUser = CustomUser.objects.get(register_id=register_id)
+            except CustomUser.DoesNotExist:
+                return Response(
+                    {'error': 'School not found', 'status': status.HTTP_404_NOT_FOUND},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+
+            try:
+                route = Route.objects.get(id=routeid, user=schoolUser)
+            except Route.DoesNotExist:
+                return Response(
+                    {'error': 'Route not found', 'status': status.HTTP_404_NOT_FOUND},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+            try:
+                routenode = RouteNode.objects.get(id=routenodeid, route=route)
+            except RouteNode.DoesNotExist:
+                return Response(
+                    {'error': 'RouteNode not found', 'status': status.HTTP_404_NOT_FOUND},
+                    status=status.HTTP_404_NOT_FOUND
+                )
+            try:
+                routenode.delete()
+                return Response(
+                    {
+                        'status': status.HTTP_200_OK, 'message': 'Route deleted successfully'
+                    },
+                    status=status.HTTP_200_OK
+                )
+            except Exception as e:
+                return Response(
+                    {'error': 'Error deleting route', 'status': status.HTTP_400_BAD_REQUEST, 'message': str(e)},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+        else:
+            return Response(
+                {'error': 'Invalid parameter value', 'status': status.HTTP_400_BAD_REQUEST},
+                status=status.HTTP_400_BAD_REQUEST
+            )
