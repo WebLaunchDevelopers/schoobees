@@ -16,7 +16,6 @@ class SiteConfig(models.Model):
     def __str__(self):
         return self.key
 
-
 class AcademicSession(models.Model):
     """Academic Session"""
 
@@ -38,7 +37,6 @@ class AcademicSession(models.Model):
 
     def __str__(self):
         return self.name
-
 
 class AcademicTerm(models.Model):
     """Academic Term"""
