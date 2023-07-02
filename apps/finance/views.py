@@ -6,7 +6,7 @@ from django.views.generic.edit import CreateView, DeleteView, UpdateView
 from django.contrib import messages
 from .forms import InvoiceItemFormset, InvoiceReceiptFormSet, InvoiceForm
 from .models import Invoice, InvoiceItem, Receipt
-
+from apps.corecode.models import AcademicSession, AcademicTerm
 class InvoiceListView(LoginRequiredMixin, ListView):
     model = Invoice
 
@@ -50,8 +50,8 @@ class InvoiceCreateView(LoginRequiredMixin, CreateView):
 
     def form_valid(self, form):
         student = form.cleaned_data['student']
-        session = form.cleaned_data['session']
-        term = form.cleaned_data['term']
+        session = AcademicSession.objects.filter(current=True).first()
+        term = AcademicTerm.objects.filter(current=True).first()
 
         existing_invoice = Invoice.objects.filter(
             student=student, session=session, term=term
@@ -60,6 +60,11 @@ class InvoiceCreateView(LoginRequiredMixin, CreateView):
         if existing_invoice:
             messages.warning(self.request, "Record already exists. Redirecting to update page.")
             return redirect('invoice-update', pk=existing_invoice.pk)
+
+        form.instance.session = session
+        form.instance.term = term
+        form.instance.user = self.request.user
+        response = super().form_valid(form)
 
         context = self.get_context_data()
         formset = context["items"]
