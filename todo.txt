@@ -28,8 +28,6 @@ s3 if needed
 
 excluded_users = CustomUser.objects.filter(username__in=['admin1', 'admin2'])
 
-
-data in invoice
 use .env for all passwords
 
 run all links in browser with staff login and without login

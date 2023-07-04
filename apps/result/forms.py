@@ -32,25 +32,15 @@ EditResults = modelformset_factory(
 )
 
 class ExamsForm(forms.ModelForm):
-    session = forms.ModelChoiceField(queryset=AcademicSession.objects.none(), widget=forms.Select(attrs={'class': 'custom-select'}))
-    term = forms.ModelChoiceField(queryset=AcademicTerm.objects.none(), widget=forms.Select(attrs={'class': 'custom-select'}))
     exam_name = forms.CharField(max_length=200, widget=forms.TextInput(attrs={'class': 'form-control'}))
     exam_date = forms.DateField(widget=forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}))
 
     class Meta:
         model = Exam
-        fields = ['session', 'term', 'exam_name', 'exam_date']
+        fields = ['exam_name', 'exam_date']
 
     def __init__(self, *args, **kwargs):
         user = kwargs.pop('user', None)
         super().__init__(*args, **kwargs)
         if user:
-            self.fields['session'].queryset = AcademicSession.objects.filter(user=user)
-            self.fields['term'].queryset = AcademicTerm.objects.filter(user=user)
-
-            self.fields['session'].help_text = mark_safe(
-                '<a href="{}">Click here to add session</a>'.format(reverse_lazy('session-create')))
-            self.fields['term'].help_text = mark_safe(
-                '<a href="{}">Click here to add term</a>'.format(reverse_lazy('term-create')))
-            
             self.fields['exam_date'].initial = date.today()  # Set the default value as today's date

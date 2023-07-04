@@ -209,7 +209,15 @@ class ExamsCreateView(LoginRequiredMixin, CreateView):
         form = self.get_form()
         if form.is_valid():
             form.instance.user = finaluser
-            return self.form_valid(form)
+            session = AcademicSession.objects.filter(current=True, user=finaluser).first()
+            term = AcademicTerm.objects.filter(current=True, user=finaluser).first()
+            if session and term:
+                form.instance.session = session
+                form.instance.term = term
+                return self.form_valid(form)
+            else:
+                messages.error(self.request, "Cannot add exam. Please make sure there is a current session and term set.")
+                return redirect('exams_create')
         else:
             return self.form_invalid(form)
 
