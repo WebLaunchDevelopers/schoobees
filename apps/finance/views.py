@@ -26,7 +26,6 @@ class InvoiceListView(LoginRequiredMixin, ListView):
 
 class InvoiceCreateView(LoginRequiredMixin, CreateView):
     model = Invoice
-    form_class = InvoiceForm
     success_url = "/finance/list/"
 
     def get_context_data(self, **kwargs):
@@ -47,6 +46,9 @@ class InvoiceCreateView(LoginRequiredMixin, CreateView):
         else:
             return redirect('login')
         return super().dispatch(request, *args, **kwargs)
+
+    def get_form(self, form_class=None):
+        return InvoiceForm(user=self.request.user, **self.get_form_kwargs())
 
     def form_valid(self, form):
         student = form.cleaned_data['student']
